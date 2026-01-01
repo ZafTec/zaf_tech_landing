@@ -29,7 +29,7 @@ Set repository Secrets (Settings → Secrets → Actions):
 
 What the workflow does on `main` push or manual run:
 1. Logs into Docker Hub (username from Variables, password from Secret).
-2. Builds multi-arch image with `NEXT_PUBLIC_SITE_URL` build-arg.
+2. Builds multi-arch image with `NEXT_PUBLIC_SITE_URL` build-arg (no lint/test here; enforced in PR workflow).
 3. Pushes tags `latest` and `sha-<commit>` to `DOCKERHUB_USERNAME/zaftech`.
 
 ## CI for pull requests
@@ -41,7 +41,3 @@ Workflow: `.github/workflows/ci.yml` runs on PR to `main`
 ## SEO helpers
 - `src/app/sitemap.ts` — uses `NEXT_PUBLIC_SITE_URL` (or `https://zaftech.co` fallback).
 - `src/app/robots.txt/route.ts` — serves robots.txt with sitemap link.
-
-## Notes
-- Dockerfile is multi-stage and runs lint + build during image creation.
-- Tailwind v4 via PostCSS plugin; theme tokens in `src/app/globals.css`.
