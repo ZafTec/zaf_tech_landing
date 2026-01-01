@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zaftech.co";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -15,31 +17,31 @@ const grotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "ZafTech | AI-First Full-Stack Agency for Web & Software",
+  title: "ZafTech | Full-Service Web & Software Studio",
   description:
-    "ZafTech builds production-grade AI, high-concurrency backends, and conversion-driven web experiences with extreme cost efficiency.",
+    "ZafTech builds conversion-focused websites, robust digital platforms, and reliable AI support assistants tailored to any business.",
   keywords: [
-    "AI development agency",
-    "RAG pipelines",
-    "Next.js experts",
-    "Bun runtime",
-    "Tailwind CSS v4",
-    "cloud cost optimization",
-    "high performance APIs",
+    "web development agency",
+    "product design",
+    "RAG chatbot",
+    "customer support automation",
+    "WordPress team",
+    "full service studio",
+    "digital platforms",
   ],
   openGraph: {
-    title: "ZafTech — AI, Backends, and Web that Scale",
+    title: "ZafTech — Full-Service Web & Software Studio",
     description:
-      "Full-stack engineering studio delivering custom LLM/RAG systems, resilient APIs, and SEO-smart web experiences.",
-    url: "https://zaftech.com",
+      "Web and product experiences built end-to-end, plus RAG assistants for support, sales, and knowledge workflows.",
+    url: siteUrl,
     siteName: "ZafTech",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ZafTech — AI-First Full-Stack Studio",
+    title: "ZafTech — Web, Product, and AI Support",
     description:
-      "Production-grade AI, high-speed APIs, and conversion-focused web builds powered by Next.js 16 + Bun.",
+      "Web platforms, UX/UI, WordPress, and reliable RAG assistants for any business use case.",
   },
 };
 

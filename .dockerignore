@@ -1,0 +1,8 @@
+.next
+node_modules
+.git
+.github
+tmp
+npm-debug.log
+yarn-error.log
+dist

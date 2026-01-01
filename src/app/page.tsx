@@ -1,78 +1,63 @@
-const stats = [
-  { label: "Latency targets", value: "<100ms p95 APIs" },
-  { label: "Infra savings", value: "30-70% cost-down" },
-  { label: "Deploy cadence", value: "Ship in 1-2 week pilots" },
-];
-
 const services = [
   {
-    title: "AI & RAG Systems",
-    body: "Custom LLM workflows, retrieval pipelines, evals, caching, and safety guardrails so answers stay accurate and fast.",
-    tags: ["RAG", "LangChain", "LlamaIndex", "Observability"],
+    title: "Web Platforms & Apps",
+    body: "Marketing sites, client portals, and product dashboards that load fast and convert.",
+    tags: ["Conversion-first", "SEO friendly", "Responsive"],
   },
   {
-    title: "High-Concurrency Backends",
-    body: "Event-driven or gRPC APIs built in FastAPI / .NET / Go with profiling, tracing, and automated load tests.",
-    tags: ["FastAPI", ".NET", "Go", "Redis", "Postgres"],
+    title: "RAG Assistants",
+    body: "On-brand support and knowledge bots for customers, sales, or internal teams.",
+    tags: ["Support bots", "Knowledge search", "Sales assist"],
   },
   {
-    title: "Web & Product Engineering",
-    body: "SEO-forward Next.js experiences, design systems, and component libraries tuned for Core Web Vitals.",
-    tags: ["Next.js 16", "Tailwind v4", "TypeScript", "Design Systems"],
+    title: "UX & Product Design",
+    body: "Research, prototyping, and design systems to launch confidently.",
+    tags: ["Design systems", "Prototyping", "Usability"],
   },
   {
-    title: "Cloud & DevOps",
-    body: "Container-first delivery on Cloud Run with GitHub Actions, preview builds, SBOMs, and cost/perf dashboards.",
-    tags: ["GCP", "Docker", "CI/CD", "Cost Optimization"],
+    title: "Dedicated WordPress",
+    body: "Custom builds, migrations, and care plans for content-heavy brands.",
+    tags: ["Custom themes", "Performance", "Care & support"],
   },
 ];
 
 const offers = [
   {
-    name: "RAG Feasibility Sprint",
-    detail: "Data audit, retrieval eval, pilot endpoint, and latency/cost report in 1–2 weeks.",
+    name: "Launch-Ready Site",
+    detail: "Messaging, design, build, and analytics for your flagship site.",
   },
   {
-    name: "API Performance Tune-Up",
-    detail: "Profiling, pooling, caching, and observability with a p95 <100ms target and before/after metrics.",
+    name: "RAG Support Sprint",
+    detail: "Scope and ship a support or knowledge bot in 2–4 weeks.",
   },
   {
-    name: "Cloud Cost Reduction",
-    detail: "Rightsizing, autoscaling policies, and traffic-shaping plan with a savings forecast.",
+    name: "Experience Refresh",
+    detail: "Redesign key funnels or dashboards to lift conversion.",
   },
 ];
 
-const stack = [
-  "Next.js 16",
-  "Bun runtime",
-  "Tailwind v4",
-  "TypeScript",
-  "FastAPI",
-  ".NET 8",
-  "Go",
-  "Postgres + pgvector",
-  "Redis",
-  "MongoDB",
-  "LangChain",
-  "LlamaIndex",
-  "Docker",
-  "GCP Cloud Run",
-  "GitHub Actions",
+const proof = [
+  {
+    title: "Support deflection",
+    result: "RAG bot cut tickets by 35% and raised CSAT by 18 pts.",
+  },
+  {
+    title: "Revenue lift",
+    result: "New marketing site boosted demo requests by 42% in 60 days.",
+  },
+  {
+    title: "Time to launch",
+    result: "Client portal delivered in 3 weeks with ongoing care.",
+  },
 ];
 
-const cases = [
-  {
-    title: "Search relevance overhaul",
-    result: "pgvector RAG → ticket volume down 35%, answer precision up 24%.",
-  },
-  {
-    title: "API scale-up",
-    result: "FastAPI + Redis cache → p95 180ms → 65ms at 5× traffic; infra −42%.",
-  },
-  {
-    title: "Cloud Run migration",
-    result: "Monolith → services; deploy time 20m → 3m, uptime 99.95%, spend −30%.",
-  },
+const valueList = [
+  "Strategy, UX, content, build, and care in one team",
+  "Clear timelines and weekly demos",
+  "RAG assistants that stay on-brand",
+  "WordPress specialists for content teams",
+  "Speed, accessibility, and SEO baked in",
+  "Ongoing care, not handoffs",
 ];
 
 export default function Home() {
@@ -87,7 +72,7 @@ export default function Home() {
             <div>
               <p className="text-base font-semibold">ZafTech</p>
               <p className="text-sm text-slate-500">
-                AI-first web & software studio
+                Web, product, and RAG assistants
               </p>
             </div>
           </div>
@@ -124,16 +109,14 @@ export default function Home() {
         <section className="pt-16 pb-12 grid md:grid-cols-2 gap-10 items-center">
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-sky-600 shadow-sm shadow-sky-100 ring-1 ring-sky-100">
-              Production-grade AI & web delivery
+              Full-service web & software studio
             </p>
             <h1 className="text-4xl md:text-5xl font-semibold leading-tight tracking-tight text-slate-900">
-              AI-native backends and conversion-ready web experiences built with
-              Next.js 16 + Bun.
+              Web & RAG that win.
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed">
-              We design and ship retrieval-safe AI systems, resilient APIs, and
-              SEO-optimized sites that stay fast under load while keeping cloud
-              spend lean.
+              Conversion-ready sites, portals, and support bots that look great,
+              load fast, and deflect tickets.
             </p>
             <div className="flex flex-wrap gap-3">
               <a
@@ -150,7 +133,11 @@ export default function Home() {
               </a>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-              {stats.map((stat) => (
+              {[
+                { label: "Launch speed", value: "Pilot in 2–4 weeks" },
+                { label: "Support deflection", value: "Up to 40%" },
+                { label: "Care plans", value: "Design, build, maintain" },
+              ].map((stat) => (
                 <div
                   key={stat.label}
                   className="rounded-2xl bg-white px-4 py-5 shadow-sm ring-1 ring-slate-100"
@@ -171,52 +158,61 @@ export default function Home() {
             <div className="relative rounded-[28px] bg-white p-6 shadow-2xl ring-1 ring-slate-100">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-slate-700">
-                  Delivery dashboard
+                  Delivery snapshot
                 </p>
                 <span className="text-xs rounded-full bg-emerald-100 text-emerald-700 px-3 py-1">
                   Live
                 </span>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-3 text-center text-sm">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs text-slate-500">Latency (p95)</p>
-                  <p className="text-xl font-semibold text-slate-900">65ms</p>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs text-slate-500">Uptime</p>
-                  <p className="text-xl font-semibold text-slate-900">99.95%</p>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs text-slate-500">Cost delta</p>
-                  <p className="text-xl font-semibold text-emerald-600">-42%</p>
-                </div>
+                {[
+                  { label: "Launch timeline", value: "2–4 weeks" },
+                  { label: "Support deflection", value: "+40%" },
+                  { label: "CSAT lift", value: "+18 pts" },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl bg-slate-50 p-4"
+                  >
+                    <p className="text-xs text-slate-500">{item.label}</p>
+                    <p className="text-xl font-semibold text-slate-900">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-6 rounded-2xl border border-slate-100 p-4">
+              <div className="mt-6 rounded-2xl border border-slate-100 p-4 space-y-4">
                 <p className="text-sm font-semibold text-slate-800">
-                  AI answer quality
+                  Performance snapshots
                 </p>
-                <div className="mt-3 space-y-3">
-                  {["Grounding", "Latency", "Cost"].map((metric, idx) => (
-                    <div key={metric} className="flex items-center gap-3">
-                      <div className="w-16 text-xs text-slate-500">
-                        {metric}
-                      </div>
-                      <div className="relative h-2 flex-1 rounded-full bg-slate-100">
-                        <div
-                          className={`absolute inset-y-0 rounded-full ${
-                            idx === 0
-                              ? "bg-emerald-500 w-[82%]"
-                              : idx === 1
-                                ? "bg-sky-500 w-[76%]"
-                                : "bg-slate-900 w-[68%]"
-                          }`}
-                        />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-700">
-                        {idx === 0 ? "A+" : idx === 1 ? "A" : "B+"}
-                      </span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+                    <p className="text-xs text-slate-500 mb-2">Traffic → Leads</p>
+                    <svg viewBox="0 0 120 60" className="w-full h-20">
+                      <polyline
+                        fill="none"
+                        stroke="#0ea5e9"
+                        strokeWidth="3"
+                        points="0,50 20,40 40,42 60,30 80,22 100,18 120,10"
+                      />
+                      <circle cx="120" cy="10" r="3" fill="#0ea5e9" />
+                    </svg>
+                    <p className="text-xs text-emerald-600 font-semibold">
+                      +42% conversions
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-slate-50 p-3 ring-1 ring-slate-100">
+                    <p className="text-xs text-slate-500 mb-2">Tickets deflected</p>
+                    <svg viewBox="0 0 120 60" className="w-full h-20">
+                      <rect x="10" y="30" width="18" height="20" fill="#0ea5e9" opacity="0.4" />
+                      <rect x="40" y="22" width="18" height="28" fill="#0ea5e9" opacity="0.6" />
+                      <rect x="70" y="14" width="18" height="36" fill="#0ea5e9" opacity="0.8" />
+                      <rect x="100" y="10" width="18" height="40" fill="#0ea5e9" />
+                    </svg>
+                    <p className="text-xs text-emerald-600 font-semibold">
+                      35% fewer tickets
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -228,14 +224,14 @@ export default function Home() {
             <div>
               <p className="text-sm font-semibold text-sky-600">What we do</p>
               <h2 className="text-3xl font-semibold text-slate-900">
-                Full-stack coverage, AI-first by design.
+                One team for web, product, and RAG support.
               </h2>
             </div>
             <a
               href="#contact"
               className="hidden md:inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:border-slate-400 transition"
             >
-              Talk to engineering
+              Talk to the team
             </a>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
@@ -277,11 +273,10 @@ export default function Home() {
           <div className="space-y-4">
             <p className="text-sm font-semibold text-sky-600">Starter offers</p>
             <h2 className="text-3xl font-semibold text-slate-900">
-              Low-friction entry points with measurable outcomes.
+              Low-friction ways to start together.
             </h2>
             <p className="text-slate-600 leading-relaxed">
-              Each sprint ships with dashboards and before/after benchmarks so
-              you can see impact in production, not slideware.
+              Clear scope, fixed timelines, and visible results.
             </p>
             <a
               href="#contact"
@@ -319,19 +314,19 @@ export default function Home() {
               <div>
                 <p className="text-sm font-semibold text-sky-600">Delivery</p>
                 <h2 className="text-3xl font-semibold text-slate-900">
-                  Clear process, transparent metrics.
+                  Clear process, transparent checkpoints.
                 </h2>
               </div>
               <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
-                Weekly demos • Dashboards • SLAs
+                Weekly demos • Roadmaps • SLAs
               </span>
             </div>
             <div className="grid md:grid-cols-4 gap-4">
               {[
                 "Discover & scope",
-                "Architecture blueprint",
-                "Pilot in 1–2 weeks",
-                "Hardening & launch",
+                "Experience blueprint",
+                "Pilot in 2–4 weeks",
+                "Launch & ongoing care",
               ].map((step, idx) => (
                 <div
                   key={step}
@@ -351,17 +346,15 @@ export default function Home() {
 
         <section className="py-12 grid gap-8 lg:grid-cols-[1.1fr,0.9fr] items-start">
           <div className="space-y-4">
-            <p className="text-sm font-semibold text-sky-600">Tech stack</p>
+            <p className="text-sm font-semibold text-sky-600">What you get</p>
             <h2 className="text-3xl font-semibold text-slate-900">
-              Modern, performance-first tooling.
+              Business outcomes, not tech checklists.
             </h2>
-            <p className="text-slate-600 leading-relaxed">
-              Next.js 16 on the Bun runtime for faster dev loops, Tailwind v4
-              for lean styling, and production stacks proven on SaaS, data, and
-              marketplace workloads.
+            <p className="text-lg text-slate-600 leading-relaxed">
+              We handle the build so you stay focused on customers and growth.
             </p>
             <div className="flex flex-wrap gap-2">
-              {stack.map((item) => (
+              {valueList.map((item) => (
                 <span
                   key={item}
                   className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-100"
@@ -374,7 +367,7 @@ export default function Home() {
           <div className="space-y-4">
             <p className="text-sm font-semibold text-sky-600">Proof</p>
             <div className="grid gap-4">
-              {cases.map((item) => (
+              {proof.map((item) => (
                 <div
                   key={item.title}
                   className="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-slate-100"
@@ -399,7 +392,7 @@ export default function Home() {
                   Start a project
                 </p>
                 <h3 className="text-3xl font-semibold leading-tight">
-                  Tell us your latency, cost, or conversion target—get a plan in
+                  Share your goal—traffic, conversion, or support. Get a plan in
                   under 48 hours.
                 </h3>
                 <p className="text-slate-200">
@@ -425,10 +418,10 @@ export default function Home() {
                   Preferred projects
                 </p>
                 <ul className="mt-3 space-y-2 text-sm text-slate-100">
-                  <li>• RAG agents connected to product data</li>
-                  <li>• API latency & reliability audits</li>
-                  <li>• Cloud Run migrations from monoliths</li>
-                  <li>• SEO/site performance rebuilds</li>
+                  <li>• Marketing or product web builds</li>
+                  <li>• RAG assistants for support, sales, or knowledge</li>
+                  <li>• WordPress redesigns and migrations</li>
+                  <li>• UX refreshes for key funnels</li>
                 </ul>
                 <p className="mt-4 text-xs text-slate-400">
                   Minimum engagement: $3k fixed or $40/hr+. Custom quotes on
