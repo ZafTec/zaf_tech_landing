@@ -1,25 +1,21 @@
-# Multi-stage Bun-powered Next.js build
-FROM oven/bun:1 AS deps
+# Single-stage Bun-powered Next.js image
+FROM oven/bun:1
 WORKDIR /app
+
 COPY package.json bun.lockb ./
 RUN bun install --frozen-lockfile
 
-FROM oven/bun:1 AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Optional: keep lint to catch obvious issues during CI
+
+ARG NEXT_PUBLIC_SITE_URL=https://zaftech.co
+ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+ENV NODE_ENV=production
+
+# Quality gate
 RUN bun run lint
+RUN bun run test
+
 RUN bun run build
 
-FROM oven/bun:1 AS runner
-WORKDIR /app
-ENV NODE_ENV=production
 EXPOSE 3000
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/bun.lockb ./bun.lockb
-COPY --from=builder /app/node_modules ./node_modules
-
 CMD ["bun", "run", "start"]

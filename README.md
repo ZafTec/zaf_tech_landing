@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZafTech Landing (Next.js 16 + Bun + Tailwind v4)
+Full-service web/RAG agency landing with Bun runtime, SEO pages, and Docker workflow.
 
-## Getting Started
-
-First, run the development server:
-
+## Quick start
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun dev      # run locally at http://localhost:3000
+bun run lint # optional lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
+- `NEXT_PUBLIC_SITE_URL` — public site origin for metadata/OG, sitemap, robots. Defaults to `https://zaftech.co`. Set at build and runtime for consistency.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Docker
+Build locally:
+```bash
+docker build -t zaftech:local --build-arg NEXT_PUBLIC_SITE_URL=https://zaftech.co .
+docker run -e NEXT_PUBLIC_SITE_URL=https://zaftech.co -p 3000:3000 zaftech:local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## GitHub Actions → Docker Hub
+Workflow: `.github/workflows/docker-publish.yml`
 
-## Learn More
+Set repository Variables (Settings → Variables → Actions):
+- `DOCKERHUB_USERNAME` — your Docker Hub username
+- `NEXT_PUBLIC_SITE_URL` — e.g., `https://zaftech.co`
 
-To learn more about Next.js, take a look at the following resources:
+Set repository Secrets (Settings → Secrets → Actions):
+- `DOCKERHUB_TOKEN` — Docker Hub access token/password
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+What the workflow does on `main` push or manual run:
+1. Logs into Docker Hub (username from Variables, password from Secret).
+2. Builds multi-arch image with `NEXT_PUBLIC_SITE_URL` build-arg.
+3. Pushes tags `latest` and `sha-<commit>` to `DOCKERHUB_USERNAME/zaftech`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## CI for pull requests
+Workflow: `.github/workflows/ci.yml` runs on PR to `main`
+- Installs deps with Bun
+- Runs `bun run lint`
+- Runs `bun run test`
 
-## Deploy on Vercel
+## SEO helpers
+- `src/app/sitemap.ts` — uses `NEXT_PUBLIC_SITE_URL` (or `https://zaftech.co` fallback).
+- `src/app/robots.txt/route.ts` — serves robots.txt with sitemap link.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+- Dockerfile is multi-stage and runs lint + build during image creation.
+- Tailwind v4 via PostCSS plugin; theme tokens in `src/app/globals.css`.
