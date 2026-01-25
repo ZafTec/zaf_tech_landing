@@ -1,8 +1,11 @@
-.next
 node_modules
+dist
+.astro
 .git
 .github
-tmp
+.tmp
 npm-debug.log
 yarn-error.log
-dist
+pnpm-debug.log
+ui_sample (2).md
+tests
