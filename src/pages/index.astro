@@ -104,30 +104,36 @@ const testimonials = [
 ---
 <Layout title="ZafTech | Web and RAG Studio">
   <div class="bg-[var(--color-bg)] text-[var(--color-ink)]" id="page-top">
-    <header class="sticky top-0 z-30 border-b border-white/70 glass">
+    <header class="sticky top-0 z-30 border-b border-[var(--color-border)] glass">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900 text-white shadow-soft">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-contrast)] text-white shadow-soft">
             Z
           </div>
           <div>
             <p class="text-base font-semibold">ZafTech</p>
-            <p class="text-sm text-slate-500">Web, product, and RAG delivery</p>
+            <p class="text-sm text-[var(--color-ink-muted)]">Web, product, and RAG delivery</p>
           </div>
         </div>
-        <nav class="hidden items-center gap-6 text-sm font-medium text-slate-700 lg:flex" aria-label="Primary">
+        <nav class="hidden items-center gap-6 text-sm font-medium text-[var(--color-ink-muted)] lg:flex" aria-label="Primary">
           {nav.map((item) => (
-            <a class="transition hover:text-slate-900" href={item.href}>{item.label}</a>
+            <a
+              class="nav-link transition hover:text-[var(--color-ink)]"
+              href={item.href}
+              data-nav={item.href.replace("#", "")}
+            >
+              {item.label}
+            </a>
           ))}
           <a
-            class="rounded-full bg-slate-900 px-4 py-2 text-white shadow-soft transition hover:translate-y-[-1px]"
+            class="rounded-full bg-[var(--color-contrast)] px-4 py-2 text-white shadow-soft transition hover:translate-y-[-1px]"
             href="#contact"
           >
             Book a review
           </a>
         </nav>
         <a
-          class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-soft lg:hidden"
+          class="rounded-full bg-[var(--color-contrast)] px-4 py-2 text-sm font-semibold text-white shadow-soft lg:hidden"
           href="#contact"
         >
           Start
@@ -135,26 +141,27 @@ const testimonials = [
       </div>
     </header>
 
-    <main class="mx-auto max-w-6xl px-4 pb-20">
-      <section class="relative mt-8 overflow-hidden rounded-[32px] shadow-soft">
+    <main>
+      <section class="relative w-full overflow-hidden">
         <div class="absolute inset-0">
           <Image
             src={heroImage}
             alt="Team collaborating in a modern workspace"
             class="h-full w-full object-cover"
             sizes="100vw"
+            priority
           />
-          <div class="absolute inset-0 bg-slate-900/55"></div>
+          <div class="absolute inset-0 bg-[var(--color-hero-overlay)]"></div>
         </div>
-        <div class="relative z-10 grid gap-8 px-6 py-16 text-white md:grid-cols-[1.1fr,0.9fr]">
+        <div class="relative z-10 mx-auto grid min-h-[70vh] max-w-6xl gap-10 px-4 py-20 text-white lg:grid-cols-[1.1fr,0.9fr]">
           <div class="space-y-6">
-            <p class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
+            <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
               Full service digital studio
             </p>
             <h1 class="text-4xl font-semibold leading-tight md:text-5xl">
               We craft landing experiences that convert and scale.
             </h1>
-            <p class="text-lg text-slate-200">
+            <p class="text-lg text-white/80">
               Strategy, design, and delivery for web platforms, product UX, and RAG assistants.
             </p>
             <div class="flex flex-wrap gap-3">
@@ -174,229 +181,278 @@ const testimonials = [
           </div>
           <div class="flex flex-col justify-between gap-6 rounded-3xl bg-white/10 p-6">
             <div>
-              <p class="text-sm font-semibold text-white">Launch snapshot</p>
-              <p class="mt-2 text-sm text-slate-200">2-4 week delivery with measurable lift.</p>
+              <p class="text-sm font-semibold">Launch snapshot</p>
+              <p class="mt-2 text-sm text-white/70">2-4 week delivery with measurable lift.</p>
             </div>
             <div class="grid gap-3 sm:grid-cols-2">
-              <div class="rounded-2xl bg-white/15 p-4">
-                <p class="text-xs uppercase tracking-wide text-slate-200">Conversion</p>
+              <div class="rounded-2xl bg-white/20 p-4">
+                <p class="text-xs uppercase tracking-wide text-white/70">Conversion</p>
                 <p class="text-xl font-semibold">+42%</p>
               </div>
-              <div class="rounded-2xl bg-white/15 p-4">
-                <p class="text-xs uppercase tracking-wide text-slate-200">Support deflection</p>
+              <div class="rounded-2xl bg-white/20 p-4">
+                <p class="text-xs uppercase tracking-wide text-white/70">Support deflection</p>
                 <p class="text-xl font-semibold">35%</p>
               </div>
             </div>
-            <div class="rounded-2xl bg-white/10 p-4 text-sm text-slate-200">
+            <div class="rounded-2xl bg-white/10 p-4 text-sm text-white/70">
               Weekly demos, clear milestones, and ongoing care.
             </div>
           </div>
         </div>
       </section>
 
-      <section id="features" class="space-y-8 py-16">
-        <div class="text-center">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">Features</p>
-          <h2 class="text-3xl font-semibold text-slate-900">A landing system built to perform.</h2>
-          <p class="mt-2 text-slate-600">Everything you need to launch and optimize fast.</p>
-        </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature, index) => (
-            <div class={`rounded-3xl bg-white p-6 shadow-card reveal delay-${index + 1}`} key={feature.title}>
-              <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white">
-                {index + 1}
-              </div>
-              <p class="text-lg font-semibold text-slate-900">{feature.title}</p>
-              <p class="mt-2 text-sm text-slate-600">{feature.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="about" class="grid items-center gap-10 py-16 lg:grid-cols-[1fr,1.1fr]">
-        <div class="overflow-hidden rounded-[32px] bg-white shadow-card">
-          <Image
-            src={aboutImage}
-            alt="Design and strategy planning session"
-            class="h-full w-full object-cover"
-            sizes="(min-width: 1024px) 45vw, 100vw"
-          />
-        </div>
-        <div class="space-y-4">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">About us</p>
-          <h2 class="text-3xl font-semibold text-slate-900">A studio that owns outcomes.</h2>
-          <p class="text-slate-600">
-            We blend strategy, design, and engineering into one dedicated pod. Every engagement
-            includes senior direction, weekly check-ins, and clear success metrics.
-          </p>
-          <div class="grid gap-3 sm:grid-cols-2">
-            {[
-              "Strategy and UX",
-              "RAG knowledge design",
-              "Performance builds",
-              "Analytics and CRO",
-            ].map((item) => (
-              <div class="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-card" key={item}>
-                {item}
+      <section id="features" class="bg-[var(--color-surface)] py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="text-center">
+            <p class="text-sm font-semibold text-[var(--color-accent)]">Features</p>
+            <h2 class="text-3xl font-semibold">A landing system built to perform.</h2>
+            <p class="mt-2 text-[var(--color-ink-muted)]">Everything you need to launch and optimize fast.</p>
+          </div>
+          <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature, index) => (
+              <div class={`rounded-3xl bg-[var(--color-surface-2)] p-6 shadow-card reveal delay-${index + 1}`} key={feature.title}>
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-contrast)] text-white">
+                  {index + 1}
+                </div>
+                <p class="text-lg font-semibold">{feature.title}</p>
+                <p class="mt-2 text-sm text-[var(--color-ink-muted)]">{feature.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="services" class="space-y-8 py-16">
-        <div class="text-center">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">Services</p>
-          <h2 class="text-3xl font-semibold text-slate-900">One team for web, product, and RAG.</h2>
-          <p class="mt-2 text-slate-600">Flexible packages designed for speed and clarity.</p>
-        </div>
-        <div class="grid gap-6 md:grid-cols-3">
-          {services.map((service) => (
-            <div class="rounded-3xl bg-white p-6 shadow-card" key={service.title}>
-              <h3 class="text-xl font-semibold text-slate-900">{service.title}</h3>
-              <p class="mt-3 text-sm text-slate-600">{service.body}</p>
-              <a class="mt-4 inline-flex text-sm font-semibold text-[var(--color-accent)]" href="#contact">
-                Learn more
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="portfolio" class="space-y-8 py-16">
-        <div class="text-center">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">Gallery</p>
-          <h2 class="text-3xl font-semibold text-slate-900">Proof across web, product, and AI.</h2>
-          <p class="mt-2 text-slate-600">Recent launches and client moments.</p>
-        </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {gallery.map((item, index) => (
-            <div class={`group overflow-hidden rounded-3xl bg-white shadow-card reveal delay-${index + 1}`} key={item.title}>
-              <div class="relative h-56">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                />
-                <div class="absolute inset-0 bg-slate-900/30 opacity-0 transition group-hover:opacity-100"></div>
-              </div>
-              <div class="p-5">
-                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.tag}</p>
-                <p class="mt-2 text-lg font-semibold text-slate-900">{item.title}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="team" class="space-y-8 py-16">
-        <div class="text-center">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">Team</p>
-          <h2 class="text-3xl font-semibold text-slate-900">Meet the team behind the builds.</h2>
-        </div>
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {team.map((member) => (
-            <div class="overflow-hidden rounded-3xl bg-white text-center shadow-card" key={member.name}>
-              <Image
-                src={member.image}
-                alt={member.name}
-                class="h-48 w-full object-cover"
-                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-              />
-              <div class="p-5">
-                <p class="text-base font-semibold text-slate-900">{member.name}</p>
-                <p class="text-sm text-slate-500">{member.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="testimonials" class="space-y-8 py-16">
-        <div class="text-center">
-          <p class="text-sm font-semibold text-[var(--color-accent)]">Testimonials</p>
-          <h2 class="text-3xl font-semibold text-slate-900">What teams say after launch.</h2>
-        </div>
-        <div class="grid gap-6 md:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <div class="rounded-3xl bg-white p-6 shadow-card" key={testimonial.name}>
-              <div class="flex items-center gap-3">
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  class="h-12 w-12 rounded-full object-cover"
-                  sizes="48px"
-                />
-                <div>
-                  <p class="text-sm font-semibold text-slate-900">{testimonial.name}</p>
-                  <p class="text-xs text-slate-500">{testimonial.role}</p>
-                </div>
-              </div>
-              <p class="mt-4 text-sm text-slate-600">{testimonial.quote}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="contact" class="py-16">
-        <div class="grid gap-8 rounded-[32px] bg-slate-900 px-8 py-10 text-white shadow-soft lg:grid-cols-[1.2fr,0.8fr]">
-          <div class="space-y-4">
-            <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact</p>
-            <h3 class="text-3xl font-semibold">Start your next launch.</h3>
-            <p class="text-slate-200">Share your goals and we will respond within 12 hours.</p>
-            <form class="grid gap-4">
-              <input
-                class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-300"
-                placeholder="Name"
-                type="text"
-              />
-              <input
-                class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-300"
-                placeholder="Email"
-                type="email"
-              />
-              <textarea
-                class="min-h-[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-300"
-                placeholder="Tell us about the project"
-              ></textarea>
-              <button
-                class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900"
-                type="button"
-              >
-                Send message
-              </button>
-            </form>
+      <section id="about" class="py-16">
+        <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1fr,1.1fr]">
+          <div class="overflow-hidden rounded-[32px] bg-[var(--color-surface)] shadow-card">
+            <Image
+              src={aboutImage}
+              alt="Design and strategy planning session"
+              class="h-full w-full object-cover"
+              sizes="(min-width: 1024px) 45vw, 100vw"
+            />
           </div>
           <div class="space-y-4">
-            <div class="rounded-2xl bg-white/10 p-5">
-              <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact info</p>
-              <p class="mt-3 text-sm text-slate-200">4321 California St, San Francisco, CA</p>
-              <p class="mt-2 text-sm text-slate-200">+1 123 456 1234</p>
-              <p class="mt-2 text-sm text-slate-200">hello@zaftech.com</p>
+            <p class="text-sm font-semibold text-[var(--color-accent)]">About us</p>
+            <h2 class="text-3xl font-semibold">A studio that owns outcomes.</h2>
+            <p class="text-[var(--color-ink-muted)]">
+              We blend strategy, design, and engineering into one dedicated pod. Every engagement
+              includes senior direction, weekly check-ins, and clear success metrics.
+            </p>
+            <div class="grid gap-3 sm:grid-cols-2">
+              {[
+                "Strategy and UX",
+                "RAG knowledge design",
+                "Performance builds",
+                "Analytics and CRO",
+              ].map((item) => (
+                <div class="rounded-2xl bg-[var(--color-surface)] px-4 py-3 text-sm font-semibold shadow-card" key={item}>
+                  {item}
+                </div>
+              ))}
             </div>
-            <div class="rounded-2xl bg-white/10 p-5">
-              <p class="text-sm font-semibold text-[var(--color-accent-2)]">Preferred projects</p>
-              <ul class="mt-3 space-y-2 text-sm text-slate-200">
-                <li>Marketing and product web builds</li>
-                <li>RAG assistants for support and sales</li>
-                <li>UX refreshes and conversions</li>
-              </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="services" class="bg-[var(--color-surface)] py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="text-center">
+            <p class="text-sm font-semibold text-[var(--color-accent)]">Services</p>
+            <h2 class="text-3xl font-semibold">One team for web, product, and RAG.</h2>
+            <p class="mt-2 text-[var(--color-ink-muted)]">Flexible packages designed for speed and clarity.</p>
+          </div>
+          <div class="mt-10 grid gap-6 md:grid-cols-3">
+            {services.map((service) => (
+              <div class="rounded-3xl bg-[var(--color-surface-2)] p-6 shadow-card" key={service.title}>
+                <h3 class="text-xl font-semibold">{service.title}</h3>
+                <p class="mt-3 text-sm text-[var(--color-ink-muted)]">{service.body}</p>
+                <a class="mt-4 inline-flex text-sm font-semibold text-[var(--color-accent)]" href="#contact">
+                  Learn more
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio" class="py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="text-center">
+            <p class="text-sm font-semibold text-[var(--color-accent)]">Gallery</p>
+            <h2 class="text-3xl font-semibold">Proof across web, product, and AI.</h2>
+            <p class="mt-2 text-[var(--color-ink-muted)]">Recent launches and client moments.</p>
+          </div>
+          <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {gallery.map((item, index) => (
+              <div class={`group overflow-hidden rounded-3xl bg-[var(--color-surface)] shadow-card reveal delay-${index + 1}`} key={item.title}>
+                <div class="relative h-56">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  />
+                  <div class="absolute inset-0 bg-black/30 opacity-0 transition group-hover:opacity-100"></div>
+                </div>
+                <div class="p-5">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-muted)]">{item.tag}</p>
+                  <p class="mt-2 text-lg font-semibold">{item.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="bg-[var(--color-surface)] py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="text-center">
+            <p class="text-sm font-semibold text-[var(--color-accent)]">Team</p>
+            <h2 class="text-3xl font-semibold">Meet the team behind the builds.</h2>
+          </div>
+          <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {team.map((member) => (
+              <div class="overflow-hidden rounded-3xl bg-[var(--color-surface-2)] text-center shadow-card" key={member.name}>
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  class="h-48 w-full object-cover"
+                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                />
+                <div class="p-5">
+                  <p class="text-base font-semibold">{member.name}</p>
+                  <p class="text-sm text-[var(--color-ink-muted)]">{member.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="testimonials" class="py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="text-center">
+            <p class="text-sm font-semibold text-[var(--color-accent)]">Testimonials</p>
+            <h2 class="text-3xl font-semibold">What teams say after launch.</h2>
+          </div>
+          <div class="mt-10 grid gap-6 md:grid-cols-3">
+            {testimonials.map((testimonial) => (
+              <div class="rounded-3xl bg-[var(--color-surface)] p-6 shadow-card" key={testimonial.name}>
+                <div class="flex items-center gap-3">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    class="h-12 w-12 rounded-full object-cover"
+                    sizes="48px"
+                  />
+                  <div>
+                    <p class="text-sm font-semibold">{testimonial.name}</p>
+                    <p class="text-xs text-[var(--color-ink-muted)]">{testimonial.role}</p>
+                  </div>
+                </div>
+                <p class="mt-4 text-sm text-[var(--color-ink-muted)]">{testimonial.quote}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="bg-[var(--color-surface)] py-16">
+        <div class="mx-auto max-w-6xl px-4">
+          <div class="grid gap-8 rounded-[32px] bg-[var(--color-contrast)] px-8 py-10 text-white shadow-soft lg:grid-cols-[1.2fr,0.8fr]">
+            <div class="space-y-4">
+              <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact</p>
+              <h3 class="text-3xl font-semibold">Start your next launch.</h3>
+              <p class="text-white/70">Share your goals and we will respond within 12 hours.</p>
+              <form class="grid gap-4">
+                <input
+                  class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
+                  placeholder="Name"
+                  type="text"
+                />
+                <input
+                  class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
+                  placeholder="Email"
+                  type="email"
+                />
+                <textarea
+                  class="min-h-[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
+                  placeholder="Tell us about the project"
+                ></textarea>
+                <button
+                  class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--color-contrast)]"
+                  type="button"
+                >
+                  Send message
+                </button>
+              </form>
+            </div>
+            <div class="space-y-4">
+              <div class="rounded-2xl bg-white/10 p-5">
+                <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact info</p>
+                <p class="mt-3 text-sm text-white/80">4321 California St, San Francisco, CA</p>
+                <p class="mt-2 text-sm text-white/80">+1 123 456 1234</p>
+                <p class="mt-2 text-sm text-white/80">hello@zaftech.com</p>
+              </div>
+              <div class="rounded-2xl bg-white/10 p-5">
+                <p class="text-sm font-semibold text-[var(--color-accent-2)]">Preferred projects</p>
+                <ul class="mt-3 space-y-2 text-sm text-white/80">
+                  <li>Marketing and product web builds</li>
+                  <li>RAG assistants for support and sales</li>
+                  <li>UX refreshes and conversions</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="border-t border-white/70 py-8">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-slate-600">
+    <footer class="border-t border-[var(--color-border)] py-8">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-[var(--color-ink-muted)]">
         <p>2026 ZafTech. All rights reserved.</p>
         <div class="flex gap-4">
-          <a href="#features" class="hover:text-slate-900">Features</a>
-          <a href="#portfolio" class="hover:text-slate-900">Gallery</a>
-          <a href="#contact" class="hover:text-slate-900">Contact</a>
+          <a href="#features" class="hover:text-[var(--color-ink)]">Features</a>
+          <a href="#portfolio" class="hover:text-[var(--color-ink)]">Gallery</a>
+          <a href="#contact" class="hover:text-[var(--color-ink)]">Contact</a>
         </div>
       </div>
     </footer>
   </div>
+
+  <script is:inline>
+    const links = Array.from(document.querySelectorAll("[data-nav]"));
+    const sections = links
+      .map((link) => document.querySelector(`#${link.dataset.nav}`))
+      .filter(Boolean);
+
+    const setActive = (id) => {
+      links.forEach((link) => {
+        link.classList.toggle("is-active", link.dataset.nav === id);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]) {
+          setActive(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: "-35% 0px -55% 0px",
+        threshold: [0.1, 0.25, 0.5],
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    if (sections[0]) {
+      setActive(sections[0].id);
+    }
+  </script>
 </Layout>
