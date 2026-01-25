@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Sora", "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", "Georgia", serif;
+  --color-ink: #0b1220;
+  --color-ink-muted: #3b4252;
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-accent: #0f766e;
+  --color-accent-2: #2563eb;
+  --radius-lg: 28px;
+}
+
+:root {
+  color: var(--color-ink);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 45%),
+    radial-gradient(circle at 25% 20%, rgba(15, 118, 110, 0.12), transparent 45%),
+    #f4f6fb;
+}
+
+a {
+  text-decoration: none;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.shadow-soft {
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+}
+
+.shadow-card {
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: fade-up 0.9s ease both;
+}
+
+.reveal.delay-1 {
+  animation-delay: 0.12s;
+}
+
+.reveal.delay-2 {
+  animation-delay: 0.22s;
+}
+
+.reveal.delay-3 {
+  animation-delay: 0.34s;
+}
+
+.reveal.delay-4 {
+  animation-delay: 0.46s;
+}
+
+.reveal.delay-5 {
+  animation-delay: 0.58s;
+}
+
+.reveal.delay-6 {
+  animation-delay: 0.7s;
+}
