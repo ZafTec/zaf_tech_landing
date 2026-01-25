@@ -103,41 +103,32 @@ const testimonials = [
 ];
 ---
 <Layout title="ZafTech | Web and RAG Studio">
-  <div class="bg-[var(--color-bg)] text-[var(--color-ink)]" id="page-top">
-    <header class="sticky top-0 z-30 border-b border-[var(--color-border)] glass">
-      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+  <div class="bg-bg text-(--color-ink)" id="page-top">
+    <header class="sticky top-0 z-30 border-b border-border glass">
+      <div class="relative mx-auto max-w-6xl px-4 py-4">
         <div class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-contrast)] text-white shadow-soft">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-contrast text-white shadow-soft">
             Z
           </div>
           <div>
             <p class="text-base font-semibold">ZafTech</p>
-            <p class="text-sm text-[var(--color-ink-muted)]">Web, product, and RAG delivery</p>
+            <p class="text-sm text-ink-muted">Web, product, and RAG delivery</p>
           </div>
         </div>
-        <nav class="hidden items-center gap-6 text-sm font-medium text-[var(--color-ink-muted)] lg:flex" aria-label="Primary">
+        <nav
+          class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-medium text-ink-muted lg:flex"
+          aria-label="Primary"
+        >
           {nav.map((item) => (
             <a
-              class="nav-link transition hover:text-[var(--color-ink)]"
+              class="nav-link transition hover:text-(--color-ink)"
               href={item.href}
               data-nav={item.href.replace("#", "")}
             >
               {item.label}
             </a>
           ))}
-          <a
-            class="rounded-full bg-[var(--color-contrast)] px-4 py-2 text-white shadow-soft transition hover:translate-y-[-1px]"
-            href="#contact"
-          >
-            Book a review
-          </a>
         </nav>
-        <a
-          class="rounded-full bg-[var(--color-contrast)] px-4 py-2 text-sm font-semibold text-white shadow-soft lg:hidden"
-          href="#contact"
-        >
-          Start
-        </a>
       </div>
     </header>
 
@@ -359,63 +350,70 @@ const testimonials = [
       </section>
 
       <section id="contact" class="bg-[var(--color-surface)] py-16">
-        <div class="mx-auto max-w-6xl px-4">
-          <div class="grid gap-8 rounded-[32px] bg-[var(--color-contrast)] px-8 py-10 text-white shadow-soft lg:grid-cols-[1.2fr,0.8fr]">
+        <div class="mx-auto max-w-5xl px-4">
+          <div class="grid gap-8 rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
             <div class="space-y-4">
-              <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact</p>
-              <h3 class="text-3xl font-semibold">Start your next launch.</h3>
-              <p class="text-white/70">Share your goals and we will respond within 12 hours.</p>
+              <p class="text-sm font-semibold text-[var(--color-accent)]">Contact</p>
+              <h3 class="text-2xl font-semibold">Let's build your next launch.</h3>
+              <p class="text-sm text-[var(--color-ink-muted)]">
+                Share your goals and we will respond within 12 hours with next steps.
+              </p>
+              <div class="grid gap-3">
+                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
+                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Email</p>
+                  <p class="mt-2 text-sm font-semibold">hello@zaftech.com</p>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
+                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Phone</p>
+                  <p class="mt-2 text-sm font-semibold">+1 123 456 1234</p>
+                </div>
+                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
+                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Location</p>
+                  <p class="mt-2 text-sm font-semibold">San Francisco, CA</p>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-3xl bg-[var(--color-surface-2)] p-6">
               <form class="grid gap-4">
-                <input
-                  class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
-                  placeholder="Name"
-                  type="text"
-                />
-                <input
-                  class="rounded-full border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
-                  placeholder="Email"
-                  type="email"
-                />
+                <div class="grid gap-3 md:grid-cols-2">
+                  <input
+                    class="rounded-full border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-2.5 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                    placeholder="Name"
+                    type="text"
+                  />
+                  <input
+                    class="rounded-full border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-2.5 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                    placeholder="Email"
+                    type="email"
+                  />
+                </div>
                 <textarea
-                  class="min-h-[120px] rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/60"
+                  class="min-h-[120px] rounded-2xl border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-3 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                   placeholder="Tell us about the project"
                 ></textarea>
                 <button
-                  class="rounded-full bg-white px-6 py-3 text-sm font-semibold text-[var(--color-contrast)]"
+                  class="w-fit rounded-full bg-[var(--color-accent)] px-6 py-2.5 text-sm font-semibold text-white"
                   type="button"
                 >
                   Send message
                 </button>
+                <p class="text-xs text-[var(--color-ink-muted)]">
+                  Prefer email? We reply within 12 hours.
+                </p>
               </form>
-            </div>
-            <div class="space-y-4">
-              <div class="rounded-2xl bg-white/10 p-5">
-                <p class="text-sm font-semibold text-[var(--color-accent-2)]">Contact info</p>
-                <p class="mt-3 text-sm text-white/80">4321 California St, San Francisco, CA</p>
-                <p class="mt-2 text-sm text-white/80">+1 123 456 1234</p>
-                <p class="mt-2 text-sm text-white/80">hello@zaftech.com</p>
-              </div>
-              <div class="rounded-2xl bg-white/10 p-5">
-                <p class="text-sm font-semibold text-[var(--color-accent-2)]">Preferred projects</p>
-                <ul class="mt-3 space-y-2 text-sm text-white/80">
-                  <li>Marketing and product web builds</li>
-                  <li>RAG assistants for support and sales</li>
-                  <li>UX refreshes and conversions</li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="border-t border-[var(--color-border)] py-8">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-[var(--color-ink-muted)]">
-        <p>2026 ZafTech. All rights reserved.</p>
+    <footer class="border-t border-border py-8">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-ink-muted">
+        <p> &copy; 2026 ZafTech. All rights reserved.</p>
         <div class="flex gap-4">
-          <a href="#features" class="hover:text-[var(--color-ink)]">Features</a>
-          <a href="#portfolio" class="hover:text-[var(--color-ink)]">Gallery</a>
-          <a href="#contact" class="hover:text-[var(--color-ink)]">Contact</a>
+          <a href="#features" class="hover:text-(--color-ink)">Features</a>
+          <a href="#portfolio" class="hover:text-(--color-ink)">Gallery</a>
+          <a href="#contact" class="hover:text-(--color-ink)">Contact</a>
         </div>
       </div>
     </footer>
@@ -426,6 +424,8 @@ const testimonials = [
     const sections = links
       .map((link) => document.querySelector(`#${link.dataset.nav}`))
       .filter(Boolean);
+    const header = document.querySelector("header");
+    let observer;
 
     const setActive = (id) => {
       links.forEach((link) => {
@@ -433,26 +433,45 @@ const testimonials = [
       });
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+    const syncNavOffset = () => {
+      const offset = header ? header.offsetHeight + 12 : 80;
+      document.documentElement.style.setProperty("--nav-offset", `${offset}px`);
+      return offset;
+    };
 
-        if (visible[0]) {
-          setActive(visible[0].target.id);
-        }
-      },
-      {
-        rootMargin: "-35% 0px -55% 0px",
-        threshold: [0.1, 0.25, 0.5],
+    const createObserver = () => {
+      const offset = syncNavOffset();
+      if (observer) {
+        observer.disconnect();
       }
-    );
+      observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
-    sections.forEach((section) => observer.observe(section));
+          if (visible[0]) {
+            setActive(visible[0].target.id);
+          }
+        },
+        {
+          rootMargin: `-${offset}px 0px -60% 0px`,
+          threshold: [0, 0.2, 0.5],
+        }
+      );
+
+      sections.forEach((section) => observer.observe(section));
+    };
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(createObserver, 120);
+    });
 
     if (sections[0]) {
       setActive(sections[0].id);
     }
+    createObserver();
   </script>
 </Layout>
