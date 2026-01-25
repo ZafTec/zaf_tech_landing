@@ -1,15 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Sora", "Segoe UI", sans-serif;
-  --font-display: "Instrument Serif", "Georgia", serif;
-  --color-ink: #0b1220;
-  --color-ink-muted: #3b4252;
-  --color-bg: #f4f6fb;
+  --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  --color-ink: #1c1e21;
+  --color-ink-muted: #606770;
+  --color-bg: #f5f6f8;
   --color-surface: #ffffff;
-  --color-accent: #0f766e;
-  --color-accent-2: #2563eb;
-  --radius-lg: 28px;
+  --color-accent: #1f7aec;
+  --color-accent-2: #20b486;
+  --radius-lg: 24px;
 }
 
 :root {
@@ -25,30 +24,24 @@
 
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 45%),
-    radial-gradient(circle at 25% 20%, rgba(15, 118, 110, 0.12), transparent 45%),
-    #f4f6fb;
+  background: var(--color-bg);
 }
 
 a {
   text-decoration: none;
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
-
 .shadow-soft {
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 24px 48px rgba(20, 26, 36, 0.12);
 }
 
 .shadow-card {
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 18px 36px rgba(20, 26, 36, 0.12);
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px);
 }
 
 @keyframes fade-up {
