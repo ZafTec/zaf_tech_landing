@@ -104,8 +104,8 @@ const testimonials = [
 ---
 <Layout title="ZafTech | Web and RAG Studio">
   <div class="bg-bg text-(--color-ink)" id="page-top">
-    <header class="sticky top-0 z-30 border-b border-border glass">
-      <div class="relative mx-auto max-w-6xl px-4 py-4">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-border glass">
+      <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
           <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-contrast text-white shadow-soft">
             Z
@@ -118,6 +118,7 @@ const testimonials = [
         <nav
           class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-medium text-ink-muted lg:flex"
           aria-label="Primary"
+          data-nav-root
         >
           {nav.map((item) => (
             <a
@@ -128,23 +129,24 @@ const testimonials = [
               {item.label}
             </a>
           ))}
+          <span class="nav-indicator" aria-hidden="true"></span>
         </nav>
       </div>
     </header>
 
     <main>
-      <section class="relative w-full overflow-hidden">
+      <section id="hero" class="relative w-full overflow-hidden">
         <div class="absolute inset-0">
           <Image
             src={heroImage}
             alt="Team collaborating in a modern workspace"
             class="h-full w-full object-cover"
             sizes="100vw"
-            priority
           />
-          <div class="absolute inset-0 bg-[var(--color-hero-overlay)]"></div>
+          <div class="absolute inset-0 bg-hero-overlay"></div>
+          <div class="hero-fade absolute inset-x-0 bottom-0 h-[12vh]"></div>
         </div>
-        <div class="relative z-10 mx-auto grid min-h-[70vh] max-w-6xl gap-10 px-4 py-20 text-white lg:grid-cols-[1.1fr,0.9fr]">
+        <div class="nav-offset relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 py-20 text-white lg:grid-cols-[1.1fr,0.9fr]">
           <div class="space-y-6">
             <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
               Full service digital studio
@@ -158,7 +160,7 @@ const testimonials = [
             <div class="flex flex-wrap gap-3">
               <a
                 href="#features"
-                class="rounded-full bg-[var(--color-accent)] px-6 py-3 text-sm font-semibold text-white shadow-soft"
+                class="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-soft"
               >
                 Learn more
               </a>
@@ -192,21 +194,21 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="features" class="bg-[var(--color-surface)] py-16">
+      <section id="features" class="bg-(--color-surface) py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">Features</p>
+            <p class="text-sm font-semibold text-accent">Features</p>
             <h2 class="text-3xl font-semibold">A landing system built to perform.</h2>
-            <p class="mt-2 text-[var(--color-ink-muted)]">Everything you need to launch and optimize fast.</p>
+            <p class="mt-2 text-ink-muted">Everything you need to launch and optimize fast.</p>
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <div class={`rounded-3xl bg-[var(--color-surface-2)] p-6 shadow-card reveal delay-${index + 1}`} key={feature.title}>
-                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-contrast)] text-white">
+              <div class={`rounded-3xl bg-surface-2 p-6 shadow-card reveal delay-${index + 1}`} key={feature.title}>
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-contrast text-white">
                   {index + 1}
                 </div>
                 <p class="text-lg font-semibold">{feature.title}</p>
-                <p class="mt-2 text-sm text-[var(--color-ink-muted)]">{feature.body}</p>
+                <p class="mt-2 text-sm text-ink-muted">{feature.body}</p>
               </div>
             ))}
           </div>
@@ -215,7 +217,7 @@ const testimonials = [
 
       <section id="about" class="py-16">
         <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1fr,1.1fr]">
-          <div class="overflow-hidden rounded-[32px] bg-[var(--color-surface)] shadow-card">
+          <div class="overflow-hidden rounded-4xl bg-(--color-surface) shadow-card">
             <Image
               src={aboutImage}
               alt="Design and strategy planning session"
@@ -224,9 +226,9 @@ const testimonials = [
             />
           </div>
           <div class="space-y-4">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">About us</p>
+            <p class="text-sm font-semibold text-accent">About us</p>
             <h2 class="text-3xl font-semibold">A studio that owns outcomes.</h2>
-            <p class="text-[var(--color-ink-muted)]">
+            <p class="text-ink-muted">
               We blend strategy, design, and engineering into one dedicated pod. Every engagement
               includes senior direction, weekly check-ins, and clear success metrics.
             </p>
@@ -237,7 +239,7 @@ const testimonials = [
                 "Performance builds",
                 "Analytics and CRO",
               ].map((item) => (
-                <div class="rounded-2xl bg-[var(--color-surface)] px-4 py-3 text-sm font-semibold shadow-card" key={item}>
+                <div class="rounded-2xl bg-(--color-surface) px-4 py-3 text-sm font-semibold shadow-card" key={item}>
                   {item}
                 </div>
               ))}
@@ -246,19 +248,19 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="services" class="bg-[var(--color-surface)] py-16">
+      <section id="services" class="bg-(--color-surface) py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">Services</p>
+            <p class="text-sm font-semibold text-accent">Services</p>
             <h2 class="text-3xl font-semibold">One team for web, product, and RAG.</h2>
-            <p class="mt-2 text-[var(--color-ink-muted)]">Flexible packages designed for speed and clarity.</p>
+            <p class="mt-2 text-ink-muted">Flexible packages designed for speed and clarity.</p>
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-3">
             {services.map((service) => (
-              <div class="rounded-3xl bg-[var(--color-surface-2)] p-6 shadow-card" key={service.title}>
+              <div class="rounded-3xl bg-surface-2 p-6 shadow-card" key={service.title}>
                 <h3 class="text-xl font-semibold">{service.title}</h3>
-                <p class="mt-3 text-sm text-[var(--color-ink-muted)]">{service.body}</p>
-                <a class="mt-4 inline-flex text-sm font-semibold text-[var(--color-accent)]" href="#contact">
+                <p class="mt-3 text-sm text-ink-muted">{service.body}</p>
+                <a class="mt-4 inline-flex text-sm font-semibold text-accent" href="#contact">
                   Learn more
                 </a>
               </div>
@@ -270,13 +272,13 @@ const testimonials = [
       <section id="portfolio" class="py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">Gallery</p>
+            <p class="text-sm font-semibold text-accent">Gallery</p>
             <h2 class="text-3xl font-semibold">Proof across web, product, and AI.</h2>
-            <p class="mt-2 text-[var(--color-ink-muted)]">Recent launches and client moments.</p>
+            <p class="mt-2 text-ink-muted">Recent launches and client moments.</p>
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {gallery.map((item, index) => (
-              <div class={`group overflow-hidden rounded-3xl bg-[var(--color-surface)] shadow-card reveal delay-${index + 1}`} key={item.title}>
+              <div class={`group overflow-hidden rounded-3xl bg-(--color-surface) shadow-card reveal delay-${index + 1}`} key={item.title}>
                 <div class="relative h-56">
                   <Image
                     src={item.image}
@@ -287,7 +289,7 @@ const testimonials = [
                   <div class="absolute inset-0 bg-black/30 opacity-0 transition group-hover:opacity-100"></div>
                 </div>
                 <div class="p-5">
-                  <p class="text-xs font-semibold uppercase tracking-wide text-[var(--color-ink-muted)]">{item.tag}</p>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-ink-muted">{item.tag}</p>
                   <p class="mt-2 text-lg font-semibold">{item.title}</p>
                 </div>
               </div>
@@ -296,15 +298,15 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="team" class="bg-[var(--color-surface)] py-16">
+      <section id="team" class="bg-(--color-surface) py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">Team</p>
+            <p class="text-sm font-semibold text-accent">Team</p>
             <h2 class="text-3xl font-semibold">Meet the team behind the builds.</h2>
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {team.map((member) => (
-              <div class="overflow-hidden rounded-3xl bg-[var(--color-surface-2)] text-center shadow-card" key={member.name}>
+              <div class="overflow-hidden rounded-3xl bg-surface-2 text-center shadow-card" key={member.name}>
                 <Image
                   src={member.image}
                   alt={member.name}
@@ -313,7 +315,7 @@ const testimonials = [
                 />
                 <div class="p-5">
                   <p class="text-base font-semibold">{member.name}</p>
-                  <p class="text-sm text-[var(--color-ink-muted)]">{member.role}</p>
+                  <p class="text-sm text-ink-muted">{member.role}</p>
                 </div>
               </div>
             ))}
@@ -324,12 +326,12 @@ const testimonials = [
       <section id="testimonials" class="py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
-            <p class="text-sm font-semibold text-[var(--color-accent)]">Testimonials</p>
+            <p class="text-sm font-semibold text-accent">Testimonials</p>
             <h2 class="text-3xl font-semibold">What teams say after launch.</h2>
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial) => (
-              <div class="rounded-3xl bg-[var(--color-surface)] p-6 shadow-card" key={testimonial.name}>
+              <div class="rounded-3xl bg-(--color-surface) p-6 shadow-card" key={testimonial.name}>
                 <div class="flex items-center gap-3">
                   <Image
                     src={testimonial.image}
@@ -339,65 +341,65 @@ const testimonials = [
                   />
                   <div>
                     <p class="text-sm font-semibold">{testimonial.name}</p>
-                    <p class="text-xs text-[var(--color-ink-muted)]">{testimonial.role}</p>
+                    <p class="text-xs text-ink-muted">{testimonial.role}</p>
                   </div>
                 </div>
-                <p class="mt-4 text-sm text-[var(--color-ink-muted)]">{testimonial.quote}</p>
+                <p class="mt-4 text-sm text-ink-muted">{testimonial.quote}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="contact" class="bg-[var(--color-surface)] py-16">
+      <section id="contact" class="bg-(--color-surface) py-16">
         <div class="mx-auto max-w-5xl px-4">
-          <div class="grid gap-8 rounded-[28px] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
+          <div class="grid gap-8 rounded-[28px] border border-border bg-(--color-surface) p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
             <div class="space-y-4">
-              <p class="text-sm font-semibold text-[var(--color-accent)]">Contact</p>
+              <p class="text-sm font-semibold text-accent">Contact</p>
               <h3 class="text-2xl font-semibold">Let's build your next launch.</h3>
-              <p class="text-sm text-[var(--color-ink-muted)]">
+              <p class="text-sm text-ink-muted">
                 Share your goals and we will respond within 12 hours with next steps.
               </p>
               <div class="grid gap-3">
-                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
-                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Email</p>
+                <div class="rounded-2xl bg-surface-2 p-4">
+                  <p class="text-xs uppercase tracking-wide text-ink-muted">Email</p>
                   <p class="mt-2 text-sm font-semibold">hello@zaftech.com</p>
                 </div>
-                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
-                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Phone</p>
+                <div class="rounded-2xl bg-surface-2 p-4">
+                  <p class="text-xs uppercase tracking-wide text-ink-muted">Phone</p>
                   <p class="mt-2 text-sm font-semibold">+1 123 456 1234</p>
                 </div>
-                <div class="rounded-2xl bg-[var(--color-surface-2)] p-4">
-                  <p class="text-xs uppercase tracking-wide text-[var(--color-ink-muted)]">Location</p>
+                <div class="rounded-2xl bg-surface-2 p-4">
+                  <p class="text-xs uppercase tracking-wide text-ink-muted">Location</p>
                   <p class="mt-2 text-sm font-semibold">San Francisco, CA</p>
                 </div>
               </div>
             </div>
-            <div class="rounded-3xl bg-[var(--color-surface-2)] p-6">
+            <div class="rounded-3xl bg-surface-2 p-6">
               <form class="grid gap-4">
                 <div class="grid gap-3 md:grid-cols-2">
                   <input
-                    class="rounded-full border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-2.5 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                    class="rounded-full border border-input-border bg-(--color-input-bg) px-4 py-2.5 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Name"
                     type="text"
                   />
                   <input
-                    class="rounded-full border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-2.5 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                    class="rounded-full border border-input-border bg-(--color-input-bg) px-4 py-2.5 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Email"
                     type="email"
                   />
                 </div>
                 <textarea
-                  class="min-h-[120px] rounded-2xl border border-[var(--color-input-border)] bg-[var(--color-input-bg)] px-4 py-3 text-sm text-[var(--color-input-text)] placeholder:text-[var(--color-input-placeholder)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                  class="min-h-30 rounded-2xl border border-input-border bg-(--color-input-bg) px-4 py-3 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Tell us about the project"
                 ></textarea>
                 <button
-                  class="w-fit rounded-full bg-[var(--color-accent)] px-6 py-2.5 text-sm font-semibold text-white"
+                  class="w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white"
                   type="button"
                 >
                   Send message
                 </button>
-                <p class="text-xs text-[var(--color-ink-muted)]">
+                <p class="text-xs text-ink-muted">
                   Prefer email? We reply within 12 hours.
                 </p>
               </form>
@@ -420,21 +422,45 @@ const testimonials = [
   </div>
 
   <script is:inline>
+    const navRoot = document.querySelector("[data-nav-root]");
+    const indicator = navRoot?.querySelector(".nav-indicator");
     const links = Array.from(document.querySelectorAll("[data-nav]"));
     const sections = links
       .map((link) => document.querySelector(`#${link.dataset.nav}`))
       .filter(Boolean);
-    const header = document.querySelector("header");
+    const hero = document.querySelector("#hero");
+    const observed = [...sections, hero].filter(Boolean);
+    const ratios = new Map();
     let observer;
 
     const setActive = (id) => {
       links.forEach((link) => {
         link.classList.toggle("is-active", link.dataset.nav === id);
       });
+      updateIndicator();
+    };
+
+    const updateIndicator = () => {
+      if (!navRoot || !indicator) {
+        return;
+      }
+      const active = navRoot.querySelector(".nav-link.is-active");
+      if (!active) {
+        indicator.style.opacity = "0";
+        indicator.style.width = "0px";
+        return;
+      }
+      const rect = active.getBoundingClientRect();
+      const navRect = navRoot.getBoundingClientRect();
+      const left = rect.left - navRect.left;
+      indicator.style.opacity = "1";
+      indicator.style.width = `${rect.width}px`;
+      indicator.style.transform = `translateX(${left}px)`;
     };
 
     const syncNavOffset = () => {
-      const offset = header ? header.offsetHeight + 12 : 80;
+      const header = document.querySelector("header");
+      const offset = header ? header.offsetHeight + 16 : 88;
       document.documentElement.style.setProperty("--nav-offset", `${offset}px`);
       return offset;
     };
@@ -446,32 +472,38 @@ const testimonials = [
       }
       observer = new IntersectionObserver(
         (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          entries.forEach((entry) => {
+            ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+          });
 
-          if (visible[0]) {
-            setActive(visible[0].target.id);
+          const sorted = Array.from(ratios.entries()).sort((a, b) => b[1] - a[1]);
+          const [id, ratio] = sorted[0] ?? [];
+
+          if (!id || ratio === 0 || id === "hero") {
+            setActive(null);
+            return;
           }
+          setActive(id);
         },
         {
-          rootMargin: `-${offset}px 0px -60% 0px`,
-          threshold: [0, 0.2, 0.5],
+          rootMargin: `-${offset}px 0px -55% 0px`,
+          threshold: [0.05, 0.2, 0.5],
         }
       );
 
-      sections.forEach((section) => observer.observe(section));
+      observed.forEach((section) => observer.observe(section));
     };
 
     let resizeTimer;
     window.addEventListener("resize", () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(createObserver, 120);
+      resizeTimer = window.setTimeout(() => {
+        createObserver();
+        updateIndicator();
+      }, 120);
     });
 
-    if (sections[0]) {
-      setActive(sections[0].id);
-    }
     createObserver();
+    updateIndicator();
   </script>
 </Layout>
