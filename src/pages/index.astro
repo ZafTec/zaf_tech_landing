@@ -140,6 +140,13 @@ const testimonials = [
           <Image
             src={heroImage}
             alt="Team collaborating in a modern workspace"
+            width={1920}
+            height={1080}
+            format="webp"
+            quality={75}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
             class="h-full w-full object-cover"
             sizes="100vw"
           />
@@ -221,6 +228,12 @@ const testimonials = [
             <Image
               src={aboutImage}
               alt="Design and strategy planning session"
+              width={1200}
+              height={900}
+              format="webp"
+              quality={75}
+              loading="lazy"
+              decoding="async"
               class="h-full w-full object-cover"
               sizes="(min-width: 1024px) 45vw, 100vw"
             />
@@ -284,6 +297,12 @@ const testimonials = [
                     <Image
                       src={item.image}
                       alt={item.title}
+                      width={900}
+                      height={600}
+                      format="webp"
+                      quality={70}
+                      loading="lazy"
+                      decoding="async"
                       class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                       sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     />
@@ -312,6 +331,12 @@ const testimonials = [
                 <Image
                   src={member.image}
                   alt={member.name}
+                  width={600}
+                  height={800}
+                  format="webp"
+                  quality={70}
+                  loading="lazy"
+                  decoding="async"
                   class="h-48 w-full object-cover"
                   sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
                 />
@@ -338,6 +363,12 @@ const testimonials = [
                   <Image
                     src={testimonial.image}
                     alt={testimonial.name}
+                    width={96}
+                    height={96}
+                    format="webp"
+                    quality={70}
+                    loading="lazy"
+                    decoding="async"
                     class="h-12 w-12 rounded-full object-cover"
                     sizes="48px"
                   />
