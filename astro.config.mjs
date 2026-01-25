@@ -9,5 +9,13 @@ export default defineConfig({
   }),
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      external: ["bun"],
+    },
+    build: {
+      rollupOptions: {
+        external: ["bun"],
+      },
+    },
   },
 });

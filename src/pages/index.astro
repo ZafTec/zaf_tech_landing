@@ -103,7 +103,7 @@ const testimonials = [
 ];
 ---
 <Layout title="ZafTech | Web and RAG Studio">
-  <div class="bg-bg text-(--color-ink)" id="page-top">
+  <div class="bg-bg text-ink" id="page-top">
     <header class="fixed inset-x-0 top-0 z-40 border-b border-border glass">
       <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
@@ -122,7 +122,7 @@ const testimonials = [
         >
           {nav.map((item) => (
             <a
-              class="nav-link transition hover:text-(--color-ink)"
+              class="nav-link transition hover:text-ink"
               href={item.href}
               data-nav={item.href.replace("#", "")}
             >
@@ -194,7 +194,7 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="features" class="bg-(--color-surface) py-16">
+      <section id="features" class="bg-surface py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
             <p class="text-sm font-semibold text-accent">Features</p>
@@ -217,7 +217,7 @@ const testimonials = [
 
       <section id="about" class="py-16">
         <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1fr,1.1fr]">
-          <div class="overflow-hidden rounded-4xl bg-(--color-surface) shadow-card">
+          <div class="overflow-hidden rounded-4xl bg-surface shadow-card">
             <Image
               src={aboutImage}
               alt="Design and strategy planning session"
@@ -239,7 +239,7 @@ const testimonials = [
                 "Performance builds",
                 "Analytics and CRO",
               ].map((item) => (
-                <div class="rounded-2xl bg-(--color-surface) px-4 py-3 text-sm font-semibold shadow-card" key={item}>
+                <div class="rounded-2xl bg-surface px-4 py-3 text-sm font-semibold shadow-card" key={item}>
                   {item}
                 </div>
               ))}
@@ -248,7 +248,7 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="services" class="bg-(--color-surface) py-16">
+      <section id="services" class="bg-surface py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
             <p class="text-sm font-semibold text-accent">Services</p>
@@ -278,14 +278,16 @@ const testimonials = [
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {gallery.map((item, index) => (
-              <div class={`group overflow-hidden rounded-3xl bg-(--color-surface) shadow-card reveal delay-${index + 1}`} key={item.title}>
-                <div class="relative h-56">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                  />
+              <div class={`group overflow-hidden rounded-3xl bg-surface shadow-card reveal delay-${index + 1}`} key={item.title}>
+                <div class="relative h-56 overflow-hidden">
+                  <div class="absolute inset-0">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    />
+                  </div>
                   <div class="absolute inset-0 bg-black/30 opacity-0 transition group-hover:opacity-100"></div>
                 </div>
                 <div class="p-5">
@@ -298,7 +300,7 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="team" class="bg-(--color-surface) py-16">
+      <section id="team" class="bg-surface py-16">
         <div class="mx-auto max-w-6xl px-4">
           <div class="text-center">
             <p class="text-sm font-semibold text-accent">Team</p>
@@ -331,7 +333,7 @@ const testimonials = [
           </div>
           <div class="mt-10 grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial) => (
-              <div class="rounded-3xl bg-(--color-surface) p-6 shadow-card" key={testimonial.name}>
+              <div class="rounded-3xl bg-surface p-6 shadow-card" key={testimonial.name}>
                 <div class="flex items-center gap-3">
                   <Image
                     src={testimonial.image}
@@ -351,9 +353,9 @@ const testimonials = [
         </div>
       </section>
 
-      <section id="contact" class="bg-(--color-surface) py-16">
+      <section id="contact" class="bg-surface py-16">
         <div class="mx-auto max-w-5xl px-4">
-          <div class="grid gap-8 rounded-[28px] border border-border bg-(--color-surface) p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
+          <div class="grid gap-8 rounded-[28px] border border-border bg-surface p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
             <div class="space-y-4">
               <p class="text-sm font-semibold text-accent">Contact</p>
               <h3 class="text-2xl font-semibold">Let's build your next launch.</h3>
@@ -376,30 +378,36 @@ const testimonials = [
               </div>
             </div>
             <div class="rounded-3xl bg-surface-2 p-6">
-              <form class="grid gap-4">
+              <form class="grid gap-4" method="post" action="/api/contact" data-contact-form>
                 <div class="grid gap-3 md:grid-cols-2">
                   <input
-                    class="rounded-full border border-input-border bg-(--color-input-bg) px-4 py-2.5 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+                    class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Name"
                     type="text"
+                    name="name"
+                    required
                   />
                   <input
-                    class="rounded-full border border-input-border bg-(--color-input-bg) px-4 py-2.5 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+                    class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="Email"
                     type="email"
+                    name="email"
+                    required
                   />
                 </div>
                 <textarea
-                  class="min-h-30 rounded-2xl border border-input-border bg-(--color-input-bg) px-4 py-3 text-sm text-(--color-input-text) placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+                  class="min-h-[120px] rounded-2xl border border-input-border bg-input-bg px-4 py-3 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Tell us about the project"
+                  name="message"
+                  required
                 ></textarea>
                 <button
                   class="w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white"
-                  type="button"
+                  type="submit"
                 >
                   Send message
                 </button>
-                <p class="text-xs text-ink-muted">
+                <p class="text-xs text-ink-muted" data-form-status>
                   Prefer email? We reply within 12 hours.
                 </p>
               </form>
@@ -413,9 +421,9 @@ const testimonials = [
       <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-ink-muted">
         <p> &copy; 2026 ZafTech. All rights reserved.</p>
         <div class="flex gap-4">
-          <a href="#features" class="hover:text-(--color-ink)">Features</a>
-          <a href="#portfolio" class="hover:text-(--color-ink)">Gallery</a>
-          <a href="#contact" class="hover:text-(--color-ink)">Contact</a>
+          <a href="#features" class="hover:text-ink">Features</a>
+          <a href="#portfolio" class="hover:text-ink">Gallery</a>
+          <a href="#contact" class="hover:text-ink">Contact</a>
         </div>
       </div>
     </footer>
@@ -505,5 +513,41 @@ const testimonials = [
 
     createObserver();
     updateIndicator();
+
+    const form = document.querySelector("[data-contact-form]");
+    const status = document.querySelector("[data-form-status]");
+
+    if (form) {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (status) {
+          status.textContent = "Sending...";
+        }
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to submit");
+          }
+
+          form.reset();
+          if (status) {
+            status.textContent = "Thanks! We'll be in touch shortly.";
+          }
+        } catch (error) {
+          if (status) {
+            status.textContent = "Something went wrong. Please email hello@zaftech.com.";
+          }
+        }
+      });
+    }
   </script>
 </Layout>
+
