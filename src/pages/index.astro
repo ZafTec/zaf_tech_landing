@@ -107,7 +107,7 @@ const testimonials = [
 ---
 <Layout title="ZafTech | Web and RAG Studio">
   <div class="bg-bg text-ink" id="page-top">
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/20 backdrop-blur-md">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-white/10 transition-all duration-300" style="background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);">
       <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
           <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-black shadow-soft">
@@ -115,11 +115,10 @@ const testimonials = [
           </div>
           <div>
             <p class="text-base font-semibold text-white">ZafTech</p>
-            <p class="text-sm text-white/70">Web, product, and RAG delivery</p>
           </div>
         </div>
         <nav
-          class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-semibold text-white/70 lg:flex"
+          class="absolute left-1/2 top-1/2 hidden -translate-y-1/2 items-center gap-6 text-sm font-semibold text-white/70 lg:flex"
           aria-label="Primary"
           data-nav-root
         >
@@ -150,7 +149,7 @@ const testimonials = [
           <div class="absolute inset-0 bg-hero-overlay"></div>
           <div class="hero-fade absolute inset-x-0 bottom-0 h-[12vh]"></div>
         </div>
-        <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 200px; padding-bottom: 80px;">
+        <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 160px; padding-bottom: 100px;">
           <div class="space-y-6">
             <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
               Full service digital studio
@@ -462,6 +461,24 @@ const testimonials = [
   </div>
 
   <script is:inline>
+    // Navbar scroll effect
+    const header = document.querySelector("header");
+
+    const updateNavbar = () => {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 50) {
+        header.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        header.style.backdropFilter = "blur(32px)";
+      } else {
+        header.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        header.style.backdropFilter = "blur(0px)";
+      }
+    };
+
+    window.addEventListener("scroll", updateNavbar, { passive: true });
+    updateNavbar(); // Initial call
+
     const navRoot = document.querySelector("[data-nav-root]");
     const indicator = navRoot?.querySelector(".nav-indicator");
     const links = Array.from(document.querySelectorAll("[data-nav]"));
