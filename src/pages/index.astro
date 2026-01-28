@@ -1,8 +1,9 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { Image } from "astro:assets";
+import Threads from "@/components/Threads/Threads.jsx";
 
-export const prerender = true;
+export const prerender = false;
 
 import heroImage from "@/assets/stock_images/ian-schneider-TamMbr4okv4-unsplash.jpg";
 import aboutImage from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
@@ -106,25 +107,25 @@ const testimonials = [
 ---
 <Layout title="ZafTech | Web and RAG Studio">
   <div class="bg-bg text-ink" id="page-top">
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-border glass">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black/20 backdrop-blur-md">
       <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-contrast text-white shadow-soft">
+          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-black shadow-soft">
             Z
           </div>
           <div>
-            <p class="text-base font-semibold">ZafTech</p>
-            <p class="text-sm text-ink-muted">Web, product, and RAG delivery</p>
+            <p class="text-base font-semibold text-white">ZafTech</p>
+            <p class="text-sm text-white/70">Web, product, and RAG delivery</p>
           </div>
         </div>
         <nav
-          class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-semibold text-ink-muted lg:flex"
+          class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 text-sm font-semibold text-white/70 lg:flex"
           aria-label="Primary"
           data-nav-root
         >
           {nav.map((item) => (
             <a
-              class="nav-link transition hover:text-ink"
+              class="nav-link transition hover:text-white"
               href={item.href}
               data-nav={item.href.replace("#", "")}
             >
@@ -139,24 +140,17 @@ const testimonials = [
     <main>
       <section id="hero" class="relative w-full overflow-hidden">
         <div class="absolute inset-0">
-          <Image
-            src={heroImage}
-            alt="Team collaborating in a modern workspace"
-            width={1920}
-            height={1080}
-            widths={[640, 960, 1280, 1600, 1920]}
-            format="webp"
-            quality={70}
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            class="h-full w-full object-cover"
-            sizes="100vw"
+          <Threads
+            client:only="react"
+            color={[1, 1, 1]}
+            amplitude={1}
+            distance={0}
+            enableMouseInteraction={true}
           />
           <div class="absolute inset-0 bg-hero-overlay"></div>
           <div class="hero-fade absolute inset-x-0 bottom-0 h-[12vh]"></div>
         </div>
-        <div class="nav-offset relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 py-20 text-white lg:grid-cols-[1.1fr,0.9fr]">
+        <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 200px; padding-bottom: 80px;">
           <div class="space-y-6">
             <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
               Full service digital studio
