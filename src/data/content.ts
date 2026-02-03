@@ -7,11 +7,10 @@ import bathra from "@/assets/projects/bathra.png";
 import mizan from "@/assets/projects/mizan.png";
 import bitbricks from "@/assets/projects/bitbricks.png";
 import afrochat from "@/assets/projects/afrochat.png";
-import placeholderProject from "@/assets/placeholderproject.jpg"
 import nahomProfile from "@/assets/people/nahom-profile.jpg";
 import euaelProfile from "@/assets/people/euael-profile.jpg";
 import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
-import teamPlaceholder from "@/assets/people/team-placeholder.avif";
+import abelProfile from "@/assets/people/abel-profile.jpg";
 import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
 import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
@@ -146,7 +145,7 @@ export const team: TeamMember[] = [
   {
     name: "Abel Yifru",
     role: "Frontend and UI/UX Lead",
-    image: teamPlaceholder,
+    image: abelProfile,
   },
 ];
 
