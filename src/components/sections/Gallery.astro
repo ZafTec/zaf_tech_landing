@@ -13,13 +13,18 @@ const { gallery } = Astro.props;
   <div class="mx-auto max-w-6xl px-4">
     <div class="text-center">
       <p class="text-sm font-semibold text-accent">Gallery</p>
-      <h2 class="text-3xl font-semibold">Proof across web, product, and AI.</h2>
-      <p class="mt-2 text-ink-muted">Recent launches and client moments.</p>
+      <h2 class="text-3xl font-semibold">Systems we've architected and delivered.</h2>
+      <p class="mt-2 text-ink-muted">Full-stack applications, ML pipelines, and cloud infrastructure.</p>
     </div>
     <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {gallery.map((item: GalleryItem, index: number) => (
-        <div class={`group overflow-hidden rounded-3xl bg-surface shadow-card reveal delay-${index + 1}`}>
-          <div class="relative h-56 overflow-hidden">
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          class={`group overflow-hidden rounded-3xl bg-surface shadow-card reveal delay-${index + 1} block transition-transform hover:scale-[1.02]`}
+        >
+          <div class="relative h-42 overflow-hidden">
             <div class="absolute inset-0">
               <Image
                 src={item.image}
@@ -41,7 +46,7 @@ const { gallery } = Astro.props;
             <p class="text-xs font-semibold uppercase tracking-wide text-ink-muted">{item.tag}</p>
             <p class="mt-2 text-lg font-semibold">{item.title}</p>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   </div>
