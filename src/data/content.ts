@@ -106,7 +106,7 @@ export const gallery: GalleryItem[] = [
   },
   {
     title: "Bathra",
-    tag: "Fullstack startup and vc connecting platform",
+    tag: "Startup and VC connecting platform",
     image: bathra,
     link: "https://www.bathra.co/",
   },
