@@ -1,0 +1,77 @@
+---
+import type { Product } from "@/data/content";
+import { Image } from "astro:assets";
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+---
+
+<section id="products" class="bg-bg py-20">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="text-center mb-12">
+      <p class="text-sm font-semibold text-accent">Products</p>
+      <h2 class="text-3xl font-semibold">Enterprise AI Solutions</h2>
+      <p class="mt-2 text-ink-muted">Custom-built intelligent systems that transform your business operations.</p>
+    </div>
+
+    {products.map((product, index) => (
+      <div class={`reveal delay-${index + 1} rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card`}>
+        <!-- Product Image (Full width hero style) -->
+        <div class="relative w-full aspect-video md:aspect-[21/9]">
+          <Image
+            src={product.image}
+            alt={`${product.name} - ${product.tagline}`}
+            class="w-full h-full object-cover object-top"
+            widths={[640, 960, 1280, 1600, 1920]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+          />
+          <!-- Gradient overlay for text readability -->
+          <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
+          
+          <!-- Floating product info at bottom -->
+          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12">
+            <div class="max-w-3xl">
+              <p class="text-sm font-semibold text-accent mb-2">{product.tagline}</p>
+              <h3 class="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4">{product.headline}</h3>
+              <p class="text-base md:text-lg text-ink-muted leading-relaxed">{product.description}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats & CTAs -->
+        <div class="p-6 md:p-8 lg:p-12">
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-4 mb-8">
+            {product.stats.map((stat) => (
+              <div class="text-center p-4 rounded-2xl bg-surface border border-border">
+                <p class="text-2xl md:text-3xl font-bold text-ink">{stat.value}</p>
+                <p class="text-sm text-ink-muted mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap gap-4 justify-center">
+            <a
+              href={product.cta.primary.href}
+              class="inline-flex items-center gap-2 px-6 py-3 bg-contrast text-white font-semibold rounded-full hover:bg-contrast/90 transition-colors"
+            >
+              {product.cta.primary.text}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+            <a
+              href={product.cta.secondary.href}
+              class="inline-flex items-center gap-2 px-6 py-3 border border-border text-ink font-semibold rounded-full hover:bg-surface transition-colors"
+            >
+              {product.cta.secondary.text}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

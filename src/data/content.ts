@@ -14,12 +14,29 @@ import abelProfile from "@/assets/people/abel-profile.jpg";
 import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
 import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
+import anchorImage from "@/assets/product/anchor.png";
 import type { ImageMetadata } from "astro";
 
 // Type definitions
 export interface Feature {
   title: string;
   body: string;
+}
+
+export interface Product {
+  name: string;
+  tagline: string;
+  headline: string;
+  description: string;
+  image: ImageMetadata;
+  stats: {
+    value: string;
+    label: string;
+  }[];
+  cta: {
+    primary: { text: string; href: string };
+    secondary: { text: string; href: string };
+  };
 }
 
 export interface Service {
@@ -51,7 +68,28 @@ export interface Testimonial {
 export const images = {
   hero: heroImage,
   about: aboutImage,
+  anchor: anchorImage,
 };
+
+// Products data
+export const products: Product[] = [
+  {
+    name: "Anchor Systems",
+    tagline: "AI Solutions for Modern Enterprises",
+    headline: "Intelligent AI Solutions",
+    description: "We build custom LLM chatbots and enterprise-grade RAG systems that transform your data into actionable intelligence with 95% accuracy.",
+    image: anchorImage,
+    stats: [
+      { value: "60-80%", label: "Support Automation" },
+      { value: "2,000+", label: "Users Scaled" },
+      { value: "<300ms", label: "Response Time" },
+    ],
+    cta: {
+      primary: { text: "Explore Chatbots", href: "#contact" },
+      secondary: { text: "Discover RAG", href: "#contact" },
+    },
+  },
+];
 
 // Features data
 export const features: Feature[] = [
