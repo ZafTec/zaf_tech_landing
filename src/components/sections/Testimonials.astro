@@ -1,0 +1,45 @@
+---
+import { Image } from "astro:assets";
+import type { Testimonial } from "@/data/content";
+
+interface Props {
+  testimonials: Testimonial[];
+}
+
+const { testimonials } = Astro.props;
+---
+
+<section id="testimonials" class="py-16">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="text-center">
+      <p class="text-sm font-semibold text-accent">Testimonials</p>
+      <h2 class="text-3xl font-semibold">What teams say after launch.</h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-3">
+      {testimonials.map((testimonial: Testimonial) => (
+        <div class="rounded-3xl bg-surface p-6 shadow-card">
+          <div class="flex items-center gap-3">
+            <Image
+              src={testimonial.image}
+              alt={testimonial.name}
+              width={96}
+              height={96}
+              widths={[48, 96]}
+              format="webp"
+              quality={65}
+              loading="lazy"
+              decoding="async"
+              class="h-12 w-12 rounded-full object-cover"
+              sizes="48px"
+            />
+            <div>
+              <p class="text-sm font-semibold">{testimonial.name}</p>
+              <p class="text-xs text-ink-muted">{testimonial.role}</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-ink-muted">{testimonial.quote}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

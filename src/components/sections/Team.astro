@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import type { TeamMember } from "@/data/content";
+
+interface Props {
+  team: TeamMember[];
+}
+
+const { team } = Astro.props;
+---
+
+<section id="team" class="bg-surface py-16">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="text-center">
+      <p class="text-sm font-semibold text-accent">Team</p>
+      <h2 class="text-3xl font-semibold">Meet the team behind the builds.</h2>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {team.map((member: TeamMember) => (
+        <div class="overflow-hidden rounded-3xl bg-surface-2 text-center shadow-card">
+          <Image
+            src={member.image}
+            alt={member.name}
+            width={600}
+            height={800}
+            widths={[240, 320, 480, 640]}
+            format="webp"
+            quality={65}
+            loading="lazy"
+            decoding="async"
+            class="h-48 w-full object-cover"
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+          />
+          <div class="p-5">
+            <p class="text-base font-semibold">{member.name}</p>
+            <p class="text-sm text-ink-muted">{member.role}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
