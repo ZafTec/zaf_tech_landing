@@ -1,0 +1,30 @@
+---
+import type { Service } from "@/data/content";
+
+interface Props {
+  services: Service[];
+}
+
+const { services } = Astro.props;
+---
+
+<section id="services" class="bg-surface py-16">
+  <div class="mx-auto max-w-6xl px-4">
+    <div class="text-center">
+      <p class="text-sm font-semibold text-accent">Services</p>
+      <h2 class="text-3xl font-semibold">One team for web, product, and RAG.</h2>
+      <p class="mt-2 text-ink-muted">Flexible packages designed for speed and clarity.</p>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-3">
+      {services.map((service: Service) => (
+        <div class="rounded-3xl bg-surface-2 p-6 shadow-card">
+          <h3 class="text-xl font-semibold">{service.title}</h3>
+          <p class="mt-3 text-sm text-ink-muted">{service.body}</p>
+          <a class="mt-4 inline-flex text-sm font-semibold text-accent" href="#contact">
+            Learn more
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

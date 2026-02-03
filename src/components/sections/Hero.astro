@@ -1,0 +1,70 @@
+---
+import Threads from "@/components/Threads/Threads.jsx";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  heroImage: ImageMetadata;
+}
+
+const { heroImage } = Astro.props;
+---
+
+<section id="hero" class="relative w-full overflow-hidden">
+  <div class="absolute inset-0">
+    <Threads
+      client:load
+      color={[1, 1, 1]}
+      amplitude={1}
+      distance={0}
+      enableMouseInteraction={true}
+    />
+    <div class="absolute inset-0 bg-hero-overlay"></div>
+    <div class="hero-fade absolute inset-x-0 bottom-0 h-[12vh]"></div>
+  </div>
+  <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 160px; padding-bottom: 100px;">
+    <div class="space-y-6">
+      <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
+        Full service digital studio
+      </p>
+      <h1 class="text-4xl font-semibold leading-tight md:text-5xl">
+        We craft landing experiences that convert and scale.
+      </h1>
+      <p class="text-lg text-white/80">
+        Strategy, design, and delivery for web platforms, product UX, and RAG assistants.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="#features"
+          class="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-contrast shadow-soft"
+        >
+          Learn more
+        </a>
+        <a
+          href="#contact"
+          class="rounded-full border border-white/60 px-6 py-3 text-sm font-semibold text-white"
+        >
+          Start a project
+        </a>
+      </div>
+    </div>
+    <div class="flex flex-col justify-between gap-6 rounded-3xl bg-white/10 p-6">
+      <div>
+        <p class="text-sm font-semibold">Launch snapshot</p>
+        <p class="mt-2 text-sm text-white/70">2-4 week delivery with measurable lift.</p>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl bg-white/20 p-4">
+          <p class="text-xs uppercase tracking-wide text-white/70">Conversion</p>
+          <p class="text-xl font-semibold">+42%</p>
+        </div>
+        <div class="rounded-2xl bg-white/20 p-4">
+          <p class="text-xs uppercase tracking-wide text-white/70">Support deflection</p>
+          <p class="text-xl font-semibold">35%</p>
+        </div>
+      </div>
+      <div class="rounded-2xl bg-white/10 p-4 text-sm text-white/70">
+        Weekly demos, clear milestones, and ongoing care.
+      </div>
+    </div>
+  </div>
+</section>

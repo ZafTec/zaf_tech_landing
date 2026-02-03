@@ -1,0 +1,65 @@
+---
+---
+
+<section id="contact" class="bg-surface py-16">
+  <div class="mx-auto max-w-5xl px-4">
+    <div class="grid gap-8 rounded-[28px] border border-border bg-surface p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
+      <div class="space-y-4">
+        <p class="text-sm font-semibold text-accent">Contact</p>
+        <h3 class="text-2xl font-semibold">Let's build your next launch.</h3>
+        <p class="text-sm text-ink-muted">
+          Share your goals and we will respond within 12 hours with next steps.
+        </p>
+        <div class="grid gap-3">
+          <div class="rounded-2xl bg-surface-2 p-4">
+            <p class="text-xs uppercase tracking-wide text-ink-muted">Email</p>
+            <p class="mt-2 text-sm font-semibold">hello@zaftech.com</p>
+          </div>
+          <div class="rounded-2xl bg-surface-2 p-4">
+            <p class="text-xs uppercase tracking-wide text-ink-muted">Phone</p>
+            <p class="mt-2 text-sm font-semibold">+1 123 456 1234</p>
+          </div>
+          <div class="rounded-2xl bg-surface-2 p-4">
+            <p class="text-xs uppercase tracking-wide text-ink-muted">Location</p>
+            <p class="mt-2 text-sm font-semibold">San Francisco, CA</p>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-3xl bg-surface-2 p-6">
+        <form class="grid gap-4" method="post" action="/api/contact" data-contact-form>
+          <div class="grid gap-3 md:grid-cols-2">
+            <input
+              class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+              placeholder="Name"
+              type="text"
+              name="name"
+              required
+            />
+            <input
+              class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+              placeholder="Email"
+              type="email"
+              name="email"
+              required
+            />
+          </div>
+          <textarea
+            class="min-h-[120px] rounded-2xl border border-input-border bg-input-bg px-4 py-3 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
+            placeholder="Tell us about the project"
+            name="message"
+            required
+          ></textarea>
+          <button
+            class="w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-contrast"
+            type="submit"
+          >
+            Send message
+          </button>
+          <p class="text-xs text-ink-muted" data-form-status>
+            Prefer email? We reply within 12 hours.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
