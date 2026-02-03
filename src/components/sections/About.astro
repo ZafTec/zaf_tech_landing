@@ -11,7 +11,7 @@ const { aboutImage } = Astro.props;
 
 <section id="about" class="py-16">
   <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1fr,1.1fr]">
-    <div class="overflow-hidden rounded-4xl bg-surface shadow-card">
+    <!-- <div class="overflow-hidden rounded-4xl bg-surface shadow-card">
       <Image
         src={aboutImage}
         alt="Design and strategy planning session"
@@ -25,20 +25,20 @@ const { aboutImage } = Astro.props;
         class="h-full w-full object-cover"
         sizes="(min-width: 1024px) 45vw, 100vw"
       />
-    </div>
+    </div> -->
     <div class="space-y-4">
       <p class="text-sm font-semibold text-accent">About us</p>
-      <h2 class="text-3xl font-semibold">A studio that owns outcomes.</h2>
+      <h2 class="text-3xl font-semibold">Engineering teams that ship production systems.</h2>
       <p class="text-ink-muted">
-        We blend strategy, design, and engineering into one dedicated pod. Every engagement
-        includes senior direction, weekly check-ins, and clear success metrics.
+        We combine deep technical expertise with product thinking. Every engagement
+        includes senior engineers, iterative delivery, and maintainable architecture.
       </p>
       <div class="grid gap-3 sm:grid-cols-2">
         {[
-          "Strategy and UX",
-          "RAG knowledge design",
-          "Performance builds",
-          "Analytics and CRO",
+          "UI/UX Design",
+          "Backend Engineering",
+          "Cloud Infrastructure",
+          "Machine Learning",
         ].map((item: string) => (
           <div class="rounded-2xl bg-surface px-4 py-3 text-sm font-semibold shadow-card">
             {item}

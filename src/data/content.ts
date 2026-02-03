@@ -1,16 +1,17 @@
 // Import images
 import heroImage from "@/assets/stock_images/ian-schneider-TamMbr4okv4-unsplash.jpg";
 import aboutImage from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
-import galleryOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
-import galleryTwo from "@/assets/stock_images/ben-spray-gEvMA8O6Et4-unsplash.jpg";
-import galleryThree from "@/assets/stock_images/fotis-fotopoulos-DuHKoV44prg-unsplash.jpg";
-import galleryFour from "@/assets/stock_images/louise-viallesoubranne-5EhN4wbfvBc-unsplash.jpg";
-import galleryFive from "@/assets/stock_images/antonio-janeski-CHVTt0aGbx0-unsplash.jpg";
-import gallerySix from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
-import teamOne from "@/assets/stock_images/antonio-janeski-CHVTt0aGbx0-unsplash.jpg";
-import teamTwo from "@/assets/stock_images/ben-spray-gEvMA8O6Et4-unsplash.jpg";
-import teamThree from "@/assets/stock_images/fotis-fotopoulos-DuHKoV44prg-unsplash.jpg";
-import teamFour from "@/assets/stock_images/louise-viallesoubranne-5EhN4wbfvBc-unsplash.jpg";
+import girumgizaw from "@/assets/projects/girumgizaw.png";
+import weventurehub from "@/assets/projects/weventure.png";
+import bathra from "@/assets/projects/bathra.png";
+import mizan from "@/assets/projects/mizan.png";
+import bitbricks from "@/assets/projects/bitbricks.png";
+import afrochat from "@/assets/projects/afrochat.png";
+import placeholderProject from "@/assets/placeholderproject.jpg"
+import nahomProfile from "@/assets/people/nahom-profile.jpg";
+import euaelProfile from "@/assets/people/euael-profile.jpg";
+import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
+import teamPlaceholder from "@/assets/people/team-placeholder.avif";
 import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
 import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
@@ -31,6 +32,7 @@ export interface GalleryItem {
   title: string;
   tag: string;
   image: ImageMetadata;
+  link: string;
 }
 
 export interface TeamMember {
@@ -55,78 +57,120 @@ export const images = {
 // Features data
 export const features: Feature[] = [
   {
-    title: "Conversion focus",
-    body: "Every section is designed to move visitors to a next step.",
+    title: "Fullstack Applications",
+    body: "Frontend desing and development, Scalable APIs, microservices, and server architecture built for performance.",
   },
   {
-    title: "AI ready",
-    body: "RAG assistants, knowledge hubs, and support automation.",
+    title: "Machine learning",
+    body: "Custom ML models, RAG systems, and AI-powered applications that learn and adapt.",
   },
   {
-    title: "Design systems",
-    body: "Cohesive visuals and components that scale with your team.",
+    title: "Cloud infrastructure",
+    body: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling.",
   },
   {
-    title: "Launch support",
-    body: "Post-launch optimization, analytics, and ongoing care.",
+    title: "Database design",
+    body: "PostgreSQL, MongoDB, and distributed data systems optimized for your workload.",
   },
 ];
 
 // Services data
 export const services: Service[] = [
   {
-    title: "Marketing sites",
-    body: "Storytelling, design, and speed to lift conversion.",
+    title: "UI/UX & Frontend",
+    body: "React, Next.js, and modern web applications with exceptional user experience.",
   },
   {
-    title: "Product UX",
-    body: "Flows and prototypes for portals, dashboards, and apps.",
+    title: "Backend & Infrastructure",
+    body: "Scalable APIs, databases, cloud architecture, and DevOps automation.",
   },
   {
-    title: "RAG assistants",
-    body: "Support and sales copilots grounded in your data.",
+    title: "Machine Learning & AI",
+    body: "Custom ML models, RAG systems, and intelligent automation tailored to your domain.",
   },
 ];
 
 // Gallery data
 export const gallery: GalleryItem[] = [
-  { title: "Launch campaign", tag: "Go to market", image: galleryOne },
-  { title: "Customer portal", tag: "Client ops", image: galleryTwo },
-  { title: "AI support hub", tag: "RAG", image: galleryThree },
-  { title: "Product refresh", tag: "UX", image: galleryFour },
-  { title: "Pricing engine", tag: "Growth", image: galleryFive },
-  { title: "Sales enablement", tag: "B2B", image: gallerySix },
+  {
+    title: "Girum Gizaw",
+    tag: "Personal Portfolio Website",
+    image: girumgizaw,
+    link: "https://girumgizaw.com/",
+  },
+  {
+    title: "weVenture Hub",
+    tag: "Service provider website",
+    image: weventurehub,
+    link: "https://weventurehub.com/",
+  },
+  {
+    title: "Bathra",
+    tag: "Fullstack startup and vc connecting platform",
+    image: bathra,
+    link: "https://www.bathra.co/",
+  },
+  {
+    title: "Mizan",
+    tag: "Fullstack AI powered nutrition platform",
+    image: mizan,
+    link: "https://mizan.euaell.me/",
+  },
+  {
+    title: "Bitbricks",
+    tag: "E-learning platform",
+    image: bitbricks,
+    link: "https://bitbricks.ai/",
+  },
+  {
+    title: "Afrochat",
+    tag: "Generative AI for Africans",
+    image: afrochat,
+    link: "https://afrochat.app/en",
+  },
 ];
 
 // Team data
 export const team: TeamMember[] = [
-  { name: "Samira Khan", role: "Creative Director", image: teamOne },
-  { name: "Miles Carter", role: "Product Lead", image: teamTwo },
-  { name: "Avery Cole", role: "Engineering Lead", image: teamThree },
-  { name: "Jordan Park", role: "AI Strategist", image: teamFour },
+  { name: "Euael Eshete", role: "Backend and ML Lead", image: euaelProfile },
+  {
+    name: "Nahom Tamru",
+    role: "Backend and Database Lead",
+    image: nahomProfile,
+  },
+  {
+    name: "Milkiyas Gebremichael",
+    role: "Fullstack Architect and Cloud Lead",
+    image: milkiyasProfile,
+  },
+  {
+    name: "Abel Yifru",
+    role: "Frontend and UI/UX Lead",
+    image: teamPlaceholder,
+  },
 ];
 
 // Testimonials data
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "ZafTech shipped our new site fast and tied it directly to revenue. The pipeline lift was immediate.",
+      "ZafTech built our entire backend infrastructure from scratch. The system handles millions of requests daily with zero downtime.",
     name: "Taylor Morgan",
-    role: "VP Growth, Northwind",
+    role: "CTO, Northwind Systems",
     image: testimonialOne,
   },
   {
     quote:
-      "Their RAG rollout reduced ticket load and finally gave support a clean knowledge flow.",
+      "Their ML team built a RAG system that transformed our support operations. The accuracy and response quality exceeded our expectations.",
     name: "Rafael Diaz",
-    role: "Head of Support, Signal Loop",
+    role: "VP Engineering, Signal Loop",
     image: testimonialTwo,
   },
   {
     quote:
-      "Every touchpoint felt intentional. The redesign improved activation in weeks.",
+      "The full-stack team delivered a complex multi-tenant platform on time. Their architecture decisions were spot-on for our scale.",
     name: "Jamie Lee",
-    role: "Product Lead, Forge",
+    role: "VP Product, Forge Technologies",
     image: testimonialThree,
   },
 ];
