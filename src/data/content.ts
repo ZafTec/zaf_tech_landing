@@ -31,14 +31,7 @@ export interface Product {
   description: string;
   image: ImageMetadata;
   imageLight?: ImageMetadata;
-  stats: {
-    value: string;
-    label: string;
-  }[];
-  cta: {
-    primary: { text: string; href: string };
-    secondary: { text: string; href: string };
-  };
+  link: string;
 }
 
 export interface Service {
@@ -82,15 +75,7 @@ export const products: Product[] = [
     description: "We build custom LLM chatbots and enterprise-grade RAG systems that transform your data into actionable intelligence with 95% accuracy.",
     image: anchorImage,
     imageLight: anchorLightImage,
-    stats: [
-      { value: "60-80%", label: "Support Automation" },
-      { value: "<300ms", label: "Response Time" },
-      { value: "96%+", label: "Accuracy" },
-    ],
-    cta: {
-      primary: { text: "Explore Chatbots", href: "#contact" },
-      secondary: { text: "Discover RAG", href: "#contact" },
-    },
+    link: "https://anchor.zaftech.co",
   },
 ];
 
