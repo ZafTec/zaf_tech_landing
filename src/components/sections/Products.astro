@@ -20,16 +20,40 @@ const { products } = Astro.props;
     {products.map((product, index) => (
       <div class={`reveal delay-${index + 1} rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card`}>
         <!-- Product Image (Full width hero style) -->
-        <div class="relative w-full aspect-video md:aspect-[21/9]">
-          <Image
-            src={product.image}
-            alt={`${product.name} - ${product.tagline}`}
-            class="w-full h-full object-cover object-top"
-            widths={[640, 960, 1280, 1600, 1920]}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-          />
+        <div class="relative w-full aspect-video md:aspect-21/9">
+          {product.imageLight ? (
+            <>
+              <div class="hidden dark:block w-full h-full">
+                <Image
+                  src={product.image}
+                  alt={`${product.name} - ${product.tagline}`}
+                  class="w-full h-full object-cover object-top"
+                  widths={[640, 960, 1280, 1600, 1920]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                />
+              </div>
+              <div class="block dark:hidden w-full h-full">
+                <Image
+                  src={product.imageLight}
+                  alt={`${product.name} - ${product.tagline}`}
+                  class="w-full h-full object-cover object-top"
+                  widths={[640, 960, 1280, 1600, 1920]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                />
+              </div>
+            </>
+          ) : (
+            <Image
+              src={product.image}
+              alt={`${product.name} - ${product.tagline}`}
+              class="w-full h-full object-cover object-top"
+              widths={[640, 960, 1280, 1600, 1920]}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+            />
+          )}
+          
           <!-- Gradient overlay for text readability -->
-          <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
+          <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
           
           <!-- Floating product info at bottom -->
           <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12">

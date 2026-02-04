@@ -15,6 +15,7 @@ import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsp
 import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
 import anchorImage from "@/assets/product/anchor.png";
+import anchorLightImage from "@/assets/product/anchor_light.png";
 import type { ImageMetadata } from "astro";
 
 // Type definitions
@@ -29,6 +30,7 @@ export interface Product {
   headline: string;
   description: string;
   image: ImageMetadata;
+  imageLight?: ImageMetadata;
   stats: {
     value: string;
     label: string;
@@ -79,10 +81,11 @@ export const products: Product[] = [
     headline: "Intelligent AI Solutions",
     description: "We build custom LLM chatbots and enterprise-grade RAG systems that transform your data into actionable intelligence with 95% accuracy.",
     image: anchorImage,
+    imageLight: anchorLightImage,
     stats: [
       { value: "60-80%", label: "Support Automation" },
-      { value: "2,000+", label: "Users Scaled" },
       { value: "<300ms", label: "Response Time" },
+      { value: "96%+", label: "Accuracy" },
     ],
     cta: {
       primary: { text: "Explore Chatbots", href: "#contact" },
