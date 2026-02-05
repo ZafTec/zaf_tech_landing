@@ -9,73 +9,245 @@ interface Props {
 const { products } = Astro.props;
 ---
 
-<section id="products" class="bg-bg py-20">
+<section id="products" class="bg-bg py-16 md:py-20">
   <div class="mx-auto max-w-6xl px-4">
-    <div class="text-center mb-12">
+    <div class="text-center mb-8 md:mb-12">
       <p class="text-sm font-semibold text-accent">Products</p>
-      <h2 class="text-3xl font-semibold">Enterprise AI Solutions</h2>
-      <p class="mt-2 text-ink-muted">Custom-built intelligent systems that transform your business operations.</p>
+      <h2 class="text-2xl md:text-3xl font-semibold">Enterprise AI Solutions</h2>
+      <p class="mt-2 text-sm md:text-base text-ink-muted">Custom-built intelligent systems that transform your business operations.</p>
     </div>
 
-    {products.map((product, index) => (
-      <div class={`reveal delay-${index + 1} rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card`}>
-        <!-- Product Image (Full width hero style) -->
-        <div class="relative w-full aspect-video md:aspect-21/9">
-          {product.imageLight ? (
-            <>
-              <div class="hidden dark:block w-full h-full">
-                <Image
-                  src={product.image}
-                  alt={`${product.name} - ${product.tagline}`}
-                  class="w-full h-full object-cover object-top"
-                  widths={[640, 960, 1280, 1600, 1920]}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                />
+    <!-- Horizontal Scrolling Gallery -->
+    <div class="relative" data-products-gallery>
+      <!-- Left Navigation Button -->
+      <button 
+        type="button"
+        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
+        data-scroll-left
+        aria-label="Previous product"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <!-- Right Navigation Button -->
+      <button 
+        type="button"
+        class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
+        data-scroll-right
+        aria-label="Next product"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <!-- Scrolling Container -->
+      <div 
+        class="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-2 md:px-4"
+        data-scroll-container
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        {products.map((product, index) => (
+          <div 
+            class={`reveal delay-${Math.min(index + 1, 6)} flex-shrink-0 w-full snap-center`}
+          >
+            <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card">
+              <!-- Product Image with Text Overlay -->
+              <div class="relative w-full aspect-video md:aspect-21/9">
+                {product.imageLight ? (
+                  <>
+                    <div class="hidden dark:block w-full h-full">
+                      <Image
+                        src={product.image}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                      />
+                    </div>
+                    <div class="block dark:hidden w-full h-full">
+                      <Image
+                        src={product.imageLight}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <Image
+                    src={product.image}
+                    alt={`${product.name} - ${product.tagline}`}
+                    class="w-full h-full object-cover object-top"
+                    widths={[640, 960, 1280, 1600, 1920]}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                  />
+                )}
+                
+                <!-- Gradient overlay for text readability -->
+                <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
+                
+                <!-- Floating product info at bottom -->
+                <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12">
+                  <div class="max-w-3xl">
+                    <p class="text-sm font-semibold text-accent mb-2">{product.tagline}</p>
+                    <h3 class="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4">{product.headline}</h3>
+                    <p class="text-base md:text-lg text-ink-muted leading-relaxed mb-6">{product.description}</p>
+                    
+                    <!-- Explore Link -->
+                    <a
+                      href={product.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 px-6 py-3 bg-contrast text-white font-semibold rounded-full hover:bg-contrast/90 transition-colors"
+                    >
+                      Explore
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                  </div>
+                </div>
               </div>
-              <div class="block dark:hidden w-full h-full">
-                <Image
-                  src={product.imageLight}
-                  alt={`${product.name} - ${product.tagline}`}
-                  class="w-full h-full object-cover object-top"
-                  widths={[640, 960, 1280, 1600, 1920]}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                />
-              </div>
-            </>
-          ) : (
-            <Image
-              src={product.image}
-              alt={`${product.name} - ${product.tagline}`}
-              class="w-full h-full object-cover object-top"
-              widths={[640, 960, 1280, 1600, 1920]}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-            />
-          )}
-          
-          <!-- Gradient overlay for text readability -->
-          <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
-          
-          <!-- Floating product info at bottom -->
-          <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-12">
-            <div class="max-w-3xl">
-              <p class="text-sm font-semibold text-accent mb-2">{product.tagline}</p>
-              <h3 class="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4">{product.headline}</h3>
-              <p class="text-base md:text-lg text-ink-muted leading-relaxed mb-6">{product.description}</p>
-              
-              <!-- Explore Link -->
-              <a
-                href={product.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-contrast text-white font-semibold rounded-full hover:bg-contrast/90 transition-colors"
-              >
-                Explore
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </a>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    ))}
+
+      <!-- Product Counter -->
+      <div class="flex justify-center items-center gap-2 mt-6">
+        {products.map((_, index) => (
+          <button
+            type="button"
+            class="w-2 h-2 rounded-full bg-border transition-all duration-300 hover:bg-accent/50"
+            data-scroll-dot={index}
+            aria-label={`Go to product ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
   </div>
 </section>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    const galleries = document.querySelectorAll('[data-products-gallery]');
+    
+    galleries.forEach(gallery => {
+      const container = gallery.querySelector('[data-scroll-container]');
+      const leftBtn = gallery.querySelector('[data-scroll-left]');
+      const rightBtn = gallery.querySelector('[data-scroll-right]');
+      const dots = gallery.querySelectorAll('[data-scroll-dot]');
+      
+      if (!container) return;
+      
+      const slides = Array.from(container.children);
+      const totalSlides = slides.length;
+      let currentIndex = 0;
+      let autoScrollInterval;
+      let isPaused = false;
+      
+      // Scroll to specific slide
+      const scrollToSlide = (index) => {
+        if (!container || totalSlides === 0) return;
+        
+        // Handle circular navigation
+        if (index < 0) {
+          currentIndex = totalSlides - 1;
+        } else if (index >= totalSlides) {
+          currentIndex = 0;
+        } else {
+          currentIndex = index;
+        }
+        
+        const slide = slides[currentIndex];
+        if (slide) {
+          slide.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+        updateUI();
+      };
+      
+      // Update UI state
+      const updateUI = () => {
+        dots.forEach((dot, i) => {
+          const isActive = i === currentIndex;
+          dot.classList.toggle('bg-accent', isActive);
+          dot.classList.toggle('bg-border', !isActive);
+          dot.classList.toggle('w-6', isActive);
+          dot.classList.toggle('w-2', !isActive);
+        });
+      };
+      
+      // Auto-scroll functionality (circular)
+      const startAutoScroll = () => {
+        stopAutoScroll();
+        autoScrollInterval = setInterval(() => {
+          if (!isPaused) {
+            scrollToSlide(currentIndex + 1);
+          }
+        }, 8000); // 8 seconds per slide
+      };
+      
+      const stopAutoScroll = () => {
+        clearInterval(autoScrollInterval);
+      };
+      
+      // Button click handlers
+      leftBtn?.addEventListener('click', () => {
+        scrollToSlide(currentIndex - 1);
+        stopAutoScroll();
+        startAutoScroll();
+      });
+      
+      rightBtn?.addEventListener('click', () => {
+        scrollToSlide(currentIndex + 1);
+        stopAutoScroll();
+        startAutoScroll();
+      });
+      
+      // Dot click handlers
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          scrollToSlide(index);
+          stopAutoScroll();
+          startAutoScroll();
+        });
+      });
+      
+      // Pause on hover
+      gallery.addEventListener('mouseenter', () => { isPaused = true; });
+      gallery.addEventListener('mouseleave', () => { isPaused = false; });
+      
+      // Track scroll position
+      const handleScroll = () => {
+        if (!container) return;
+        const scrollLeft = container.scrollLeft;
+        const slideWidth = slides[0]?.offsetWidth || container.offsetWidth;
+        const newIndex = Math.round(scrollLeft / slideWidth);
+        
+        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
+          currentIndex = newIndex;
+          updateUI();
+        }
+      };
+      
+      container.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Handle visibility change
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          stopAutoScroll();
+        } else {
+          startAutoScroll();
+        }
+      });
+      
+      // Initial state
+      updateUI();
+      startAutoScroll();
+    });
+  })();
+</script>
