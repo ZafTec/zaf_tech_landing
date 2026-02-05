@@ -10,6 +10,9 @@ export default defineConfig({
   }),
   integrations: [react()],
   vite: {
+    build: {
+      outDir: "dist",
+    },
     plugins: [tailwindcss()],
     ssr: {
       external: ["bun"],
