@@ -47,7 +47,7 @@ const { products } = Astro.props;
       >
         {products.map((product, index) => (
           <div 
-            class={`reveal delay-${Math.min(index + 1, 6)} flex-shrink-0 w-full snap-center`}
+            class={`reveal delay-${Math.min(index + 1, 6)} shrink-0 w-full snap-center`}
           >
             <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card">
               <!-- Product Image with Text Overlay -->
