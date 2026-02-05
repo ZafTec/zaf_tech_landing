@@ -13,7 +13,7 @@ import Team from "@/components/sections/Team.astro";
 import Contact from "@/components/sections/Contact.astro";
 
 // Data imports
-import { images, features, services, products, gallery, team, testimonials } from "@/data/content";
+import { images, features, services, products, gallery, team } from "@/data/content";
 
 export const prerender = true;
 
@@ -60,7 +60,7 @@ const nav = [
     </header>
 
     <main>
-      <Hero heroImage={images.hero} />
+      <Hero />
       <Features features={features} />
       <Products products={products} />
       <About aboutImage={images.about} />
