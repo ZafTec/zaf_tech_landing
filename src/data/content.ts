@@ -16,6 +16,10 @@ import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-un
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
 import anchorImage from "@/assets/product/anchor.png";
 import anchorLightImage from "@/assets/product/anchor_light.png";
+import talosImage from "@/assets/product/talos.png";
+import talosLightImage from "@/assets/product/talos_light.png";
+import tarikImage from "@/assets/product/tarik.png";
+import tarikLightImage from "@/assets/product/tarik_light.png";
 import type { ImageMetadata } from "astro";
 
 // Type definitions
@@ -76,6 +80,24 @@ export const products: Product[] = [
     image: anchorImage,
     imageLight: anchorLightImage,
     link: "https://anchor.zaftech.co",
+  },
+  {
+    name: "Talos",
+    tagline: "AI-Powered Code Review",
+    headline: "Smart Code Review Assistant",
+    description: "Automated code review powered by AI. Detect bugs, security vulnerabilities, and style issues before they reach production.",
+    image: talosImage,
+    imageLight: talosLightImage,
+    link: "https://talos.zaftech.co",
+  },
+  {
+    name: "Tarik",
+    tagline: "Intelligent Data Pipeline",
+    headline: "Automated Data Processing",
+    description: "Streamline your data workflows with AI-powered ETL pipelines. Extract, transform, and load data from any source with intelligent mapping.",
+    image: tarikImage,
+    imageLight: tarikLightImage,
+    link: "https://tarik.zaftech.co",
   },
 ];
 
