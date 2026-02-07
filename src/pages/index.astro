@@ -30,7 +30,7 @@ const nav = [
 ---
 <Layout title="ZafTech | Full-stack Development & Machine Learning">
   <div class="bg-bg text-ink" id="page-top">
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-ink/10 dark:border-white/10 transition-all duration-300" style="background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-transparent transition-all duration-300" style="background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);" data-header>
       <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div class="flex items-center gap-3">
           <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-contrast dark:bg-white text-white dark:text-black shadow-soft">
@@ -88,17 +88,27 @@ const nav = [
     // Navbar scroll effect
     const header = document.querySelector("header");
 
+    // Detect dark mode
+    const isDarkMode = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
     const updateNavbar = () => {
       const scrollY = window.scrollY;
+      const dark = isDarkMode();
 
       if (scrollY > 50) {
-        header.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        // Light mode: light background, Dark mode: dark background
+        header.style.backgroundColor = dark ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.85)";
         header.style.backdropFilter = "blur(32px)";
+        header.style.borderColor = dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
       } else {
         header.style.backgroundColor = "rgba(0, 0, 0, 0)";
         header.style.backdropFilter = "blur(0px)";
+        header.style.borderColor = "transparent";
       }
     };
+    
+    // Listen for theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateNavbar);
 
     window.addEventListener("scroll", updateNavbar, { passive: true });
     updateNavbar(); // Initial call
