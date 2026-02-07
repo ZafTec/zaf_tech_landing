@@ -151,24 +151,51 @@ const nav = [
       if (observer) {
         observer.disconnect();
       }
+
+      // Track the best matching section
+      let bestSection = null;
+      let bestScore = -Infinity;
+
       observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+            const rect = entry.boundingClientRect;
+            const viewportHeight = window.innerHeight;
+            const offsetVal = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-offset')) || 88;
+
+            // Calculate how centered the section is in the viewport (below navbar)
+            const sectionCenter = rect.top + rect.height / 2;
+            const viewportCenter = offsetVal + (viewportHeight - offsetVal) / 2;
+            const distanceFromCenter = Math.abs(sectionCenter - viewportCenter);
+
+            // Score: higher is better (closer to center, more visible)
+            const visibilityScore = entry.isIntersecting ? entry.intersectionRatio : 0;
+            const centerScore = Math.max(0, 1 - distanceFromCenter / (viewportHeight / 2));
+            const totalScore = visibilityScore * 0.6 + centerScore * 0.4;
+
+            ratios.set(entry.target.id, totalScore);
           });
 
+          // Find section with highest score
           const sorted = Array.from(ratios.entries()).sort((a, b) => b[1] - a[1]);
-          const [id, ratio] = sorted[0] ?? [];
+          const [id, score] = sorted[0] ?? [];
 
-          if (!id || ratio === 0 || id === "hero") {
+          // Only update if we have a valid, visible section
+          if (!id || score < 0.05 || id === "hero") {
             setActive(null);
             return;
           }
-          setActive(id);
+
+          // Only update if this is a better match or significant change
+          if (score > bestScore || (bestSection && Math.abs(score - bestScore) > 0.1)) {
+            bestScore = score;
+            bestSection = id;
+            setActive(id);
+          }
         },
         {
-          rootMargin: `-${offset}px 0px -55% 0px`,
-          threshold: [0.05, 0.2, 0.5],
+          rootMargin: `-${offset}px 0px -30% 0px`,
+          threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
         }
       );
 
