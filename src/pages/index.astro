@@ -85,10 +85,7 @@ const nav = [
   </div>
 
   <script is:inline>
-    // Navbar scroll effect
     const header = document.querySelector("header");
-
-    // Detect dark mode
     const isDarkMode = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     const updateNavbar = () => {
@@ -96,7 +93,6 @@ const nav = [
       const dark = isDarkMode();
 
       if (scrollY > 50) {
-        // Light mode: light background, Dark mode: dark background
         header.style.backgroundColor = dark ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.85)";
         header.style.backdropFilter = "blur(32px)";
         header.style.borderColor = dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
@@ -107,22 +103,35 @@ const nav = [
       }
     };
     
-    // Listen for theme changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateNavbar);
-
     window.addEventListener("scroll", updateNavbar, { passive: true });
-    updateNavbar(); // Initial call
+    updateNavbar();
 
     const navRoot = document.querySelector("[data-nav-root]");
     const indicator = navRoot?.querySelector(".nav-indicator");
     const links = Array.from(document.querySelectorAll("[data-nav]"));
-    const sections = links
-      .map((link) => document.querySelector(`#${link.dataset.nav}`))
-      .filter(Boolean);
-    const hero = document.querySelector("#hero");
-    const observed = [...sections, hero].filter(Boolean);
-    const ratios = new Map();
-    let observer;
+
+    const scrollToSection = (id) => {
+      const element = document.querySelector(`#${id}`);
+      if (!element) return;
+      
+      const headerHeight = header?.offsetHeight || 72;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    };
+
+    links.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.dataset.nav;
+        scrollToSection(id);
+      });
+    });
 
     const setActive = (id) => {
       links.forEach((link) => {
@@ -132,9 +141,7 @@ const nav = [
     };
 
     const updateIndicator = () => {
-      if (!navRoot || !indicator) {
-        return;
-      }
+      if (!navRoot || !indicator) return;
       const active = navRoot.querySelector(".nav-link.is-active");
       if (!active) {
         indicator.style.opacity = "0";
@@ -149,115 +156,45 @@ const nav = [
       indicator.style.transform = `translateX(${left}px)`;
     };
 
-    const syncNavOffset = () => {
-      const header = document.querySelector("header");
-      const offset = header ? header.offsetHeight + 16 : 88;
-      document.documentElement.style.setProperty("--nav-offset", `${offset}px`);
-      return offset;
-    };
-
-    const createObserver = () => {
-      const offset = syncNavOffset();
-      if (observer) {
-        observer.disconnect();
-      }
-
-      // Track the best matching section
-      let bestSection = null;
-      let bestScore = -Infinity;
-
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const rect = entry.boundingClientRect;
-            const viewportHeight = window.innerHeight;
-            const offsetVal = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-offset')) || 88;
-
-            // Calculate how centered the section is in the viewport (below navbar)
-            const sectionCenter = rect.top + rect.height / 2;
-            const viewportCenter = offsetVal + (viewportHeight - offsetVal) / 2;
-            const distanceFromCenter = Math.abs(sectionCenter - viewportCenter);
-
-            // Score: higher is better (closer to center, more visible)
-            const visibilityScore = entry.isIntersecting ? entry.intersectionRatio : 0;
-            const centerScore = Math.max(0, 1 - distanceFromCenter / (viewportHeight / 2));
-            const totalScore = visibilityScore * 0.6 + centerScore * 0.4;
-
-            ratios.set(entry.target.id, totalScore);
-          });
-
-          // Find section with highest score
-          const sorted = Array.from(ratios.entries()).sort((a, b) => b[1] - a[1]);
-          const [id, score] = sorted[0] ?? [];
-
-          // Only update if we have a valid, visible section
-          if (!id || score < 0.05 || id === "hero") {
-            setActive(null);
-            return;
-          }
-
-          // Only update if this is a better match or significant change
-          if (score > bestScore || (bestSection && Math.abs(score - bestScore) > 0.1)) {
-            bestScore = score;
-            bestSection = id;
-            setActive(id);
-          }
-        },
-        {
-          rootMargin: `-${offset}px 0px -30% 0px`,
-          threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+    const sections = links.map((link) => document.querySelector(`#${link.dataset.nav}`)).filter(Boolean);
+    const hero = document.querySelector("#hero");
+    const observed = [...sections, hero].filter(Boolean);
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        const top = visible[0];
+        if (top && top.target.id !== "hero") {
+          setActive(top.target.id);
+        } else if (!top || top.target.id === "hero") {
+          setActive(null);
         }
-      );
+      },
+      { rootMargin: "-72px 0px -60% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
 
-      observed.forEach((section) => observer.observe(section));
-    };
-
-    let resizeTimer;
-    window.addEventListener("resize", () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        createObserver();
-        updateIndicator();
-      }, 120);
-    });
-
-    createObserver();
+    observed.forEach((section) => observer.observe(section));
     updateIndicator();
 
-    const form = document.querySelector("[data-contact-form]");
-    const status = document.querySelector("[data-form-status]");
-
-    if (form) {
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (status) {
-          status.textContent = "Sending...";
-        }
-        const formData = new FormData(form);
-        const payload = Object.fromEntries(formData.entries());
-
-        try {
-          const response = await fetch("/api/contact", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to submit");
-          }
-
-          form.reset();
-          if (status) {
-            status.textContent = "Thanks! We'll be in touch shortly.";
-          }
-        } catch (error) {
-          if (status) {
-            status.textContent = "Something went wrong. Please email hello@zaftech.com.";
-          }
-        }
-      });
-    }
+    // Contact form
+    document.querySelector("[data-contact-form]")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.querySelector("[data-form-status]");
+      if (status) status.textContent = "Sending...";
+      
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new FormData(e.target))),
+        });
+        if (!response.ok) throw new Error("Failed");
+        e.target.reset();
+        if (status) status.textContent = "Thanks! We'll be in touch shortly.";
+      } catch {
+        if (status) status.textContent = "Something went wrong. Please email contact@zaftech.co.";
+      }
+    });
   </script>
 </Layout>
 
