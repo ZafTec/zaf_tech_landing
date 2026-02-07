@@ -4,25 +4,27 @@ import Threads from "@/components/Threads/Threads.jsx";
 
 <section id="hero" class="relative w-full overflow-hidden">
   <div class="absolute inset-0">
-    <Threads
-      client:load
-      color={[1, 1, 1]}
-      amplitude={1}
-      distance={0}
-      enableMouseInteraction={true}
-    />
-    <div class="absolute inset-0 bg-hero-overlay"></div>
-    <!-- <div class="hero-fade absolute inset-x-0 bottom-0 h-[12vh]"></div> -->
+    <!-- Background color for contrast -->
+    <div class="absolute inset-0 bg-slate-100 dark:bg-[#0c0f17]"></div>
+    <!-- Threads: inverted (black) in light mode, normal (white) in dark mode -->
+    <div class="absolute inset-0 invert dark:invert-0">
+      <Threads
+        client:load
+        color={[1, 1, 1]}
+        amplitude={1}
+        distance={0}
+        enableMouseInteraction={true}
+      />
+    </div>
+    <!-- Overlay for readability -->
+    <div class="absolute inset-0 bg-white/30 dark:bg-black/30"></div>
   </div>
-  <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 260px; padding-bottom: 100px;">
+  <div class="relative z-10 mx-auto grid min-h-screen max-w-6xl gap-10 px-4 text-ink dark:text-white lg:grid-cols-[1.1fr,0.9fr]" style="padding-top: 260px; padding-bottom: 100px;">
     <div class="space-y-6">
-      <!-- <p class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
-        Full service digital studio
-      </p> -->
       <h1 class="text-4xl font-semibold leading-tight md:text-5xl">
         We craft Full-stack applications and Machine Learning solutions.
       </h1>
-      <p class="text-lg text-white/80">
+      <p class="text-lg text-ink-muted dark:text-white/80">
         Design and delivery for web platforms,Product UI/UX, and System architecture solutions.
       </p>
       <div class="flex flex-wrap gap-3">
@@ -34,7 +36,7 @@ import Threads from "@/components/Threads/Threads.jsx";
         </a>
         <a
           href="#contact"
-          class="rounded-full border border-white/60 px-6 py-3 text-sm font-semibold text-white"
+          class="rounded-full border border-ink/30 dark:border-white/60 px-6 py-3 text-sm font-semibold text-ink dark:text-white"
         >
           Start a project
         </a>
