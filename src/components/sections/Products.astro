@@ -45,7 +45,7 @@ const startIndex = originalCount;
       <!-- Scrolling Track -->
       <div class="overflow-hidden" data-carousel-viewport>
         <div 
-          class="flex gap-6 transition-transform duration-500 ease-out"
+          class="flex transition-transform duration-500 ease-out"
           data-carousel-track
           style="transform: translateX(0);"
         >
@@ -55,7 +55,7 @@ const startIndex = originalCount;
               data-slide-index={index % originalCount}
               data-absolute-index={index}
             >
-              <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2 shadow-card">
+              <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2">
                 <div class="relative w-full aspect-video md:aspect-21/9">
                   {product.imageLight ? (
                     <>
@@ -133,13 +133,7 @@ const startIndex = originalCount;
   .product-slide {
     flex: 0 0 100%;
     max-width: 100%;
-  }
-  
-  @media (min-width: 768px) {
-    .product-slide {
-      flex: 0 0 calc(100% - 2rem);
-      max-width: calc(100% - 2rem);
-    }
+    padding: 0 4px;
   }
   
   .dot.active {
@@ -175,13 +169,7 @@ const startIndex = originalCount;
       
       // Calculate slide width
       const getSlideWidth = () => {
-        const slide = slides[0];
-        if (!slide) return viewport?.offsetWidth || 0;
-        const style = window.getComputedStyle(slide);
-        const width = slide.offsetWidth;
-        const marginRight = parseInt(style.marginRight) || 0;
-        const gap = 24; // gap-6 = 1.5rem = 24px
-        return width + gap;
+        return viewport?.offsetWidth || slides[0]?.offsetWidth || 0;
       };
       
       // Move to specific index with CSS transform
