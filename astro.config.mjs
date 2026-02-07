@@ -29,4 +29,5 @@ export default defineConfig({
       include: ["ogl"],
     },
   },
+  site: "https://zaftech.co",
 });
