@@ -158,22 +158,58 @@ const nav = [
 
     const sections = links.map((link) => document.querySelector(`#${link.dataset.nav}`)).filter(Boolean);
     const hero = document.querySelector("#hero");
-    const observed = [...sections, hero].filter(Boolean);
     
+    // Track visibility of each section
+    const visibility = new Map();
+    let activeSection = null;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.filter(e => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        const top = visible[0];
-        if (top && top.target.id !== "hero") {
-          setActive(top.target.id);
-        } else if (!top || top.target.id === "hero") {
+        // Update visibility tracking
+        entries.forEach(entry => {
+          visibility.set(entry.target.id, entry.intersectionRatio);
+        });
+
+        const heroVisible = visibility.get("hero") || 0;
+        
+        // Hide indicator when hero is visible
+        if (heroVisible > 0.3) {
           setActive(null);
+          return;
+        }
+
+        // Find most visible section
+        let bestSection = null;
+        let bestRatio = 0;
+        
+        sections.forEach(section => {
+          const ratio = visibility.get(section.id) || 0;
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestSection = section.id;
+          }
+        });
+
+        // If we have a visible section, make it active
+        if (bestSection && bestRatio > 0) {
+          activeSection = bestSection;
+          setActive(bestSection);
+        } 
+        // Otherwise keep showing the last active section (no disappearing in gaps!)
+        else if (activeSection) {
+          setActive(activeSection);
         }
       },
-      { rootMargin: "-72px 0px -60% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+      { 
+        rootMargin: "-80px 0px -40% 0px",
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+      }
     );
 
-    observed.forEach((section) => observer.observe(section));
+    // Observe all sections and hero
+    sections.forEach(section => observer.observe(section));
+    if (hero) observer.observe(hero);
+    
     updateIndicator();
 
     // Contact form
