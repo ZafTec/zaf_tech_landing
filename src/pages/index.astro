@@ -1,7 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 
-// Section components
 import Hero from "@/components/sections/Hero.astro";
 import Features from "@/components/sections/Features.astro";
 import About from "@/components/sections/About.astro";
@@ -9,104 +8,100 @@ import Services from "@/components/sections/Services.astro";
 import Products from "@/components/sections/Products.astro";
 import Gallery from "@/components/sections/Gallery.astro";
 import Team from "@/components/sections/Team.astro";
-// import Testimonials from "@/components/sections/Testimonials.astro";
 import Contact from "@/components/sections/Contact.astro";
 
-// Data imports
-import { images, features, services, products, gallery, team } from "@/data/content";
+import { features, services, products, gallery, team } from "@/data/content";
 
 export const prerender = true;
 
 const nav = [
-  { label: "Features", href: "#features" },
+  { label: "Capabilities", href: "#services" },
   { label: "Products", href: "#products" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Gallery", href: "#portfolio" },
   { label: "Team", href: "#team" },
-  // { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },
 ];
 ---
 <Layout title="ZafTech | Full-stack Development & Machine Learning">
-  <div class="bg-bg text-ink" id="page-top">
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-transparent transition-all duration-300" style="background-color: rgba(0, 0, 0, 0); backdrop-filter: blur(0px);" data-header>
-      <div class="relative mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <div class="flex items-center gap-3">
-          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-contrast dark:bg-white text-white dark:text-black shadow-soft">
-            Z
-          </div>
-          <div>
-            <p class="text-base font-semibold text-ink dark:text-white">ZafTech</p>
-          </div>
+  <div class="bg-void text-ink min-h-screen flex flex-col" id="page-top">
+    <!-- Status Bar -->
+    <header class="fixed top-0 left-0 w-full h-8 bg-void border-b border-border-dim z-50 flex items-center justify-between px-4 sm:px-6 font-mono text-xs tracking-wider" data-header>
+      <div class="flex items-center gap-2">
+        <span class="text-primary font-bold">ZAFTECH_OS</span>
+        <span class="text-muted">v1.0.4</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2 text-muted">
+          <span>MEM: 64%</span>
+          <span class="w-px h-3 bg-border-dim"></span>
+          <span>NET: SECURE</span>
         </div>
-        <nav
-          class="absolute left-1/2 top-1/2 hidden -translate-y-1/2 -translate-x-1/2 items-center gap-6 text-sm font-semibold text-ink/70 dark:text-white/70 lg:flex"
-          aria-label="Primary"
-          data-nav-root
-        >
-          {nav.map((item) => (
-            <a
-              class="nav-link transition hover:text-ink dark:hover:text-white"
-              href={item.href}
-              data-nav={item.href.replace("#", "")}
-            >
-              {item.label}
-            </a>
-          ))}
-          <span class="nav-indicator" aria-hidden="true"></span>
-        </nav>
+        <div class="flex items-center gap-2">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+          </span>
+          <span class="text-primary font-bold">SYSTEM: ONLINE</span>
+        </div>
       </div>
     </header>
 
-    <main>
+    <!-- Secondary Nav -->
+    <nav class="fixed top-8 left-0 w-full h-12 bg-void/95 backdrop-blur-sm border-b border-border-dim z-40 flex items-center justify-between px-4 sm:px-6" data-nav>
+      <div class="flex items-center gap-4">
+        <div class="flex h-8 w-8 items-center justify-center rounded bg-primary text-void font-bold text-sm">
+          Z
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-6 font-mono text-xs text-muted" data-nav-root>
+        {nav.map((item) => (
+          <a
+            class="nav-link transition-colors hover:text-primary"
+            href={item.href}
+            data-nav={item.href.replace("#", "")}
+          >
+            [ {item.label} ]
+          </a>
+        ))}
+        <span class="nav-indicator" aria-hidden="true"></span>
+      </div>
+      <a
+        href="#contact"
+        class="hidden sm:flex h-9 items-center justify-center px-4 bg-primary text-void text-xs font-bold tracking-wider hover:bg-white transition-colors"
+      >
+        INITIATE PROJECT
+      </a>
+      <button class="flex sm:hidden h-9 w-9 items-center justify-center bg-onyx border border-border-dim text-primary" data-mobile-menu aria-label="Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </nav>
+
+    <main class="pt-20">
       <Hero />
-      <Features features={features} />
-      <Products products={products} />
-      <About aboutImage={images.about} />
       <Services services={services} />
+      <Products products={products} />
+      <About />
       <Gallery gallery={gallery} />
       <Team team={team} />
-      <!-- TODO: Populate testimonials section -->
-      <!-- <Testimonials testimonials={testimonials} /> -->
+      <Features features={features} />
       <Contact />
     </main>
 
-    <footer class="border-t border-border py-8">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-ink-muted">
-        <p> &copy; 2026 ZafTech. All rights reserved.</p>
-        <div class="flex gap-4">
-          <a href="#features" class="hover:text-ink">Features</a>
-          <a href="#portfolio" class="hover:text-ink">Gallery</a>
-          <a href="#contact" class="hover:text-ink">Contact</a>
+    <footer class="bg-onyx border-t border-border-dim py-4 px-6 md:px-12 mt-auto">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-muted">
+        <div class="flex items-center gap-4">
+          <span class="text-primary">&gt; SYSTEM_LOG:</span>
+          <span>Session active. All systems nominal.</span>
+        </div>
+        <div class="flex gap-6">
+          <a href="#services" class="hover:text-primary transition-colors">capabilities.md</a>
+          <a href="#contact" class="hover:text-primary transition-colors">contact.sh</a>
+          <span class="text-border-dim">2026 ZAFTECH_OS</span>
         </div>
       </div>
     </footer>
   </div>
 
   <script is:inline>
-    const header = document.querySelector("header");
-    const isDarkMode = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    const updateNavbar = () => {
-      const scrollY = window.scrollY;
-      const dark = isDarkMode();
-
-      if (scrollY > 50) {
-        header.style.backgroundColor = dark ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.85)";
-        header.style.backdropFilter = "blur(32px)";
-        header.style.borderColor = dark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)";
-      } else {
-        header.style.backgroundColor = "rgba(0, 0, 0, 0)";
-        header.style.backdropFilter = "blur(0px)";
-        header.style.borderColor = "transparent";
-      }
-    };
-    
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateNavbar);
-    window.addEventListener("scroll", updateNavbar, { passive: true });
-    updateNavbar();
-
     const navRoot = document.querySelector("[data-nav-root]");
     const indicator = navRoot?.querySelector(".nav-indicator");
     const links = Array.from(document.querySelectorAll("[data-nav]"));
@@ -115,7 +110,7 @@ const nav = [
       const element = document.querySelector(`#${id}`);
       if (!element) return;
       
-      const headerHeight = header?.offsetHeight || 72;
+      const headerHeight = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
 
@@ -159,26 +154,22 @@ const nav = [
     const sections = links.map((link) => document.querySelector(`#${link.dataset.nav}`)).filter(Boolean);
     const hero = document.querySelector("#hero");
     
-    // Track visibility of each section
     const visibility = new Map();
     let activeSection = null;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Update visibility tracking
         entries.forEach(entry => {
           visibility.set(entry.target.id, entry.intersectionRatio);
         });
 
         const heroVisible = visibility.get("hero") || 0;
         
-        // Hide indicator when hero is visible
         if (heroVisible > 0.3) {
           setActive(null);
           return;
         }
 
-        // Find most visible section
         let bestSection = null;
         let bestRatio = 0;
         
@@ -190,13 +181,10 @@ const nav = [
           }
         });
 
-        // If we have a visible section, make it active
         if (bestSection && bestRatio > 0) {
           activeSection = bestSection;
           setActive(bestSection);
-        } 
-        // Otherwise keep showing the last active section (no disappearing in gaps!)
-        else if (activeSection) {
+        } else if (activeSection) {
           setActive(activeSection);
         }
       },
@@ -206,13 +194,11 @@ const nav = [
       }
     );
 
-    // Observe all sections and hero
     sections.forEach(section => observer.observe(section));
     if (hero) observer.observe(hero);
     
     updateIndicator();
 
-    // Contact form
     document.querySelector("[data-contact-form]")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       const status = document.querySelector("[data-form-status]");
@@ -226,11 +212,10 @@ const nav = [
         });
         if (!response.ok) throw new Error("Failed");
         e.target.reset();
-        if (status) status.textContent = "Thanks! We'll be in touch shortly.";
+        if (status) status.textContent = "Transmission received. Standby for response.";
       } catch {
-        if (status) status.textContent = "Something went wrong. Please email contact@zaftech.co.";
+        if (status) status.textContent = "Connection failed. Try contact@zaftech.co";
       }
     });
   </script>
 </Layout>
-

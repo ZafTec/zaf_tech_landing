@@ -8,34 +8,36 @@ interface Props {
 
 const { products } = Astro.props;
 
-// Triple the products for seamless infinite scroll
 const allProducts = [...products, ...products, ...products];
 const originalCount = products.length;
 const startIndex = originalCount;
 ---
 
-<section id="products" class="bg-bg py-16 md:py-20">
-  <div class="mx-auto max-w-6xl px-4">
-    <div class="text-center mb-8 md:mb-12">
-      <p class="text-sm font-semibold text-accent">Products</p>
-      <h2 class="text-2xl md:text-3xl font-semibold">Enterprise AI Solutions</h2>
-      <p class="mt-2 text-sm md:text-base text-ink-muted">Custom-built intelligent systems that transform your business operations.</p>
+<section id="products" class="py-16 md:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 lg:px-24">
+    <!-- Section Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between border-b border-border-dim pb-4">
+      <h2 class="text-primary font-mono text-lg sm:text-xl tracking-tight">02 // PROPRIETARY_PRODUCTS</h2>
+      <span class="hidden sm:block text-ink-muted font-mono text-xs text-right max-w-[200px] leading-tight mt-2 sm:mt-0">
+        &lt;product_scan&gt;<br/>
+        inventory: {products.length} active
+      </span>
     </div>
 
     <div class="relative" data-products-gallery data-start-index={startIndex} data-count={originalCount}>
       <!-- Navigation Buttons -->
-      <button 
+      <button
         type="button"
-        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
+        class="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 bg-onyx border border-border-dim flex items-center justify-center text-ink hover:bg-onyx-hover hover:text-primary hover:border-primary transition-all duration-300"
         data-scroll="prev"
         aria-label="Previous product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
-      <button 
+      <button
         type="button"
-        class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
+        class="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 bg-onyx border border-border-dim flex items-center justify-center text-ink hover:bg-onyx-hover hover:text-primary hover:border-primary transition-all duration-300"
         data-scroll="next"
         aria-label="Next product"
       >
@@ -43,66 +45,44 @@ const startIndex = originalCount;
       </button>
 
       <!-- Scrolling Track -->
-      <div class="overflow-hidden" data-carousel-viewport>
-        <div 
+      <div class="overflow-hidden px-8 md:px-16" data-carousel-viewport>
+        <div
           class="flex transition-transform duration-500 ease-out"
           data-carousel-track
           style="transform: translateX(0);"
         >
           {allProducts.map((product, index) => (
-            <div 
+            <div
               class="product-slide shrink-0 w-full"
               data-slide-index={index % originalCount}
               data-absolute-index={index}
             >
-              <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2">
+              <div class="border border-border-dim bg-onyx overflow-hidden hover:border-primary/30 transition-colors duration-300">
                 <div class="relative w-full aspect-video md:aspect-21/9">
-                  {product.imageLight ? (
-                    <>
-                      <div class="hidden dark:block w-full h-full">
-                        <Image
-                          src={product.image}
-                          alt={`${product.name} - ${product.tagline}`}
-                          class="w-full h-full object-cover object-top"
-                          widths={[640, 960, 1280, 1600, 1920]}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                        />
-                      </div>
-                      <div class="block dark:hidden w-full h-full">
-                        <Image
-                          src={product.imageLight}
-                          alt={`${product.name} - ${product.tagline}`}
-                          class="w-full h-full object-cover object-top"
-                          widths={[640, 960, 1280, 1600, 1920]}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <Image
-                      src={product.image}
-                      alt={`${product.name} - ${product.tagline}`}
-                      class="w-full h-full object-cover object-top"
-                      widths={[640, 960, 1280, 1600, 1920]}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                    />
-                  )}
-                  
-                  <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
-                  
-                  <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
-                    <div class="max-w-3xl mx-auto md:mx-0 text-center md:text-left">
-                      <p class="text-[10px] md:text-sm font-semibold text-contrast dark:text-accent uppercase tracking-wider md:tracking-normal mb-1 md:mb-2">{product.tagline}</p>
-                      <h3 class="text-lg md:text-3xl lg:text-4xl font-semibold mb-2 md:mb-4 leading-tight">{product.headline}</h3>
-                      <p class="hidden md:block text-base md:text-lg text-ink-muted leading-relaxed mb-6">{product.description}</p>
-                      
+                  <Image
+                    src={product.image}
+                    alt={`${product.name} - ${product.tagline}`}
+                    class="w-full h-full object-cover object-top"
+                    widths={[640, 960, 1280, 1600, 1920]}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                  />
+
+                  <div class="absolute inset-0 bg-gradient-to-t from-void via-void/70 to-transparent pointer-events-none" aria-hidden="true"></div>
+
+                  <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-10">
+                    <div class="max-w-3xl">
+                      <p class="font-mono text-[10px] md:text-xs text-primary uppercase tracking-widest mb-1 md:mb-2">{product.tagline}</p>
+                      <h3 class="text-xl md:text-3xl lg:text-4xl font-bold text-ink mb-2 md:mb-4 leading-tight">{product.headline}</h3>
+                      <p class="hidden md:block text-base text-ink-muted leading-relaxed mb-6 font-mono">{product.description}</p>
+
                       <a
                         href={product.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-contrast text-white text-xs md:text-base font-semibold rounded-full hover:bg-contrast/90 transition-colors mt-2 md:mt-0"
+                        class="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-primary text-void text-xs md:text-sm font-bold tracking-wide hover:bg-white transition-colors"
                       >
-                        Explore
+                        <span class="font-mono">&gt;</span>
+                        EXPLORE
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 md:w-4 md:h-4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                       </a>
                     </div>
@@ -119,7 +99,7 @@ const startIndex = originalCount;
         {products.map((_, index) => (
           <button
             type="button"
-            class="dot w-2 h-2 rounded-full bg-border transition-all duration-300 hover:bg-accent/50"
+            class="dot w-2 h-2 bg-border-dim transition-all duration-300 hover:bg-primary/50"
             data-goto={index}
             aria-label={`Go to product ${index + 1}`}
           />
@@ -135,12 +115,12 @@ const startIndex = originalCount;
     max-width: 100%;
     padding: 0 4px;
   }
-  
+
   .dot.active {
-    background-color: var(--color-accent);
+    background-color: var(--color-primary);
     width: 1.5rem;
   }
-  
+
   [data-carousel-track] {
     will-change: transform;
   }
@@ -149,7 +129,7 @@ const startIndex = originalCount;
 <script is:inline>
   (function() {
     const galleries = document.querySelectorAll('[data-products-gallery]');
-    
+
     galleries.forEach(gallery => {
       const track = gallery.querySelector('[data-carousel-track]');
       const viewport = gallery.querySelector('[data-carousel-viewport]');
@@ -157,22 +137,20 @@ const startIndex = originalCount;
       const prevBtn = gallery.querySelector('[data-scroll="prev"]');
       const nextBtn = gallery.querySelector('[data-scroll="next"]');
       const dots = gallery.querySelectorAll('[data-goto]');
-      
+
       const count = parseInt(gallery.dataset.count || '0');
       const startIndex = parseInt(gallery.dataset.startIndex || '0');
-      
+
       if (!track || slides.length === 0 || count === 0) return;
-      
+
       let currentIndex = startIndex;
       let autoScrollInterval;
       let isPaused = false;
-      
-      // Calculate slide width
+
       const getSlideWidth = () => {
         return viewport?.offsetWidth || slides[0]?.offsetWidth || 0;
       };
-      
-      // Move to specific index with CSS transform
+
       const goToSlide = (index) => {
         const slideWidth = getSlideWidth();
         const offset = -index * slideWidth;
@@ -180,62 +158,54 @@ const startIndex = originalCount;
         currentIndex = index;
         updateDots();
       };
-      
-      // Update dot indicators
+
       const updateDots = () => {
         const realIndex = ((currentIndex % count) + count) % count;
         dots.forEach((dot, i) => {
           dot.classList.toggle('active', i === realIndex);
         });
       };
-      
-      // Handle infinite loop reset
+
       const checkBounds = () => {
         const slideWidth = getSlideWidth();
-        
-        // If we're in the first set, jump to third set
+
         if (currentIndex < count) {
           track.style.transition = 'none';
           currentIndex += count;
           const offset = -currentIndex * slideWidth;
           track.style.transform = `translateX(${offset}px)`;
-          // Force reflow
           track.offsetHeight;
           track.style.transition = 'transform 0.5s ease-out';
           return;
         }
-        
-        // If we're in the third set, jump to second set
+
         if (currentIndex >= count * 2) {
           track.style.transition = 'none';
           currentIndex -= count;
           const offset = -currentIndex * slideWidth;
           track.style.transform = `translateX(${offset}px)`;
-          // Force reflow
           track.offsetHeight;
           track.style.transition = 'transform 0.5s ease-out';
         }
       };
-      
-      // Navigation handlers
+
       const prev = () => {
         goToSlide(currentIndex - 1);
         setTimeout(checkBounds, 500);
         resetAutoScroll();
       };
-      
+
       const next = () => {
         goToSlide(currentIndex + 1);
         setTimeout(checkBounds, 500);
         resetAutoScroll();
       };
-      
+
       const goTo = (index) => {
         goToSlide(startIndex + index);
         resetAutoScroll();
       };
-      
-      // Auto-scroll
+
       const startAutoScroll = () => {
         stopAutoScroll();
         autoScrollInterval = setInterval(() => {
@@ -244,28 +214,26 @@ const startIndex = originalCount;
           }
         }, 6000);
       };
-      
+
       const stopAutoScroll = () => {
         clearInterval(autoScrollInterval);
       };
-      
+
       const resetAutoScroll = () => {
         stopAutoScroll();
         startAutoScroll();
       };
-      
-      // Event listeners
+
       prevBtn?.addEventListener('click', prev);
       nextBtn?.addEventListener('click', next);
-      
+
       dots.forEach((dot, index) => {
         dot.addEventListener('click', () => goTo(index));
       });
-      
+
       gallery.addEventListener('mouseenter', () => { isPaused = true; });
       gallery.addEventListener('mouseleave', () => { isPaused = false; });
-      
-      // Visibility observer
+
       const visibilityObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach(entry => {
@@ -278,21 +246,19 @@ const startIndex = originalCount;
         },
         { threshold: 0.2 }
       );
-      
+
       visibilityObserver.observe(gallery);
-      
-      // Initial position
+
       const init = () => {
         goToSlide(startIndex);
       };
-      
+
       if (document.readyState === 'complete') {
         init();
       } else {
         window.addEventListener('load', init);
       }
-      
-      // Handle resize
+
       let resizeTimer;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);

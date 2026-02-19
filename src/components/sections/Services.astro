@@ -6,25 +6,151 @@ interface Props {
 }
 
 const { services } = Astro.props;
+
+const serviceIcons: Record<string, string> = {
+  "UI/UX & Frontend": "grid_goldenratio",
+  "Backend & Infrastructure": "dns",
+  "Machine Learning & AI": "neurology",
+};
+
+const serviceTags: Record<string, string[]> = {
+  "UI/UX & Frontend": ["REACT", "NEXT.JS", "THREE.JS"],
+  "Backend & Infrastructure": ["NODE", "POSTGRES", "KUBERNETES"],
+  "Machine Learning & AI": ["PYTORCH", "TENSORFLOW", "NLP"],
+};
 ---
 
-<section id="services" class="bg-surface py-16">
-  <div class="mx-auto max-w-6xl px-4">
-    <div class="text-center">
-      <p class="text-sm font-semibold text-accent">Services</p>
-      <h2 class="text-3xl font-semibold">Full-stack expertise across your entire stack.</h2>
-      <p class="mt-2 text-ink-muted">From beautiful interfaces to robust backend systems and intelligent automation.</p>
+<section id="services" class="py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-24">
+  <div class="w-full max-w-7xl mx-auto">
+    <!-- Section Header -->
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between border-b border-border-dim pb-4">
+      <h2 class="text-primary font-mono text-lg sm:text-xl tracking-tight">01 // CAPABILITIES</h2>
+      <span class="hidden sm:block text-muted font-mono text-xs text-right max-w-[200px] leading-tight mt-2 sm:mt-0">
+        &lt;system_check&gt;<br/>
+        modules loaded: {services.length}/{services.length}
+      </span>
     </div>
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
-      {services.map((service: Service) => (
-        <div class="rounded-3xl bg-surface-2 p-6 shadow-card">
-          <h3 class="text-xl font-semibold">{service.title}</h3>
-          <p class="mt-3 text-sm text-ink-muted">{service.body}</p>
-          <a class="mt-4 inline-flex text-sm font-semibold text-accent" href="#contact">
-            Learn more
-          </a>
+
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border-dim border border-border-dim">
+      {services.map((service: Service, index: number) => {
+        const num = String(index + 1).padStart(2, "0");
+        const icon = serviceIcons[service.title] || "terminal";
+        const tags = serviceTags[service.title] || [];
+        
+        return (
+          <div class="group relative flex flex-col p-8 sm:p-10 bg-void hover:bg-onyx transition-colors duration-200 cursor-crosshair min-h-[320px]">
+            <!-- Hover Top Border Accent -->
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            
+            <div class="flex justify-between items-start mb-auto">
+              <span class="font-mono text-muted text-xs group-hover:text-primary transition-colors">[ {num} ]</span>
+              <span class="material-symbols-outlined text-primary text-4xl opacity-80 group-hover:opacity-100 transition-opacity">{icon}</span>
+            </div>
+            
+            <div class="space-y-4 mt-8">
+              <h3 class="text-2xl font-bold text-ink tracking-tight group-hover:translate-x-1 transition-transform duration-200">
+                {service.title.replace(" & ", "<br/>").replace(" and ", "<br/>")}
+              </h3>
+              
+              <div class="h-px w-8 bg-border-dim group-hover:w-full group-hover:bg-primary/30 transition-all duration-300"></div>
+              
+              <p class="font-mono text-sm text-ink-muted leading-relaxed">
+                {service.body}
+              </p>
+              
+              <!-- Tech Tags -->
+              <div class="flex flex-wrap gap-2 pt-2">
+                {tags.map((tag) => (
+                  <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      
+      <!-- Additional Capability Cards -->
+      <div class="group relative flex flex-col p-8 sm:p-10 bg-void hover:bg-onyx transition-colors duration-200 cursor-crosshair min-h-[320px]">
+        <div class="absolute top-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        <div class="flex justify-between items-start mb-auto">
+          <span class="font-mono text-muted text-xs group-hover:text-primary transition-colors">[ 04 ]</span>
+          <span class="material-symbols-outlined text-primary text-4xl opacity-80 group-hover:opacity-100 transition-opacity">security</span>
         </div>
-      ))}
+        <div class="space-y-4 mt-8">
+          <h3 class="text-2xl font-bold text-ink tracking-tight group-hover:translate-x-1 transition-transform duration-200">
+            DevOps &<br/>Security
+          </h3>
+          <div class="h-px w-8 bg-border-dim group-hover:w-full group-hover:bg-primary/30 transition-all duration-300"></div>
+          <p class="font-mono text-sm text-ink-muted leading-relaxed">
+            CI/CD pipelines and penetration testing. Automated workflows that ensure code quality and safety.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">CI/CD</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">INFOSEC</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">TERRAFORM</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="group relative flex flex-col p-8 sm:p-10 bg-void hover:bg-onyx transition-colors duration-200 cursor-crosshair min-h-[320px]">
+        <div class="absolute top-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        <div class="flex justify-between items-start mb-auto">
+          <span class="font-mono text-muted text-xs group-hover:text-primary transition-colors">[ 05 ]</span>
+          <span class="material-symbols-outlined text-primary text-4xl opacity-80 group-hover:opacity-100 transition-opacity">cloud</span>
+        </div>
+        <div class="space-y-4 mt-8">
+          <h3 class="text-2xl font-bold text-ink tracking-tight group-hover:translate-x-1 transition-transform duration-200">
+            Cloud<br/>Architecture
+          </h3>
+          <div class="h-px w-8 bg-border-dim group-hover:w-full group-hover:bg-primary/30 transition-all duration-300"></div>
+          <p class="font-mono text-sm text-ink-muted leading-relaxed">
+            AWS, Azure, GCP deployments with auto-scaling. Infrastructure as code for reproducible environments.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">AWS</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">GCP</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">DOCKER</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="group relative flex flex-col p-8 sm:p-10 bg-void hover:bg-onyx transition-colors duration-200 cursor-crosshair min-h-[320px]">
+        <div class="absolute top-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        <div class="flex justify-between items-start mb-auto">
+          <span class="font-mono text-muted text-xs group-hover:text-primary transition-colors">[ 06 ]</span>
+          <span class="material-symbols-outlined text-primary text-4xl opacity-80 group-hover:opacity-100 transition-opacity">token</span>
+        </div>
+        <div class="space-y-4 mt-8">
+          <h3 class="text-2xl font-bold text-ink tracking-tight group-hover:translate-x-1 transition-transform duration-200">
+            Blockchain<br/>Protocols
+          </h3>
+          <div class="h-px w-8 bg-border-dim group-hover:w-full group-hover:bg-primary/30 transition-all duration-300"></div>
+          <p class="font-mono text-sm text-ink-muted leading-relaxed">
+            Smart contracts and DApps. Decentralized architectures for trustless execution environments.
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">SOLIDITY</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">RUST</span>
+            <span class="text-[10px] font-mono border border-border-dim px-2 py-1 text-muted rounded-sm group-hover:border-primary/30 transition-colors">WEB3.JS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Console -->
+    <div class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-border-dim pt-4">
+      <p class="font-mono text-xs text-muted">
+        <span class="text-primary">&gt;</span> awaiting command input...
+      </p>
+      <p class="font-mono text-xs text-muted hidden sm:block">
+        mem_usage: 14%
+      </p>
     </div>
   </div>
 </section>
+
+<!-- Material Icons Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />

@@ -1,67 +1,147 @@
 ---
+
 ---
 
-<section id="contact" class="bg-surface py-16">
-  <div class="mx-auto max-w-5xl px-4">
-    <div class="grid gap-8 rounded-[28px] border border-border bg-surface p-6 shadow-card lg:grid-cols-[1fr,1.1fr] lg:p-8">
-      <div class="space-y-4">
-        <p class="text-sm font-semibold text-accent">Contact</p>
-        <h3 class="text-2xl font-semibold">Let's build your next launch.</h3>
-        <p class="text-sm text-ink-muted">
-          Share your goals and we will respond within 12 hours with next steps.
-        </p>
-        <div class="grid gap-3">
-          <div class="rounded-2xl bg-surface-2 p-4">
-            <p class="text-xs uppercase tracking-wide text-ink-muted">Email</p>
-            <p class="mt-2 text-sm font-semibold">contact@zaftech.co</p>
-          </div>
-          <!--
-          <div class="rounded-2xl bg-surface-2 p-4">
-            <p class="text-xs uppercase tracking-wide text-ink-muted">Phone</p>
-            <p class="mt-2 text-sm font-semibold">+1 123 456 1234</p>
-          </div>
-          -->
-          <div class="rounded-2xl bg-surface-2 p-4">
-            <p class="text-xs uppercase tracking-wide text-ink-muted">Location</p>
-            <p class="mt-2 text-sm font-semibold">Addis Ababa, ET</p>
-          </div>
+<section id="contact" class="py-16 md:py-24 px-4 relative overflow-hidden">
+  <!-- Background Grid Decoration -->
+  <div class="absolute inset-0 z-0 pointer-events-none opacity-20" style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+  <div class="max-w-2xl mx-auto relative z-10">
+    <!-- Terminal Container -->
+    <div class="w-full bg-onyx border border-border-dim shadow-2xl overflow-hidden flex flex-col">
+      <!-- Terminal Header -->
+      <div class="bg-[#222] border-b border-border-dim px-4 py-2 flex items-center justify-between select-none">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
         </div>
+        <div class="font-mono text-ink-muted text-xs tracking-wide">
+          bash - user@zaftech: ~/contact
+        </div>
+        <div class="w-4"></div>
       </div>
-      <div class="rounded-3xl bg-surface-2 p-6">
-        <form class="grid gap-4" method="post" action="/api/contact" data-contact-form>
-          <div class="grid gap-3 md:grid-cols-2">
-            <input
-              class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
-              placeholder="Name"
-              type="text"
-              name="name"
-              required
-            />
-            <input
-              class="rounded-full border border-input-border bg-input-bg px-4 py-2.5 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
-              placeholder="Email"
-              type="email"
-              name="email"
-              required
-            />
+
+      <!-- Terminal Body -->
+      <div class="p-6 md:p-8 font-mono text-sm md:text-base relative">
+        <!-- Intro Logs -->
+        <div class="mb-6 text-ink-muted">
+          <p>&gt; Initializing secure connection...</p>
+          <p>&gt; Handshake established.</p>
+          <p>&gt; Ready for transmission.</p>
+        </div>
+
+        <!-- Form -->
+        <form action="/api/contact" method="post" class="space-y-6" data-contact-form>
+          <!-- Input: Name -->
+          <div class="group">
+            <label class="block text-primary mb-2 opacity-90 text-sm" for="name">&gt; input_name:</label>
+            <div class="relative flex items-center bg-onyx-hover border-l-2 border-transparent focus-within:border-primary transition-colors duration-200">
+              <span class="pl-3 text-ink-muted select-none">$</span>
+              <input
+                class="terminal-input w-full text-ink px-3 py-3 placeholder-ink-muted/30"
+                id="name"
+                name="name"
+                placeholder="_"
+                required
+                type="text"
+              />
+            </div>
           </div>
-          <textarea
-            class="min-h-30 rounded-2xl border border-input-border bg-input-bg px-4 py-3 text-sm text-input-text placeholder:text-input-placeholder focus:outline-none focus:ring-2 focus:ring-accent"
-            placeholder="Tell us about the project"
-            name="message"
-            required
-          ></textarea>
-          <button
-            class="w-fit rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-contrast"
-            type="submit"
-          >
-            Send message
-          </button>
-          <p class="text-xs text-ink-muted" data-form-status>
-            Prefer email? We reply within 12 hours.
+
+          <!-- Input: Email -->
+          <div class="group">
+            <label class="block text-primary mb-2 opacity-90 text-sm" for="email">&gt; input_email:</label>
+            <div class="relative flex items-center bg-onyx-hover border-l-2 border-transparent focus-within:border-primary transition-colors duration-200">
+              <span class="pl-3 text-ink-muted select-none">$</span>
+              <input
+                class="terminal-input w-full text-ink px-3 py-3 placeholder-ink-muted/30"
+                id="email"
+                name="email"
+                placeholder="_"
+                required
+                type="email"
+              />
+            </div>
+          </div>
+
+          <!-- Input: Project Type -->
+          <div class="group">
+            <label class="block text-primary mb-2 opacity-90 text-sm" for="project">&gt; input_project_type:</label>
+            <div class="relative flex items-center bg-onyx-hover border-l-2 border-transparent focus-within:border-primary transition-colors duration-200">
+              <span class="pl-3 text-ink-muted select-none">$</span>
+              <select
+                class="terminal-input w-full text-ink px-3 py-3 appearance-none cursor-pointer"
+                id="project"
+                name="project"
+              >
+                <option class="bg-onyx text-ink-muted" disabled selected value="">_select_option</option>
+                <option class="bg-onyx" value="full_stack">Full-Stack Engineering</option>
+                <option class="bg-onyx" value="ml_ai">Machine Learning / AI</option>
+                <option class="bg-onyx" value="cloud">Cloud Infrastructure</option>
+                <option class="bg-onyx" value="security">Security Audit</option>
+                <option class="bg-onyx" value="other">Other</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 text-ink-muted pointer-events-none text-sm">expand_more</span>
+            </div>
+          </div>
+
+          <!-- Input: Message -->
+          <div class="group">
+            <label class="block text-primary mb-2 opacity-90 text-sm" for="message">&gt; define_parameters:</label>
+            <div class="relative flex bg-onyx-hover border-l-2 border-transparent focus-within:border-primary transition-colors duration-200">
+              <span class="pl-3 pt-3 text-ink-muted select-none">$</span>
+              <textarea
+                class="terminal-input w-full text-ink px-3 py-3 placeholder-ink-muted/30 resize-none"
+                id="message"
+                name="message"
+                placeholder="// Describe your project requirements..."
+                rows="4"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <button
+              class="group relative w-full flex items-center justify-center py-3 px-6 bg-transparent border border-primary text-primary font-bold tracking-widest hover:bg-primary hover:text-void transition-all duration-300 text-sm"
+              type="submit"
+            >
+              <span class="mr-2 text-lg leading-none group-hover:animate-pulse">&gt;</span>
+              EXECUTE_TRANSMISSION
+              <span class="ml-2 w-2 h-4 bg-primary animate-blink inline-block align-middle group-hover:bg-void"></span>
+            </button>
+          </div>
+
+          <!-- Status -->
+          <p class="text-xs text-ink-muted text-center" data-form-status>
+            Prefer email? We reply within 12 hours. contact@zaftech.co
           </p>
         </form>
+      </div>
+
+      <!-- Terminal Footer Status -->
+      <div class="bg-[#111] border-t border-border-dim px-4 py-1 flex items-center justify-between text-[10px] font-mono text-ink-muted uppercase tracking-wider">
+        <span>Ln 1, Col 1</span>
+        <span>UTF-8</span>
+        <span>ZAFTECH_CLI</span>
+      </div>
+    </div>
+
+    <!-- Alternative Contact Methods -->
+    <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-6 text-xs font-mono text-ink-muted">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-sm">mail</span>
+        <span>contact@zaftech.co</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-sm">location_on</span>
+        <span>Addis Ababa, ET</span>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Material Icons Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
