@@ -108,18 +108,44 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --color-ink: var(--color-onyx-900);
-    --color-ink-muted: var(--color-onyx-600);
-    --color-bg: var(--color-ivory-50);
-    --color-surface: var(--color-ivory-100);
-    --color-surface-2: var(--color-ivory-200);
-    --color-border: var(--color-ivory-300);
+    --color-onyx-50: oklch(23.55% 0.047 103.83);
+    --color-onyx-100: oklch(28.86% 0.058 103.73);
+    --color-onyx-200: oklch(45.50% 0.093 102.36);
+    --color-onyx-300: oklch(60.62% 0.125 102.37);
+    --color-onyx-400: oklch(74.72% 0.155 101.45);
+    --color-onyx-500: oklch(88.29% 0.183 101.63);
+    --color-onyx-600: oklch(90.15% 0.173 102.47);
+    --color-onyx-700: oklch(92.36% 0.145 103.34);
+    --color-onyx-800: oklch(94.68% 0.104 102.85);
+    --color-onyx-900: oklch(97.19% 0.053 102.73);
+    --color-onyx-950: oklch(98.51% 0.026 99.90);
+
+    --color-ivory-50: oklch(18.53% 0.010 145.15);
+    --color-ivory-100: oklch(22.10% 0.017 144.97);
+    --color-ivory-200: oklch(33.12% 0.031 144.85);
+    --color-ivory-300: oklch(43.12% 0.039 144.86);
+    --color-ivory-400: oklch(52.72% 0.050 144.82);
+    --color-ivory-500: oklch(61.89% 0.061 144.79);
+    --color-ivory-600: oklch(69.78% 0.047 145.05);
+    --color-ivory-700: oklch(77.52% 0.034 145.24);
+    --color-ivory-800: oklch(85.22% 0.024 145.36);
+    --color-ivory-900: oklch(92.67% 0.012 145.48);
+    --color-ivory-950: oklch(96.40% 0.005 145.54);
+
+    --color-ink: oklch(22.10% 0.017 144.97);
+    --color-ink-muted: oklch(43.12% 0.039 144.86);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root .text-onyx-300,
+  :root .text-onyx-400,
+  :root .text-onyx-500 {
+    color: var(--color-ivory-300);
   }
 
-  .technical-grid {
-    background-image: 
-      linear-gradient(to right, var(--color-ivory-300) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-ivory-300) 1px, transparent 1px);
+  :root .text-onyx-600 {
+    color: var(--color-ivory-400);
   }
 }
 
@@ -157,6 +183,32 @@ a {
     linear-gradient(to bottom, var(--color-onyx-800) 1px, transparent 1px);
 }
 
+.product-image--light {
+  display: none;
+}
+
+@media (prefers-color-scheme: light) {
+  .product-image--dark {
+    display: none;
+  }
+
+  .product-image--light {
+    display: block;
+  }
+
+  .threads-layer--dark {
+    display: none;
+  }
+
+  .threads-layer--light {
+    display: block;
+  }
+}
+
+.threads-layer--light {
+  display: none;
+}
+
 .shadow-soft {
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
 }
@@ -165,27 +217,6 @@ a {
   box-shadow: 0 18px 36px rgba(0, 0, 0, 0.3);
 }
 
-.nav-link {
-  position: relative;
-  padding-bottom: 6px;
-}
-
-.nav-link.is-active {
-  color: var(--color-spruce-400);
-}
-
-.nav-indicator {
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  height: 2px;
-  width: 0;
-  background: var(--color-spruce-400);
-  opacity: 0;
-  transform: translateX(0);
-  transition: transform 0.25s ease, width 0.25s ease, opacity 0.2s ease;
-  pointer-events: none;
-}
 
 @keyframes fade-up {
   from {

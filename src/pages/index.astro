@@ -47,10 +47,6 @@ const nav = [
           </nav>
         </div>
         <div class="flex items-center gap-4">
-          <div class="hidden sm:flex items-center gap-2 text-onyx-400 text-[10px] font-mono">
-            <span class="w-1.5 h-1.5 bg-spruce-400 animate-pulse-dot"></span>
-            Active
-          </div>
           <a
             href="#contact"
             class="hidden sm:flex h-9 items-center justify-center px-5 bg-spruce-400 text-onyx-950 text-[10px] font-bold tracking-wider hover:bg-spruce-300 transition-colors uppercase"
@@ -114,61 +110,6 @@ const nav = [
         scrollToSection(id);
       });
     });
-
-    // Section highlighting
-    const sections = links.map((link) => document.querySelector(`#${link.dataset.nav}`)).filter(Boolean);
-    const hero = document.querySelector("#hero");
-    
-    const visibility = new Map();
-
-    const setActive = (id) => {
-      links.forEach((link) => {
-        if (link.dataset.nav === id) {
-          link.classList.add("text-spruce-400");
-          link.classList.remove("text-onyx-400");
-        } else {
-          link.classList.remove("text-spruce-400");
-          link.classList.add("text-onyx-400");
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          visibility.set(entry.target.id, entry.intersectionRatio);
-        });
-
-        const heroVisible = visibility.get("hero") || 0;
-        
-        if (heroVisible > 0.3) {
-          setActive(null);
-          return;
-        }
-
-        let bestSection = null;
-        let bestRatio = 0;
-        
-        sections.forEach(section => {
-          const ratio = visibility.get(section.id) || 0;
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            bestSection = section.id;
-          }
-        });
-
-        if (bestSection && bestRatio > 0) {
-          setActive(bestSection);
-        }
-      },
-      { 
-        rootMargin: "-80px 0px -40% 0px",
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
-      }
-    );
-
-    sections.forEach(section => observer.observe(section));
-    if (hero) observer.observe(hero);
 
     document.querySelector("[data-contact-form]")?.addEventListener("submit", async (e) => {
       e.preventDefault();

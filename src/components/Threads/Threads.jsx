@@ -23,9 +23,9 @@ uniform vec2 uMouse;
 
 #define PI 3.1415926538
 
-const int u_line_count = 40;
-const float u_line_width = 7.0;
-const float u_line_blur = 10.0;
+const int u_line_count = 28;
+const float u_line_width = 14.0;
+const float u_line_blur = 18.0;
 
 float Perlin2D(vec2 P) {
     vec2 Pi = floor(P);
@@ -110,6 +110,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     }
 
     float colorVal = 1.0 - line_strength;
+    colorVal = pow(colorVal, 0.55);
+    colorVal = clamp(colorVal * 1.35, 0.0, 1.0);
     fragColor = vec4(uColor * colorVal, colorVal);
 }
 
@@ -132,11 +134,11 @@ const Threads = ({
     if (!containerRef.current) return;
     const container = containerRef.current;
 
-    const renderer = new Renderer({ alpha: true });
+    const renderer = new Renderer({ alpha: true, dpr: 2 });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     container.appendChild(gl.canvas);
 
     const geometry = new Triangle(gl);

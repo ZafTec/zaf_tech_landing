@@ -64,13 +64,32 @@ const startIndex = originalCount;
             >
               <div class="mx-2 border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
                 <div class="relative w-full aspect-video">
-                  <Image
-                    src={product.image}
-                    alt={`${product.name} - ${product.tagline}`}
-                    class="w-full h-full object-cover object-top"
-                    widths={[640, 960, 1280, 1600, 1920]}
-                    sizes="(max-width: 768px) 85vw, 800px"
-                  />
+                  {product.imageLight ? (
+                    <>
+                      <Image
+                        src={product.image}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top product-image--dark"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 85vw, 800px"
+                      />
+                      <Image
+                        src={product.imageLight}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top product-image--light"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 85vw, 800px"
+                      />
+                    </>
+                  ) : (
+                    <Image
+                      src={product.image}
+                      alt={`${product.name} - ${product.tagline}`}
+                      class="w-full h-full object-cover object-top"
+                      widths={[640, 960, 1280, 1600, 1920]}
+                      sizes="(max-width: 768px) 85vw, 800px"
+                    />
+                  )}
 
                   <div class="absolute inset-0 bg-onyx-950/30 pointer-events-none" aria-hidden="true"></div>
                   
