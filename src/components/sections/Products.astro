@@ -13,12 +13,12 @@ const originalCount = products.length;
 const startIndex = originalCount;
 ---
 
-<section id="products" class="py-16 md:py-24 px-6 md:px-12 bg-onyx-900">
-  <div class="max-w-6xl mx-auto">
+<section id="products" class="py-16 md:py-24 bg-onyx-900">
+  <div class="max-w-6xl mx-auto px-6 md:px-12">
     <!-- Section Header -->
     <div class="mb-12">
       <div class="flex items-center gap-3 mb-4">
-        <span class="text-spruce-400 font-mono text-sm">06 //</span>
+        <span class="text-spruce-400 font-mono text-sm">04 //</span>
         <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Our Products</span>
       </div>
       <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
@@ -33,7 +33,7 @@ const startIndex = originalCount;
       <!-- Navigation Buttons -->
       <button
         type="button"
-        class="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
+        class="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
         data-scroll="prev"
         aria-label="Previous product"
       >
@@ -42,49 +42,49 @@ const startIndex = originalCount;
 
       <button
         type="button"
-        class="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
+        class="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
         data-scroll="next"
         aria-label="Next product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
 
-      <!-- Scrolling Track -->
-      <div class="overflow-hidden px-10" data-carousel-viewport>
+      <!-- Scrolling Track with Snap -->
+      <div class="overflow-hidden" data-carousel-viewport>
         <div
-          class="flex transition-transform duration-500 ease-out"
+          class="flex transition-transform duration-500 ease-out snap-x snap-mandatory"
           data-carousel-track
           style="transform: translateX(0);"
         >
           {allProducts.map((product, index) => (
             <div
-              class="product-slide shrink-0 w-full"
+              class="product-slide shrink-0 snap-center"
               data-slide-index={index % originalCount}
               data-absolute-index={index}
             >
-              <div class="border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
-                <div class="relative w-full aspect-video md:aspect-21/9">
+              <div class="mx-2 border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
+                <div class="relative w-full aspect-video">
                   <Image
                     src={product.image}
                     alt={`${product.name} - ${product.tagline}`}
                     class="w-full h-full object-cover object-top"
                     widths={[640, 960, 1280, 1600, 1920]}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                    sizes="(max-width: 768px) 85vw, 800px"
                   />
 
-                  <div class="absolute inset-0 bg-onyx-950/70 pointer-events-none" aria-hidden="true"></div>
+                  <div class="absolute inset-0 bg-onyx-950/60 pointer-events-none" aria-hidden="true"></div>
 
-                  <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                    <div class="max-w-3xl">
-                      <p class="font-mono text-[10px] md:text-xs text-spruce-400 uppercase tracking-widest mb-2">{product.tagline}</p>
-                      <h3 class="text-xl md:text-2xl lg:text-3xl font-bold text-ivory-100 mb-3">{product.headline}</h3>
+                  <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+                    <div class="max-w-2xl">
+                      <p class="font-mono text-[10px] text-spruce-400 uppercase tracking-widest mb-2">{product.tagline}</p>
+                      <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-ivory-100 mb-2">{product.headline}</h3>
                       <p class="hidden md:block text-sm text-onyx-300 leading-relaxed mb-4">{product.description}</p>
 
                       <a
                         href={product.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide hover:bg-spruce-300 transition-colors"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide hover:bg-spruce-300 transition-colors"
                       >
                         Explore
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -115,9 +115,14 @@ const startIndex = originalCount;
 
 <style>
   .product-slide {
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding: 0 4px;
+    flex: 0 0 85%;
+    max-width: 800px;
+  }
+
+  @media (min-width: 768px) {
+    .product-slide {
+      flex: 0 0 80%;
+    }
   }
 
   .dot.active {
@@ -127,6 +132,11 @@ const startIndex = originalCount;
 
   [data-carousel-track] {
     will-change: transform;
+  }
+
+  [data-carousel-viewport] {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
   }
 </style>
 
@@ -151,11 +161,20 @@ const startIndex = originalCount;
       let autoScrollInterval;
       let isPaused = false;
 
-      const getSlideWidth = () => viewport?.offsetWidth || slides[0]?.offsetWidth || 0;
+      const getSlideWidth = () => {
+        const slide = slides[0];
+        return slide ? slide.offsetWidth + 16 : 0;
+      };
+
+      const getViewportCenter = () => {
+        return viewport.offsetWidth / 2;
+      };
 
       const goToSlide = (index) => {
         const slideWidth = getSlideWidth();
-        const offset = -index * slideWidth;
+        const viewportCenter = getViewportCenter();
+        const slideCenter = (slideWidth * index) + (slideWidth / 2) - 8;
+        const offset = viewportCenter - slideCenter;
         track.style.transform = `translateX(${offset}px)`;
         currentIndex = index;
         updateDots();
@@ -167,11 +186,10 @@ const startIndex = originalCount;
       };
 
       const checkBounds = () => {
-        const slideWidth = getSlideWidth();
         if (currentIndex < count) {
           track.style.transition = 'none';
           currentIndex += count;
-          track.style.transform = `translateX(${-currentIndex * slideWidth}px)`;
+          goToSlide(currentIndex);
           track.offsetHeight;
           track.style.transition = 'transform 0.5s ease-out';
           return;
@@ -179,7 +197,7 @@ const startIndex = originalCount;
         if (currentIndex >= count * 2) {
           track.style.transition = 'none';
           currentIndex -= count;
-          track.style.transform = `translateX(${-currentIndex * slideWidth}px)`;
+          goToSlide(currentIndex);
           track.offsetHeight;
           track.style.transition = 'transform 0.5s ease-out';
         }

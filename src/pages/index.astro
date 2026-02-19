@@ -37,14 +37,13 @@ const nav = [
           <nav class="hidden md:flex gap-6" data-nav-root>
             {nav.map((item) => (
               <a
-                class="text-[10px] font-mono text-onyx-400 hover:text-spruce-400 transition-colors uppercase tracking-widest nav-link"
+                class="text-[10px] font-mono text-onyx-400 hover:text-spruce-400 transition-colors uppercase tracking-widest"
                 href={item.href}
                 data-nav={item.href.replace("#", "")}
               >
                 {item.label}
               </a>
             ))}
-            <span class="nav-indicator" aria-hidden="true"></span>
           </nav>
         </div>
         <div class="flex items-center gap-4">
@@ -92,8 +91,6 @@ const nav = [
   </div>
 
   <script is:inline>
-    const navRoot = document.querySelector("[data-nav-root]");
-    const indicator = navRoot?.querySelector(".nav-indicator");
     const links = Array.from(document.querySelectorAll("[data-nav]"));
 
     const scrollToSection = (id) => {
@@ -117,77 +114,6 @@ const nav = [
         scrollToSection(id);
       });
     });
-
-    const setActive = (id) => {
-      links.forEach((link) => {
-        link.classList.toggle("is-active", link.dataset.nav === id);
-      });
-      updateIndicator();
-    };
-
-    const updateIndicator = () => {
-      if (!navRoot || !indicator) return;
-      const active = navRoot.querySelector(".nav-link.is-active");
-      if (!active) {
-        indicator.style.opacity = "0";
-        indicator.style.width = "0px";
-        return;
-      }
-      const rect = active.getBoundingClientRect();
-      const navRect = navRoot.getBoundingClientRect();
-      const left = rect.left - navRect.left;
-      indicator.style.opacity = "1";
-      indicator.style.width = `${rect.width}px`;
-      indicator.style.transform = `translateX(${left}px)`;
-    };
-
-    const sections = links.map((link) => document.querySelector(`#${link.dataset.nav}`)).filter(Boolean);
-    const hero = document.querySelector("#hero");
-    
-    const visibility = new Map();
-    let activeSection = null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          visibility.set(entry.target.id, entry.intersectionRatio);
-        });
-
-        const heroVisible = visibility.get("hero") || 0;
-        
-        if (heroVisible > 0.3) {
-          setActive(null);
-          return;
-        }
-
-        let bestSection = null;
-        let bestRatio = 0;
-        
-        sections.forEach(section => {
-          const ratio = visibility.get(section.id) || 0;
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            bestSection = section.id;
-          }
-        });
-
-        if (bestSection && bestRatio > 0) {
-          activeSection = bestSection;
-          setActive(bestSection);
-        } else if (activeSection) {
-          setActive(activeSection);
-        }
-      },
-      { 
-        rootMargin: "-80px 0px -40% 0px",
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
-      }
-    );
-
-    sections.forEach(section => observer.observe(section));
-    if (hero) observer.observe(hero);
-    
-    updateIndicator();
 
     document.querySelector("[data-contact-form]")?.addEventListener("submit", async (e) => {
       e.preventDefault();
