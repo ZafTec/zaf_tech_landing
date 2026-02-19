@@ -52,17 +52,17 @@
   --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  --color-onyx-50: oklch(95.85% 0.010 325.66);
-  --color-onyx-100: oklch(91.78% 0.022 325.76);
-  --color-onyx-200: oklch(83.52% 0.042 325.95);
-  --color-onyx-300: oklch(75.09% 0.067 326.22);
-  --color-onyx-400: oklch(66.64% 0.088 326.51);
-  --color-onyx-500: oklch(58.16% 0.114 326.92);
-  --color-onyx-600: oklch(49.62% 0.094 326.88);
-  --color-onyx-700: oklch(40.68% 0.076 326.86);
-  --color-onyx-800: oklch(31.24% 0.053 326.75);
-  --color-onyx-900: oklch(21% 0.032 326.64);
-  --color-onyx-950: oklch(17.81% 0.021 326.40);
+  --color-onyx-50: oklch(96.40% 0.005 145.54);
+  --color-onyx-100: oklch(92.67% 0.012 145.48);
+  --color-onyx-200: oklch(85.22% 0.024 145.36);
+  --color-onyx-300: oklch(77.52% 0.034 145.24);
+  --color-onyx-400: oklch(69.78% 0.047 145.05);
+  --color-onyx-500: oklch(61.89% 0.061 144.79);
+  --color-onyx-600: oklch(52.72% 0.050 144.82);
+  --color-onyx-700: oklch(43.12% 0.039 144.86);
+  --color-onyx-800: oklch(33.12% 0.031 144.85);
+  --color-onyx-900: oklch(22.10% 0.017 144.97);
+  --color-onyx-950: oklch(18.53% 0.010 145.15);
 
   --color-ivory-50: oklch(98.51% 0.026 99.90);
   --color-ivory-100: oklch(97.19% 0.053 102.73);
@@ -106,6 +106,23 @@
   scroll-padding-top: 0;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-ink: var(--color-onyx-900);
+    --color-ink-muted: var(--color-onyx-600);
+    --color-bg: var(--color-ivory-50);
+    --color-surface: var(--color-ivory-100);
+    --color-surface-2: var(--color-ivory-200);
+    --color-border: var(--color-ivory-300);
+  }
+
+  .technical-grid {
+    background-image: 
+      linear-gradient(to right, var(--color-ivory-300) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-ivory-300) 1px, transparent 1px);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -118,7 +135,7 @@ body {
 
 ::selection {
   background: var(--color-spruce-500);
-  color: var(--color-onyx-950);
+  color: var(--color-ivory-100);
 }
 
 section[id] {
