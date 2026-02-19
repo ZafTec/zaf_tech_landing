@@ -9,67 +9,67 @@ interface Props {
 const { team } = Astro.props;
 
 const roleIcons: Record<string, string> = {
-  "Backend and ML Lead": "memory",
+  "Backend and ML Lead": "psychology",
   "Backend and Database Lead": "storage",
   "Fullstack Architect and Cloud Lead": "dns",
-  "Frontend and UI/UX Lead": "grid_goldenratio",
+  "Frontend and UI/UX Lead": "palette",
 };
 
 const roleLabels: Record<string, string> = {
-  "Backend and ML Lead": "ALGORITHMS",
-  "Backend and Database Lead": "DATABASE",
-  "Fullstack Architect and Cloud Lead": "ARCHITECT",
-  "Frontend and UI/UX Lead": "INTERFACE",
+  "Backend and ML Lead": "ML Engineer",
+  "Backend and Database Lead": "Database Lead",
+  "Fullstack Architect and Cloud Lead": "Architect",
+  "Frontend and UI/UX Lead": "Design Lead",
 };
 
 const skillTags: Record<string, string[]> = {
   "Backend and ML Lead": ["Python", "TensorFlow", "PyTorch", "CUDA"],
   "Backend and Database Lead": ["PostgreSQL", "Redis", "MongoDB", "GraphQL"],
-  "Fullstack Architect and Cloud Lead": ["System_Design", "Cloud_Native", "Kubernetes"],
-  "Frontend and UI/UX Lead": ["React", "TypeScript", "Three.js", "Figma"],
+  "Fullstack Architect and Cloud Lead": ["System Design", "Cloud", "Kubernetes"],
+  "Frontend and UI/UX Lead": ["React", "TypeScript", "Figma"],
 };
 ---
 
-<section id="team" class="relative min-h-screen flex flex-col">
-  <!-- Section Header -->
-  <div class="border-b border-border-dim bg-void sticky top-20 z-40">
-    <div class="max-w-7xl mx-auto px-6 lg:px-24 py-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<section id="team" class="relative">
+  <!-- Sticky Section Header with Glass Effect -->
+  <div class="sticky top-16 z-40 border-b border-onyx-700 bg-onyx-950/80 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-6 md:px-12 py-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
-        <div class="font-mono text-primary text-sm mb-2">04 // AGENCY_INTELLIGENCE</div>
-        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ink uppercase">Operators</h2>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="text-spruce-400 font-mono text-sm">04 //</span>
+          <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Our Team</span>
+        </div>
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-ivory-100">The Operators</h2>
       </div>
-      <div class="font-mono text-xs text-ink-muted max-w-md text-right hidden md:block">
-        &gt; DEPLOYING UNIT SPECIFICATIONS<br/>
-        &gt; ACCESS LEVEL: PUBLIC_READ
+      <div class="font-mono text-xs text-onyx-400 hidden md:block">
+        {team.length} team members
       </div>
     </div>
   </div>
 
-  <!-- Grid Container -->
-  <div class="flex-1 w-full max-w-7xl mx-auto border-x border-border-dim">
-    <!-- Team Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border-dim border-b border-border-dim">
+  <!-- Team Grid -->
+  <div class="max-w-6xl mx-auto px-6 md:px-12 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {team.map((member: TeamMember, index: number) => {
-        const unitNum = String(index + 1).padStart(2, "0");
         const icon = roleIcons[member.role] || "person";
-        const roleLabel = roleLabels[member.role] || "OPERATOR";
+        const roleLabel = roleLabels[member.role] || "Team Member";
         const tags = skillTags[member.role] || [];
         
         return (
-          <article class="group relative h-[500px] md:h-[600px] flex flex-col justify-between bg-void hover:bg-onyx transition-colors duration-300 overflow-hidden">
-            <!-- Tech Header -->
-            <div class="p-6 md:p-8 flex justify-between items-start z-10">
+          <article class="group relative flex flex-col bg-onyx-900 border border-onyx-700 hover:border-spruce-400/30 transition-all duration-300 overflow-hidden">
+            <!-- Hover Top Border Accent -->
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-spruce-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-20"></div>
+
+            <!-- Header -->
+            <div class="p-5 flex justify-between items-start">
               <div class="flex flex-col gap-1">
-                <span class="font-mono text-xs text-ink-muted">ID: UNIT_{unitNum}</span>
-                <span class="font-mono text-primary text-sm font-bold tracking-wider bg-primary/10 px-2 py-1 w-fit">// {roleLabel}</span>
+                <span class="font-mono text-[10px] text-onyx-400 uppercase tracking-widest">{roleLabel}</span>
               </div>
-              <span class="material-symbols-outlined text-border-dim group-hover:text-primary transition-colors text-xl">{icon}</span>
+              <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 transition-colors text-xl">{icon}</span>
             </div>
 
             <!-- Image Container -->
-            <div class="absolute inset-0 top-20 flex items-end justify-center pointer-events-none">
-              <!-- Abstract Grid Background -->
-              <div class="absolute inset-x-6 bottom-0 h-3/4 border-x border-t border-border-dim/30 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.02)_50%,transparent_75%,transparent_100%)] bg-[length:4px_4px]"></div>
+            <div class="relative h-56 overflow-hidden">
               <Image
                 src={member.image}
                 alt={member.name}
@@ -79,83 +79,52 @@ const skillTags: Record<string, string[]> = {
                 quality={70}
                 loading="lazy"
                 decoding="async"
-                class="relative h-[80%] w-auto object-cover object-bottom filter-grayscale mix-blend-normal z-0"
+                class="h-full w-full object-cover object-top filter-grayscale"
                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
               />
-              <!-- Gradient Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-void via-void/80 to-transparent z-10 h-1/2 top-auto"></div>
+              <div class="absolute inset-0 bg-onyx-950/40 group-hover:bg-onyx-950/20 transition-colors"></div>
             </div>
 
             <!-- Content Footer -->
-            <div class="relative z-20 p-6 md:p-8 mt-auto border-t border-border-dim/0 group-hover:border-primary/30 transition-colors">
-              <h3 class="text-2xl md:text-3xl font-bold text-ink mb-4 group-hover:translate-x-2 transition-transform duration-300">
-                {member.name.split(" ")[0].toUpperCase()}
+            <div class="p-5 border-t border-onyx-700">
+              <h3 class="text-lg font-bold text-ivory-100 mb-3 group-hover:text-spruce-400 transition-colors">
+                {member.name}
               </h3>
-              <div class="space-y-3">
-                <div class="flex items-center gap-2">
-                  <span class="w-1 h-1 bg-primary rounded-full"></span>
-                  <p class="font-mono text-xs text-ink-muted tracking-wide uppercase">Specs_Loadout:</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <span class="font-mono text-[11px] text-ink border border-border-dim px-2 py-1 bg-onyx group-hover:border-primary/50 transition-colors">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+              <div class="flex flex-wrap gap-2">
+                {tags.slice(0, 3).map((tag) => (
+                  <span class="font-mono text-[10px] text-onyx-400 border border-onyx-700 px-2 py-0.5 group-hover:border-onyx-600 transition-colors">
+                    {tag}
+                  </span>
+                ))}
               </div>
-            </div>
-
-            <!-- Hover Corner Accents -->
-            <div class="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg fill="none" height="20" viewBox="0 0 20 20" width="20">
-                <path d="M0 0H20V20" stroke="#00E676" stroke-width="2"></path>
-              </svg>
             </div>
           </article>
         );
       })}
 
-      <!-- Recruitment / Join Card -->
-      <article class="group relative h-[500px] md:h-[600px] flex flex-col justify-center items-center bg-void hover:bg-onyx transition-colors duration-300 text-center p-8">
-        <!-- Dashed Border Box -->
-        <div class="absolute inset-6 border border-dashed border-border-dim group-hover:border-primary/40 transition-colors"></div>
-        
-        <div class="relative z-10 flex flex-col items-center gap-6">
-          <div class="w-20 h-20 rounded-full bg-onyx border border-border-dim flex items-center justify-center group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all duration-300">
-            <span class="material-symbols-outlined text-border-dim group-hover:text-primary text-4xl">add</span>
+      <!-- Career / Join Card -->
+      <article class="group relative flex flex-col justify-center items-center bg-onyx-900/50 border border-dashed border-onyx-600 hover:border-spruce-400/50 transition-all duration-300 text-center p-8 min-h-[400px]">
+        <div class="relative z-10 flex flex-col items-center gap-5">
+          <div class="w-16 h-16 rounded-full border border-onyx-600 flex items-center justify-center group-hover:border-spruce-400 group-hover:bg-onyx-800 transition-all duration-300">
+            <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 text-3xl transition-colors">add</span>
           </div>
           
           <div class="space-y-2">
-            <span class="font-mono text-xs text-red-500 bg-red-500/10 px-2 py-1 animate-pulse">STATUS: OFFLINE</span>
-            <h3 class="text-xl md:text-2xl font-bold text-ink">UNIT_05_EMPTY</h3>
-            <p class="font-mono text-xs text-ink-muted max-w-[200px] mx-auto">
-              &gt; Slot available for highly specialized talent.
+            <span class="font-mono text-[10px] text-spruce-400 uppercase tracking-widest">We're Hiring</span>
+            <h3 class="text-xl font-bold text-ivory-100">Join Our Team</h3>
+            <p class="font-mono text-xs text-onyx-400 max-w-[200px] mx-auto">
+              Looking for talented engineers to join our mission.
             </p>
           </div>
           
-          <a href="#contact" class="mt-4 font-mono text-sm text-primary hover:text-void border border-primary hover:bg-primary px-6 py-3 transition-all duration-300 uppercase tracking-widest font-bold">
-            [ Initiate Application ]
+          <a 
+            href="/careers" 
+            class="mt-2 font-mono text-xs text-spruce-400 hover:text-ivory-100 border border-spruce-400/50 hover:bg-spruce-400 hover:border-spruce-400 px-5 py-2.5 transition-all duration-300 uppercase tracking-wider"
+          >
+            View Openings
           </a>
         </div>
-
-        <!-- Background Tech Pattern -->
-        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#333 1px, transparent 1px); background-size: 20px 20px;"></div>
       </article>
-    </div>
-  </div>
-
-  <!-- Terminal Footer -->
-  <div class="bg-onyx border-t border-border-dim py-4 px-6 md:px-24 mt-auto max-w-7xl mx-auto w-full">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-ink-muted">
-      <div class="flex items-center gap-4">
-        <span class="text-primary">&gt; SYSTEM_LOG:</span>
-        <span>Loaded {team.length} operator profiles.</span>
-      </div>
-      <div class="flex gap-6">
-        <span class="cursor-pointer hover:text-ink transition-colors">privacy_protocol.md</span>
-        <span class="cursor-pointer hover:text-ink transition-colors">terms_of_service.txt</span>
-      </div>
     </div>
   </div>
 </section>

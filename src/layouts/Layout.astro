@@ -2,8 +2,8 @@
 import "@/styles/global.css";
 
 const {
-  title = "ZafTech | Full-stack Development & Machine Learning",
-  description = "Full-stack engineering & ML solutions for high-stakes environments. Precision over marketing.",
+  title = "Zaftech Solutions | Full-stack Development & Machine Learning",
+  description = "Full-stack engineering & ML solutions for high-stakes environments.",
 } = Astro.props;
 ---
 <!doctype html>
@@ -18,6 +18,8 @@ const {
     <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
       href="/fonts/plus-jakarta-sans/plus-jakarta-sans-400.woff2"
@@ -39,13 +41,6 @@ const {
       type="font/woff2"
       crossorigin
     />
-    <link
-      rel="preload"
-      href="/fonts/jetbrains-mono/jetbrains-mono-500.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
 
     <title>{title}</title>
 
@@ -57,7 +52,7 @@ const {
       gtag('config', 'G-7C4HBS7YTG');
     </script>
   </head>
-  <body class="bg-void text-ink antialiased selection:bg-primary selection:text-void">
+  <body class="bg-onyx-950 text-ivory-100 antialiased selection:bg-spruce-500 selection:text-onyx-950">
     <slot />
   </body>
 </html>

@@ -7,63 +7,63 @@ interface Props {
 
 const { features } = Astro.props;
 
-const featureIcons: string[] = ["layers", "neurology", "dns", "storage"];
+const featureIcons: string[] = ["layers", "psychology", "dns", "storage"];
 ---
 
-<section id="features" class="py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-onyx">
-  <div class="max-w-7xl mx-auto">
+<section id="features" class="py-16 md:py-24 px-6 md:px-12 bg-onyx-900">
+  <div class="max-w-6xl mx-auto">
     <!-- Section Header -->
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between border-b border-border-dim pb-4">
-      <h2 class="text-primary font-mono text-lg sm:text-xl tracking-tight">03 // SYSTEM_SPECS</h2>
-      <span class="hidden sm:block text-ink-muted font-mono text-xs text-right max-w-[200px] leading-tight mt-2 sm:mt-0">
-        &lt;capability_matrix&gt;<br/>
-        all systems operational
-      </span>
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-spruce-400 font-mono text-sm">08 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Why Us</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
+        Built Different
+      </h2>
+      <p class="text-onyx-300 max-w-xl text-lg">
+        Engineering practices that set us apart.
+      </p>
     </div>
 
     <!-- Features Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border-dim border border-border-dim">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {features.map((feature: Feature, index: number) => {
-        const num = String(index + 1).padStart(2, "0");
         const icon = featureIcons[index] || "check_circle";
         
         return (
-          <div class="group relative flex flex-col p-6 md:p-8 bg-void hover:bg-onyx-hover transition-colors duration-200 cursor-crosshair min-h-[280px]">
+          <div class="group relative flex flex-col p-6 bg-onyx-950 border border-onyx-700 hover:border-spruce-400/30 transition-all duration-200">
             <!-- Hover Top Border Accent -->
-            <div class="absolute top-0 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-spruce-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
 
-            <div class="flex justify-between items-start mb-auto">
-              <span class="font-mono text-muted text-xs group-hover:text-primary transition-colors">[ {num} ]</span>
-              <span class="material-symbols-outlined text-primary text-3xl opacity-80 group-hover:opacity-100 transition-opacity">{icon}</span>
+            <div class="flex justify-between items-start mb-4">
+              <span class="font-mono text-xs text-onyx-500 group-hover:text-spruce-400 transition-colors">[ 0{index + 1} ]</span>
+              <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 text-2xl transition-colors">{icon}</span>
             </div>
 
-            <div class="space-y-3 mt-6">
-              <h3 class="text-xl font-bold text-ink tracking-tight group-hover:translate-x-1 transition-transform duration-200">
-                {feature.title}
-              </h3>
-              
-              <div class="h-px w-6 bg-border-dim group-hover:w-12 group-hover:bg-primary/30 transition-all duration-300"></div>
-              
-              <p class="font-mono text-sm text-ink-muted leading-relaxed">
-                {feature.body}
-              </p>
-            </div>
+            <h3 class="text-lg font-bold text-ivory-100 mb-3 group-hover:text-spruce-400 transition-colors">
+              {feature.title}
+            </h3>
+            
+            <p class="text-onyx-400 text-sm leading-relaxed">
+              {feature.body}
+            </p>
           </div>
         );
       })}
     </div>
 
     <!-- Stats Row -->
-    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
       {[
         { label: "Projects Deployed", value: "50+" },
         { label: "Uptime Guarantee", value: "99.9%" },
-        { label: "Response Time", value: "<12h" },
+        { label: "Response Time", value: "<24h" },
         { label: "Code Coverage", value: "95%" },
       ].map((stat) => (
-        <div class="border border-border-dim bg-void p-4 text-center hover:border-primary/30 transition-colors">
-          <p class="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-          <p class="font-mono text-xs text-ink-muted mt-1 uppercase tracking-wide">{stat.label}</p>
+        <div class="text-center">
+          <p class="text-2xl md:text-3xl font-bold text-spruce-400">{stat.value}</p>
+          <p class="font-mono text-[10px] text-onyx-400 mt-1 uppercase tracking-widest">{stat.label}</p>
         </div>
       ))}
     </div>

@@ -1,0 +1,299 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+export const prerender = true;
+
+const positions = [
+  {
+    title: "Full-Stack Engineer",
+    department: "Engineering",
+    location: "Remote / Addis Ababa",
+    type: "Full-time",
+    description: "Build and maintain full-stack applications using modern frameworks and cloud infrastructure.",
+    requirements: ["3+ years experience with React/Next.js", "Strong TypeScript skills", "Experience with Node.js and databases", "Familiarity with cloud platforms (AWS/GCP)"],
+  },
+  {
+    title: "Machine Learning Engineer",
+    department: "AI/ML",
+    location: "Remote / Addis Ababa",
+    type: "Full-time",
+    description: "Design and implement ML models and AI-powered solutions for enterprise clients.",
+    requirements: ["3+ years in ML/AI", "Strong Python and PyTorch/TensorFlow skills", "Experience with LLMs and RAG systems", "Understanding of MLOps practices"],
+  },
+  {
+    title: "DevOps Engineer",
+    department: "Infrastructure",
+    location: "Remote / Addis Ababa",
+    type: "Full-time",
+    description: "Build and maintain CI/CD pipelines, infrastructure, and deployment automation.",
+    requirements: ["3+ years in DevOps/SRE roles", "Strong Kubernetes and Docker experience", "Terraform/IaC expertise", "Security-first mindset"],
+  },
+];
+---
+
+<Layout title="Careers | Zaftech Solutions">
+  <div class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 border-b border-onyx-700 bg-onyx-950/95 backdrop-blur-sm">
+      <div class="px-6 md:px-12 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-6">
+          <a href="/" class="flex items-center gap-2">
+            <div class="w-2 h-2 bg-spruce-400"></div>
+            <span class="text-ivory-100 text-sm font-bold tracking-wider">Zaftech Solutions</span>
+          </a>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-[10px] font-mono text-onyx-400 hover:text-spruce-400 transition-colors uppercase tracking-widest">
+            Back to Home
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="pt-20 pb-16 flex-grow">
+      <!-- Hero Section -->
+      <section class="py-16 md:py-24 px-6 md:px-12 relative">
+        <div class="absolute inset-0 technical-grid opacity-[0.05] pointer-events-none"></div>
+        
+        <div class="max-w-6xl mx-auto relative z-10">
+          <div class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-spruce-400 font-mono text-sm">Careers</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-ivory-100 mb-4">
+              Join Our Team
+            </h1>
+            <p class="text-onyx-300 max-w-xl text-lg leading-relaxed">
+              We're looking for talented engineers who want to build impactful systems. 
+              Remote-first, competitive compensation, meaningful work.
+            </p>
+          </div>
+
+          <!-- Values -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            <div class="p-6 border border-onyx-700 bg-onyx-900">
+              <span class="material-symbols-outlined text-spruce-400 text-2xl mb-3">rocket_launch</span>
+              <h3 class="text-lg font-bold text-ivory-100 mb-2">Growth</h3>
+              <p class="text-onyx-400 text-sm">Work on challenging projects that push your skills forward.</p>
+            </div>
+            <div class="p-6 border border-onyx-700 bg-onyx-900">
+              <span class="material-symbols-outlined text-spruce-400 text-2xl mb-3">home_work</span>
+              <h3 class="text-lg font-bold text-ivory-100 mb-2">Flexibility</h3>
+              <p class="text-onyx-400 text-sm">Remote-first culture with flexible hours and async communication.</p>
+            </div>
+            <div class="p-6 border border-onyx-700 bg-onyx-900">
+              <span class="material-symbols-outlined text-spruce-400 text-2xl mb-3">payments</span>
+              <h3 class="text-lg font-bold text-ivory-100 mb-2">Compensation</h3>
+              <p class="text-onyx-400 text-sm">Competitive rates and equity opportunities for key roles.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Open Positions -->
+      <section class="px-6 md:px-12">
+        <div class="max-w-6xl mx-auto">
+          <h2 class="text-2xl md:text-3xl font-bold text-ivory-100 mb-8">Open Positions</h2>
+          
+          <div class="space-y-6">
+            {positions.map((position, index) => (
+              <div class="border border-onyx-700 bg-onyx-900 overflow-hidden">
+                <div class="p-6 md:p-8">
+                  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+                    <div>
+                      <h3 class="text-xl font-bold text-ivory-100 mb-2">{position.title}</h3>
+                      <div class="flex flex-wrap gap-3 text-xs font-mono text-onyx-400">
+                        <span class="flex items-center gap-1">
+                          <span class="material-symbols-outlined text-sm">apartment</span>
+                          {position.department}
+                        </span>
+                        <span class="flex items-center gap-1">
+                          <span class="material-symbols-outlined text-sm">location_on</span>
+                          {position.location}
+                        </span>
+                        <span class="flex items-center gap-1">
+                          <span class="material-symbols-outlined text-sm">schedule</span>
+                          {position.type}
+                        </span>
+                      </div>
+                    </div>
+                    <a
+                      href={`#apply-${index}`}
+                      class="inline-flex items-center justify-center px-5 py-2.5 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide uppercase hover:bg-spruce-300 transition-colors"
+                    >
+                      Apply Now
+                    </a>
+                  </div>
+                  
+                  <p class="text-onyx-300 mb-6">{position.description}</p>
+                  
+                  <div>
+                    <h4 class="font-mono text-[10px] uppercase tracking-widest text-onyx-500 mb-3">Requirements</h4>
+                    <ul class="space-y-2">
+                      {position.requirements.map((req) => (
+                        <li class="flex items-start gap-2 text-sm text-onyx-400">
+                          <span class="text-spruce-400 mt-0.5">•</span>
+                          {req}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Application Form -->
+      <section id="apply-0" class="py-16 md:py-24 px-6 md:px-12 mt-8 bg-onyx-900">
+        <div class="max-w-3xl mx-auto">
+          <div class="mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-ivory-100 mb-4">Submit Your Application</h2>
+            <p class="text-onyx-400">Fill out the form below and we'll get back to you within 48 hours.</p>
+          </div>
+
+          <form action="/api/careers" method="post" class="space-y-6" data-careers-form>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="name">Name *</label>
+                <input
+                  class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 transition-all duration-200"
+                  id="name"
+                  name="name"
+                  placeholder="Your full name"
+                  required
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="email">Email *</label>
+                <input
+                  class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 transition-all duration-200"
+                  id="email"
+                  name="email"
+                  placeholder="name@email.com"
+                  required
+                  type="email"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="phone">Phone</label>
+                <input
+                  class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 transition-all duration-200"
+                  id="phone"
+                  name="phone"
+                  placeholder="+251 9X XXX XXXX"
+                  type="tel"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="position">Position *</label>
+                <div class="relative">
+                  <select
+                    class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 appearance-none cursor-pointer transition-all duration-200"
+                    id="position"
+                    name="position"
+                    required
+                  >
+                    <option disabled selected value="">Select position...</option>
+                    <option value="Full-Stack Engineer">Full-Stack Engineer</option>
+                    <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                    <option value="DevOps Engineer">DevOps Engineer</option>
+                    <option value="General Application">General Application</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-onyx-400">
+                    <span class="material-symbols-outlined">expand_more</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="experience">Years of Experience</label>
+                <input
+                  class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 transition-all duration-200"
+                  id="experience"
+                  name="experience"
+                  placeholder="e.g., 5 years"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="portfolio">Portfolio / GitHub</label>
+                <input
+                  class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 transition-all duration-200"
+                  id="portfolio"
+                  name="portfolio"
+                  placeholder="https://github.com/username"
+                  type="url"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block font-mono text-[10px] uppercase tracking-widest text-onyx-400" for="message">Tell us about yourself</label>
+              <textarea
+                class="w-full bg-onyx-950 border border-onyx-700 text-ivory-100 px-4 py-3 placeholder-onyx-500/50 resize-none transition-all duration-200"
+                id="message"
+                name="message"
+                placeholder="Why do you want to join Zaftech? What projects have you worked on?"
+                rows="5"
+              ></textarea>
+            </div>
+
+            <div class="pt-2">
+              <button
+                class="w-full md:w-auto px-10 py-4 bg-spruce-400 text-onyx-950 font-bold uppercase tracking-widest text-sm hover:bg-spruce-300 transition-all flex items-center justify-center gap-3 group"
+                type="submit"
+              >
+                <span>Submit Application</span>
+                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              </button>
+              <p class="mt-4 font-mono text-[10px] text-onyx-500">
+                We review all applications and respond within 48 hours.
+              </p>
+              <p class="font-mono text-[10px] text-onyx-400 mt-2" data-form-status></p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-onyx-700 py-8 px-6 md:px-12 mt-auto">
+      <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-onyx-400">
+        <span class="text-spruce-400">2026 Zaftech Solutions</span>
+        <a href="/" class="hover:text-spruce-400 transition-colors">Back to Home</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Material Icons Link -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <script is:inline>
+    document.querySelector("[data-careers-form]")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = document.querySelector("[data-form-status]");
+      if (status) status.textContent = "Submitting...";
+      
+      try {
+        const response = await fetch("/api/careers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(new FormData(e.target))),
+        });
+        if (!response.ok) throw new Error("Failed");
+        e.target.reset();
+        if (status) status.textContent = "Application submitted! We'll be in touch within 48 hours.";
+      } catch {
+        if (status) status.textContent = "Something went wrong. Please try again or email contact@zaftech.co";
+      }
+    });
+  </script>
+</Layout>

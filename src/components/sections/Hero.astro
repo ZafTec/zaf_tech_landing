@@ -2,167 +2,94 @@
 import Threads from "@/components/Threads/Threads.jsx";
 ---
 
-<section id="hero" class="relative w-full overflow-hidden min-h-screen flex flex-col lg:flex-row">
-  <!-- Background Grid -->
-  <div class="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none z-0"></div>
-  
-  <!-- Threads Background -->
+<section id="hero" class="relative w-full overflow-hidden" style="min-height: calc(100vh - 64px); max-height: calc(100vh - 64px);">
+  <!-- Threads Background with Glass Effect -->
   <div class="absolute inset-0 z-0">
-    <Threads
-      client:load
-      color={[0, 0.9, 0.46]}
-      amplitude={0.8}
-      distance={0}
-      enableMouseInteraction={true}
-    />
-    <div class="absolute inset-0 bg-void/70"></div>
+    <!-- Base background -->
+    <div class="absolute inset-0 bg-onyx-950"></div>
+    
+    <!-- Threads Animation - mouse interactive -->
+    <div class="absolute inset-0 opacity-40">
+      <Threads
+        client:load
+        color={[0.45, 0.59, 0.64]}
+        amplitude={0.8}
+        distance={0}
+        enableMouseInteraction={true}
+      />
+    </div>
+    
+    <!-- Glass overlay to make threads visible through it -->
+    <div class="absolute inset-0 bg-onyx-950/70 backdrop-blur-[2px]"></div>
   </div>
 
-  <!-- Left Column: Typography & CTAs -->
-  <section class="relative z-10 w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-12 md:px-20 py-24 lg:py-0 border-b lg:border-b-0 lg:border-r border-border-dim bg-void/80 backdrop-blur-sm">
-    <!-- Terminal Breadcrumbs -->
-    <div class="font-mono text-primary text-sm mb-6 flex items-center gap-2 reveal">
-      <span class="text-muted">root</span>
-      <span class="text-border-dim">/</span>
-      <span class="text-muted">home</span>
-      <span class="text-border-dim">/</span>
-      <span class="font-bold">&gt; execute_protocol</span>
-    </div>
+  <!-- Background Grid -->
+  <div class="absolute inset-0 technical-grid opacity-[0.07] pointer-events-none z-0"></div>
 
-    <!-- Main Headline -->
-    <div class="mb-6 relative reveal delay-1">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-ink">
-        Fortified<br/>
-        <span class="relative inline-flex items-center">
-          Execution
-          <span class="animate-blink ml-1 w-3 h-10 sm:h-14 bg-primary inline-block align-middle"></span>
-        </span>
-      </h1>
-    </div>
-
-    <!-- Subheadline -->
-    <p class="text-base sm:text-lg text-ink-muted max-w-lg leading-relaxed mb-10 reveal delay-2">
-      Full-stack engineering & ML solutions for high-stakes environments. 
-      Precision over marketing.
-    </p>
-
-    <!-- CTA Group -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 reveal delay-3">
-      <a
-        href="#contact"
-        class="group relative inline-flex items-center justify-center px-8 py-4 bg-primary text-void font-bold text-sm tracking-wide uppercase transition-all duration-200 hover:bg-white hover:text-void focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-void"
-      >
-        <span class="mr-2 font-mono text-lg leading-none">[</span>
-        INITIATE PROJECT
-        <span class="ml-2 font-mono text-lg leading-none">]</span>
-      </a>
-      <a 
-        href="#products" 
-        class="group flex items-center gap-2 text-ink font-mono text-sm hover:text-primary transition-colors duration-200 py-2"
-      >
-        <span class="text-primary group-hover:translate-x-1 transition-transform duration-200">&gt;</span>
-        <span class="border-b border-transparent group-hover:border-primary">View Products</span>
-      </a>
-    </div>
-
-    <!-- Technical Footer Metadata -->
-    <div class="mt-16 sm:mt-24 font-mono text-xs text-muted flex gap-6 reveal delay-4">
-      <div>
-        <span class="block text-border-dim mb-1">LATENCY</span>
-        <span class="text-ink">12ms</span>
+  <div class="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16" style="min-height: calc(100vh - 64px);">
+    <div class="max-w-6xl mx-auto w-full">
+      <!-- Section Label -->
+      <div class="flex items-center gap-3 mb-6 reveal">
+        <span class="text-spruce-400 font-mono text-sm">01 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Engineering Excellence</span>
       </div>
-      <div>
-        <span class="block text-border-dim mb-1">REGION</span>
-        <span class="text-ink">US-EAST-1</span>
-      </div>
-      <div>
-        <span class="block text-border-dim mb-1">ENCRYPTION</span>
-        <span class="text-ink">AES-256</span>
-      </div>
-    </div>
-  </section>
 
-  <!-- Right Column: Code Visual -->
-  <section class="relative z-10 w-full lg:w-1/2 bg-onyx flex items-center justify-center overflow-hidden min-h-[400px] lg:min-h-auto">
-    <div class="relative w-full h-full flex items-center justify-center p-8 lg:p-12">
-      <!-- Corner Decorations -->
-      <div class="absolute top-8 left-8 w-4 h-4 border-l border-t border-primary/50"></div>
-      <div class="absolute top-8 right-8 w-4 h-4 border-r border-t border-primary/50"></div>
-      <div class="absolute bottom-8 left-8 w-4 h-4 border-l border-b border-primary/50"></div>
-      <div class="absolute bottom-8 right-8 w-4 h-4 border-r border-b border-primary/50"></div>
+      <!-- Main Headline -->
+      <div class="mb-6 reveal delay-1">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-ivory-100">
+          Build systems<br/>
+          <span class="text-spruce-400">that scale</span>
+        </h1>
+      </div>
 
-      <!-- Terminal Window -->
-      <div class="relative w-full max-w-lg aspect-square bg-gradient-to-tr from-onyx-hover to-void border border-border-dim shadow-2xl">
-        <!-- Window Header -->
-        <div class="h-8 bg-void border-b border-border-dim flex items-center px-3 gap-1.5">
-          <div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
-          <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
-          <div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-          <div class="ml-auto font-mono text-[10px] text-muted">bash - 80x24</div>
+      <!-- Subheadline -->
+      <p class="text-base sm:text-lg text-onyx-300 max-w-xl leading-relaxed mb-10 reveal delay-2">
+        Full-stack engineering and machine learning solutions for organizations that demand reliability, 
+        security, and performance at scale.
+      </p>
+
+      <!-- CTA Group -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 reveal delay-3">
+        <a
+          href="#contact"
+          class="inline-flex items-center justify-center px-8 py-4 bg-spruce-400 text-onyx-950 font-bold text-sm tracking-wide uppercase transition-all duration-200 hover:bg-spruce-300"
+        >
+          Start a Project
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <a 
+          href="#services" 
+          class="group flex items-center gap-2 text-ivory-100 text-sm hover:text-spruce-400 transition-colors py-2"
+        >
+          <span class="border-b border-transparent group-hover:border-spruce-400">View Capabilities</span>
+        </a>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="mt-16 pt-8 border-t border-onyx-800 grid grid-cols-2 md:grid-cols-4 gap-6 reveal delay-4">
+        <div>
+          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">50+</span>
+          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Projects Delivered</span>
         </div>
-
-        <!-- Code Content -->
-        <div class="p-4 font-mono text-xs sm:text-sm leading-relaxed overflow-hidden">
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">01</span>
-            <span class="text-primary">import</span> <span class="text-ink">zaftech_core</span> <span class="text-primary">as</span> <span class="text-ink">zt</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">02</span>
-            <span class="text-muted">// Initializing secure handshake</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">03</span>
-            <span class="text-purple-400">class</span> <span class="text-yellow-300">FortifiedSystem</span>(<span class="text-ink">zt.Base</span>):
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">04</span>
-            <span class="pl-4 text-purple-400">def</span> <span class="text-blue-400">__init__</span>(<span class="text-orange-300">self</span>):
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">05</span>
-            <span class="pl-8 text-orange-300">self</span>.<span class="text-ink">status</span> = <span class="text-green-400">"OPTIMAL"</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">06</span>
-            <span class="pl-8 text-orange-300">self</span>.<span class="text-ink">security_level</span> = <span class="text-blue-300">MAX_INT</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">07</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">08</span>
-            <span class="pl-4 text-purple-400">async def</span> <span class="text-blue-400">deploy</span>(<span class="text-orange-300">self</span>):
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">09</span>
-            <span class="pl-8 text-primary">await</span> <span class="text-ink">zt.execute</span>({
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">10</span>
-            <span class="pl-12 text-ink">target:</span> <span class="text-green-400">"production"</span>,
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">11</span>
-            <span class="pl-12 text-ink">mode:</span> <span class="text-green-400">"stealth"</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="text-muted select-none w-6">12</span>
-            <span class="pl-8">})</span>
-          </div>
-          <div class="flex gap-2 mt-4 animate-pulse">
-            <span class="text-muted select-none w-6">13</span>
-            <span class="text-primary">&gt; System ready. Waiting for input..._</span>
-          </div>
+        <div>
+          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">99.9%</span>
+          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Uptime</span>
         </div>
-
-        <!-- Glow Effect -->
-        <div class="absolute -inset-1 bg-primary/20 blur-xl -z-10 opacity-50"></div>
-      </div>
-
-      <div class="absolute bottom-12 right-12 font-mono text-[10px] text-primary/50 tracking-widest">
-        COORD: 9.03, 38.74
+        <div>
+          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">&lt;24h</span>
+          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Response Time</span>
+        </div>
+        <div>
+          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">4+</span>
+          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Years Experience</span>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Corner Decorations -->
+  <div class="absolute top-8 left-8 w-4 h-4 border-l border-t border-onyx-600 z-20"></div>
+  <div class="absolute top-8 right-8 w-4 h-4 border-r border-t border-onyx-600 z-20"></div>
+  <div class="absolute bottom-8 left-8 w-4 h-4 border-l border-b border-onyx-600 z-20"></div>
+  <div class="absolute bottom-8 right-8 w-4 h-4 border-r border-b border-onyx-600 z-20"></div>
 </section>

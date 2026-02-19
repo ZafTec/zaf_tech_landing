@@ -1,93 +1,136 @@
 ---
 
+const tabs = [
+  {
+    id: "fullstack",
+    icon: "code",
+    title: "Full-Stack Engineering",
+    description: "Frontend design and development, scalable APIs, microservices, and server architecture built for performance and maintainability.",
+    stack: ["React", "Next.js", "Node.js", "PostgreSQL", "GraphQL"],
+  },
+  {
+    id: "ml",
+    icon: "psychology",
+    title: "Machine Learning",
+    description: "Custom ML models, RAG systems, and AI-powered applications that learn and adapt. From prototyping to production deployment.",
+    stack: ["Python", "TensorFlow", "PyTorch", "OpenAI", "LangChain"],
+  },
+  {
+    id: "cloud",
+    icon: "cloud",
+    title: "Cloud Infrastructure",
+    description: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling. Infrastructure as code for reproducible environments.",
+    stack: ["AWS", "Docker", "Kubernetes", "Terraform", "GitHub Actions"],
+  },
+  {
+    id: "security",
+    icon: "security",
+    title: "Security & DevOps",
+    description: "CI/CD pipelines, penetration testing, and automated workflows. Building secure systems from the ground up.",
+    stack: ["CI/CD", "InfoSec", "Vault", "SonarQube", "OWASP"],
+  },
+];
+
+const activeTab = "fullstack";
 ---
 
-<section id="about" class="py-16 md:py-24 px-4 sm:px-6 md:px-12 lg:px-24 relative overflow-hidden">
+<section id="about" class="py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
   <!-- Background Grid -->
-  <div class="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+  <div class="absolute inset-0 technical-grid opacity-[0.05] pointer-events-none"></div>
 
-  <div class="max-w-7xl mx-auto relative z-10">
+  <div class="max-w-6xl mx-auto relative z-10">
     <!-- Section Header -->
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between border-b border-border-dim pb-4">
-      <h2 class="text-primary font-mono text-lg sm:text-xl tracking-tight">05 // ABOUT_PROTOCOL</h2>
-      <span class="hidden sm:block text-ink-muted font-mono text-xs text-right max-w-[200px] leading-tight mt-2 sm:mt-0">
-        &lt;mission_statement&gt;<br/>
-        initialized
-      </span>
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-spruce-400 font-mono text-sm">02 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">What We Do</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
+        Expertise that delivers
+      </h2>
+      <p class="text-onyx-300 max-w-xl text-lg leading-relaxed">
+        End-to-end solutions from concept to deployment. Select an area to learn more.
+      </p>
     </div>
 
-    <div class="grid gap-8 lg:gap-12 lg:grid-cols-2 items-center">
-      <!-- Content -->
-      <div class="space-y-6">
-        <div class="space-y-4">
-          <p class="text-ink-muted font-mono text-sm">&gt; loading company_profile...</p>
-          <h3 class="text-3xl md:text-4xl font-bold text-ink leading-tight">
-            Engineering teams that ship production systems.
-          </h3>
-          <p class="text-base text-ink-muted leading-relaxed">
-            We combine deep technical expertise with product thinking. Every engagement includes senior engineers, iterative delivery, and maintainable architecture. No marketing fluff - just code that works.
-          </p>
-        </div>
-
-        <!-- Tech Stack Grid -->
-        <div class="grid grid-cols-2 gap-3">
-          {[
-            { icon: "code", label: "Full-Stack Engineering" },
-            { icon: "psychology", label: "Machine Learning" },
-            { icon: "cloud", label: "Cloud Infrastructure" },
-            { icon: "security", label: "Security & DevOps" },
-          ].map((item) => (
-            <div class="group flex items-center gap-3 p-4 border border-border-dim bg-void hover:border-primary/30 hover:bg-onyx transition-all duration-200">
-              <span class="material-symbols-outlined text-primary text-xl">{item.icon}</span>
-              <span class="font-mono text-xs text-ink group-hover:text-primary transition-colors">{item.label}</span>
+    <div class="grid gap-8 lg:grid-cols-2 items-start">
+      <!-- Tab Navigation -->
+      <div class="space-y-3" data-tabs-nav>
+        {tabs.map((tab, index) => (
+          <button
+            type="button"
+            data-tab-btn={tab.id}
+            class={`w-full flex items-center gap-4 p-5 border transition-all duration-200 text-left ${
+              index === 0 
+                ? 'bg-onyx-800 border-spruce-400/50' 
+                : 'bg-onyx-900 border-onyx-700 hover:bg-onyx-800 hover:border-onyx-600'
+            }`}
+          >
+            <span class={`material-symbols-outlined text-2xl ${index === 0 ? 'text-spruce-400' : 'text-onyx-400'}`}>
+              {tab.icon}
+            </span>
+            <div class="flex-1">
+              <h3 class={`font-semibold ${index === 0 ? 'text-ivory-100' : 'text-onyx-300'}`}>
+                {tab.title}
+              </h3>
             </div>
-          ))}
-        </div>
-
-        <!-- Console Output -->
-        <div class="font-mono text-xs text-ink-muted space-y-1 border-l-2 border-primary/30 pl-4">
-          <p>&gt; stack: [REACT, NODE, PYTHON, AWS]</p>
-          <p>&gt; methodology: AGILE_ITERATIVE</p>
-          <p>&gt; status: ACCEPTING_NEW_CLIENTS</p>
-        </div>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              stroke-width="2" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"
+              class={`transition-transform ${index === 0 ? 'text-spruce-400' : 'text-onyx-500'}`}
+              data-tab-arrow={tab.id}
+            >
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        ))}
       </div>
 
-      <!-- Terminal Window Visual -->
-      <div class="relative">
-        <div class="bg-onyx border border-border-dim shadow-2xl">
-          <!-- Window Header -->
-          <div class="bg-[#222] border-b border-border-dim px-4 py-2 flex items-center gap-2">
-            <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
-            <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
-            <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
-            <span class="ml-auto font-mono text-xs text-ink-muted">about.md</span>
-          </div>
+      <!-- Tab Content -->
+      <div class="border border-onyx-700 bg-onyx-900 p-8" data-tabs-content>
+        {tabs.map((tab, index) => (
+          <div 
+            data-tab-content={tab.id}
+            class={index === 0 ? '' : 'hidden'}
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <span class="material-symbols-outlined text-3xl text-spruce-400">{tab.icon}</span>
+              <h3 class="text-xl font-bold text-ivory-100">{tab.title}</h3>
+            </div>
+            
+            <p class="text-onyx-300 leading-relaxed mb-8">
+              {tab.description}
+            </p>
 
-          <!-- Content -->
-          <div class="p-6 font-mono text-sm space-y-3">
-            <p class="text-ink-muted"># ZAFTECH MISSION</p>
-            <p class="text-ink">
-              <span class="text-primary">const</span> mission = <span class="text-green-400">"Build systems that scale"</span>;
-            </p>
-            <p class="text-ink-muted mt-4">// Core Values</p>
-            <p class="text-ink">
-              <span class="text-purple-400">export</span> <span class="text-primary">const</span> values = {"{"}
-            </p>
-            <p class="text-ink pl-4">precision: <span class="text-yellow-300">true</span>,</p>
-            <p class="text-ink pl-4">scalability: <span class="text-yellow-300">true</span>,</p>
-            <p class="text-ink pl-4">security: <span class="text-yellow-300">MAX_INT</span>,</p>
-            <p class="text-ink pl-4">marketing_fluff: <span class="text-red-400">false</span></p>
-            <p class="text-ink">{"}"}</p>
-            <div class="mt-4 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span class="text-primary">Ready to deploy.</span>
+            <div>
+              <h4 class="font-mono text-[10px] uppercase tracking-widest text-onyx-400 mb-4">Technology Stack</h4>
+              <div class="flex flex-wrap gap-2">
+                {tab.stack.map((tech) => (
+                  <span class="px-3 py-1.5 bg-onyx-800 border border-onyx-700 text-xs font-mono text-ivory-100">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-onyx-700">
+              <a 
+                href="#contact" 
+                class="inline-flex items-center gap-2 text-spruce-400 text-sm font-medium hover:text-spruce-300 transition-colors"
+              >
+                Discuss your project
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
             </div>
           </div>
-        </div>
-
-        <!-- Corner Accents -->
-        <div class="absolute -top-2 -left-2 w-4 h-4 border-l border-t border-primary/50"></div>
-        <div class="absolute -bottom-2 -right-2 w-4 h-4 border-r border-b border-primary/50"></div>
+        ))}
       </div>
     </div>
   </div>
@@ -95,3 +138,40 @@
 
 <!-- Material Icons Link -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+<script is:inline>
+  const tabBtns = document.querySelectorAll('[data-tab-btn]');
+  const tabContents = document.querySelectorAll('[data-tab-content]');
+  
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tabBtn;
+      
+      // Update button states
+      tabBtns.forEach(b => {
+        const isActive = b.dataset.tabBtn === tabId;
+        b.classList.toggle('bg-onyx-800', isActive);
+        b.classList.toggle('border-spruce-400/50', isActive);
+        b.classList.toggle('bg-onyx-900', !isActive);
+        b.classList.toggle('border-onyx-700', !isActive);
+        
+        const icon = b.querySelector('.material-symbols-outlined');
+        const title = b.querySelector('h3');
+        const arrow = b.querySelector('[data-tab-arrow]');
+        
+        if (icon) icon.classList.toggle('text-spruce-400', isActive);
+        if (icon) icon.classList.toggle('text-onyx-400', !isActive);
+        if (title) title.classList.toggle('text-ivory-100', isActive);
+        if (title) title.classList.toggle('text-onyx-300', !isActive);
+        if (arrow) arrow.classList.toggle('text-spruce-400', isActive);
+        if (arrow) arrow.classList.toggle('text-onyx-500', !isActive);
+      });
+      
+      // Update content visibility
+      tabContents.forEach(content => {
+        const isActive = content.dataset.tabContent === tabId;
+        content.classList.toggle('hidden', !isActive);
+      });
+    });
+  });
+</script>
