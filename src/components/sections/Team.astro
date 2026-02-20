@@ -1,33 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import type { TeamMember } from "@/data/content";
-
-interface Props {
-  team: TeamMember[];
-}
-
-const { team } = Astro.props;
-
-const roleIcons: Record<string, string> = {
-  "Backend and ML Lead": "psychology",
-  "Backend and Database Lead": "storage",
-  "Fullstack Architect and Cloud Lead": "dns",
-  "Frontend and UI/UX Lead": "palette",
-};
-
-const roleLabels: Record<string, string> = {
-  "Backend and ML Lead": "ML Engineer",
-  "Backend and Database Lead": "Database Lead",
-  "Fullstack Architect and Cloud Lead": "Architect",
-  "Frontend and UI/UX Lead": "Design Lead",
-};
-
-const skillTags: Record<string, string[]> = {
-  "Backend and ML Lead": ["Python", "TensorFlow", "PyTorch", "CUDA"],
-  "Backend and Database Lead": ["PostgreSQL", "Redis", "MongoDB", "GraphQL"],
-  "Fullstack Architect and Cloud Lead": ["System Design", "Cloud", "Kubernetes"],
-  "Frontend and UI/UX Lead": ["React", "TypeScript", "Figma"],
-};
+import { team, roleConfigs } from "@/data/content";
+import type { TeamMember, RoleConfig } from "@/data/content";
 ---
 
 <section id="team" class="relative">
@@ -42,7 +16,7 @@ const skillTags: Record<string, string[]> = {
         <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-ivory-100">The Operators</h2>
       </div>
       <div class="font-mono text-xs text-onyx-400 hidden md:block">
-        {team.length} team members
+        {team.length} operators
       </div>
     </div>
   </div>
@@ -51,9 +25,7 @@ const skillTags: Record<string, string[]> = {
   <div class="max-w-6xl mx-auto px-6 md:px-12 py-12">
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {team.map((member: TeamMember, index: number) => {
-        const icon = roleIcons[member.role] || "person";
-        const roleLabel = roleLabels[member.role] || "Team Member";
-        const tags = skillTags[member.role] || [];
+        const config: RoleConfig = roleConfigs[member.role] || { icon: "person", label: "Operator", skills: [] };
         
         return (
           <article class="group relative flex flex-col bg-onyx-900 border border-onyx-700 hover:border-spruce-400/30 transition-all duration-300 overflow-hidden">
@@ -63,9 +35,9 @@ const skillTags: Record<string, string[]> = {
             <!-- Header -->
             <div class="p-5 flex justify-between items-start">
               <div class="flex flex-col gap-1">
-                <span class="font-mono text-[10px] text-onyx-400 uppercase tracking-widest">{roleLabel}</span>
+                <span class="font-mono text-[10px] text-onyx-400 uppercase tracking-widest">{config.label}</span>
               </div>
-              <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 transition-colors text-xl">{icon}</span>
+              <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 transition-colors text-xl">{config.icon}</span>
             </div>
 
             <!-- Image Container -->
@@ -79,7 +51,7 @@ const skillTags: Record<string, string[]> = {
                 quality={70}
                 loading="lazy"
                 decoding="async"
-                class="h-full w-full object-cover object-top filter-grayscale"
+                class="h-full w-full object-cover filter-grayscale"
                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
               />
               <div class="absolute inset-0 bg-onyx-950/40 group-hover:bg-onyx-950/20 transition-colors"></div>
@@ -91,7 +63,7 @@ const skillTags: Record<string, string[]> = {
                 {member.name}
               </h3>
               <div class="flex flex-wrap gap-2">
-                {tags.slice(0, 3).map((tag) => (
+                {config.skills.slice(0, 3).map((tag) => (
                   <span class="font-mono text-[10px] text-onyx-400 border border-onyx-700 px-2 py-0.5 group-hover:border-onyx-600 transition-colors">
                     {tag}
                   </span>
@@ -103,7 +75,7 @@ const skillTags: Record<string, string[]> = {
       })}
 
       <!-- Career / Join Card -->
-      <article class="group relative flex flex-col justify-center items-center bg-onyx-900/50 border border-dashed border-onyx-600 hover:border-spruce-400/50 transition-all duration-300 text-center p-8 min-h-[400px]">
+      <article class="group relative flex flex-col justify-center items-center bg-onyx-900/50 border border-dashed border-onyx-600 hover:border-spruce-400/50 transition-all duration-300 text-center p-8 min-h-100">
         <div class="relative z-10 flex flex-col items-center gap-5">
           <div class="w-16 h-16 rounded-full border border-onyx-600 flex items-center justify-center group-hover:border-spruce-400 group-hover:bg-onyx-800 transition-all duration-300">
             <span class="material-symbols-outlined text-onyx-500 group-hover:text-spruce-400 text-3xl transition-colors">add</span>
@@ -112,7 +84,7 @@ const skillTags: Record<string, string[]> = {
           <div class="space-y-2">
             <span class="font-mono text-[10px] text-spruce-400 uppercase tracking-widest">We're Hiring</span>
             <h3 class="text-xl font-bold text-ivory-100">Join Our Team</h3>
-            <p class="font-mono text-xs text-onyx-400 max-w-[200px] mx-auto">
+            <p class="font-mono text-xs text-onyx-400 max-w-50 mx-auto">
               Looking for talented engineers to join our mission.
             </p>
           </div>

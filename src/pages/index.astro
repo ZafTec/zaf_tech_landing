@@ -10,7 +10,7 @@ import Gallery from "@/components/sections/Gallery.astro";
 import Team from "@/components/sections/Team.astro";
 import Contact from "@/components/sections/Contact.astro";
 
-import { features, services, products, gallery, team } from "@/data/content";
+import { features, services, products, gallery } from "@/data/content";
 
 export const prerender = true;
 
@@ -66,7 +66,7 @@ const nav = [
       <About />
       <Products products={products} />
       <Gallery gallery={gallery} />
-      <Team team={team.filter((_, i) => i < 3)} />
+      <Team />
       <Features features={features} />
       <Contact />
     </main>

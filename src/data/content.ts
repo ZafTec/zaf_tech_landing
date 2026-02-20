@@ -10,7 +10,6 @@ import afrochat from "@/assets/projects/afrochat.png";
 import nahomProfile from "@/assets/people/nahom-profile.jpg";
 import euaelProfile from "@/assets/people/euael-profile.jpg";
 import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
-import abelProfile from "@/assets/people/abel-profile.jpg";
 import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
 import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
 import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
@@ -61,6 +60,12 @@ export interface Testimonial {
   name: string;
   role: string;
   image: ImageMetadata;
+}
+
+export interface RoleConfig {
+  icon: string;
+  label: string;
+  skills: string[];
 }
 
 // Images
@@ -190,12 +195,31 @@ export const team: TeamMember[] = [
     role: "Fullstack Architect and Cloud Lead",
     image: milkiyasProfile,
   },
-  {
-    name: "Abel Yifru",
-    role: "Frontend and UI/UX Lead",
-    image: abelProfile,
-  },
 ];
+
+// Role configurations
+export const roleConfigs: Record<string, RoleConfig> = {
+  "Backend and ML Lead": {
+    icon: "psychology",
+    label: "ML Engineer",
+    skills: ["Python", "TensorFlow", "PyTorch", "CUDA"],
+  },
+  "Backend and Database Lead": {
+    icon: "storage",
+    label: "Database Lead",
+    skills: ["PostgreSQL", "Redis", "MongoDB", "GraphQL"],
+  },
+  "Fullstack Architect and Cloud Lead": {
+    icon: "dns",
+    label: "Architect",
+    skills: ["System Design", "Cloud", "Kubernetes"],
+  },
+  "Frontend and UI/UX Lead": {
+    icon: "palette",
+    label: "Design Lead",
+    skills: ["React", "TypeScript", "Figma"],
+  },
+};
 
 // Testimonials data
 export const testimonials: Testimonial[] = [
