@@ -22,10 +22,58 @@ import tarikLightImage from "@/assets/product/tarik_light.png";
 import type { ImageMetadata } from "astro";
 
 // Type definitions
-export interface Feature {
+export interface TabItem {
+  id: string;
+  icon: string;
   title: string;
-  body: string;
+  description: string;
+  stack: string[];
 }
+
+export interface StatsItem {
+  value: string;
+  label: string;
+}
+
+// Stats data
+export const stats: StatsItem[] = [
+  { value: "50+", label: "Projects Delivered" },
+  { value: "99.9%", label: "Uptime" },
+  { value: "<24h", label: "Response Time" },
+  { value: "4+", label: "Years Experience" },
+];
+
+// About Tabs data
+export const aboutTabs: TabItem[] = [
+  {
+    id: "fullstack",
+    icon: "code",
+    title: "Full-Stack Engineering",
+    description: "Frontend design and development, scalable APIs, microservices, and server architecture built for performance and maintainability.",
+    stack: ["React", "Next.js", "Node.js", "PostgreSQL", "GraphQL"],
+  },
+  {
+    id: "ml",
+    icon: "psychology",
+    title: "Machine Learning",
+    description: "Custom ML models, RAG systems, and AI-powered applications that learn and adapt. From prototyping to production deployment.",
+    stack: ["Python", "TensorFlow", "PyTorch", "OpenAI", "LangChain"],
+  },
+  {
+    id: "cloud",
+    icon: "cloud",
+    title: "Cloud Infrastructure",
+    description: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling. Infrastructure as code for reproducible environments.",
+    stack: ["AWS", "Docker", "Kubernetes", "Terraform", "GitHub Actions"],
+  },
+  {
+    id: "security",
+    icon: "security",
+    title: "Security & DevOps",
+    description: "CI/CD pipelines, penetration testing, and automated workflows. Building secure systems from the ground up.",
+    stack: ["CI/CD", "InfoSec", "Vault", "SonarQube", "OWASP"],
+  },
+];
 
 export interface Product {
   name: string;
@@ -35,6 +83,11 @@ export interface Product {
   image: ImageMetadata;
   imageLight?: ImageMetadata;
   link: string;
+}
+
+export interface Feature {
+  title: string;
+  body: string;
 }
 
 export interface Service {
@@ -66,6 +119,15 @@ export interface RoleConfig {
   icon: string;
   label: string;
   skills: string[];
+}
+
+export interface OpenPosition {
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string[];
 }
 
 // Images
@@ -243,5 +305,22 @@ export const testimonials: Testimonial[] = [
     name: "Jamie Lee",
     role: "VP Product, Forge Technologies",
     image: testimonialThree,
+  },
+];
+
+// Open Positions data
+export const openPositions: OpenPosition[] = [
+  {
+    title: "Skilled Software Engineer",
+    department: "Engineering",
+    location: "Remote / Addis Ababa",
+    type: "Full-time",
+    description: "Join our core engineering team to build scalable full-stack applications, architect robust cloud infrastructure, and develop innovative software solutions.",
+    requirements: [
+      "Solid experience in software engineering across the full stack",
+      "Proficiency in modern programming languages and frameworks (e.g., TypeScript, React, Node.js, Python)",
+      "Experience with database design and cloud platforms",
+      "Strong problem-solving skills and a proactive mindset"
+    ],
   },
 ];
