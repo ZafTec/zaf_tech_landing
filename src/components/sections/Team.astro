@@ -41,7 +41,7 @@ import type { TeamMember, RoleConfig } from "@/data/content";
             </div>
 
             <!-- Image Container -->
-            <div class="relative h-56 overflow-hidden">
+            <div class="relative h-56 overflow-hidden image-container">
               <Image
                 src={member.image}
                 alt={member.name}
@@ -54,7 +54,7 @@ import type { TeamMember, RoleConfig } from "@/data/content";
                 class="h-full w-full object-cover filter-grayscale"
                 sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
               />
-              <div class="absolute inset-0 bg-onyx-950/40 group-hover:bg-onyx-950/20 transition-colors"></div>
+              <div class="absolute inset-0 image-overlay--adaptive"></div>
             </div>
 
             <!-- Content Footer -->
