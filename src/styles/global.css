@@ -187,6 +187,12 @@ a {
   display: none;
 }
 
+.product-image--dark,
+.product-image--light {
+  filter: blur(2px);
+  transform: scale(1.02);
+}
+
 .product-overlay {
   background: rgba(12, 14, 18, 0.25);
 }
@@ -194,11 +200,17 @@ a {
 .product-overlay-gradient {
   background: linear-gradient(
     to top,
-    rgba(14, 16, 21, 0.95) 0%,
-    rgba(14, 16, 21, 0.8) 30%,
-    rgba(14, 16, 21, 0.4) 60%,
-    transparent 100%
+    rgba(14, 16, 21, 0.3) 0%,
+    rgba(14, 16, 21, 0.15) 30%,
+    transparent 50%
   );
+}
+
+.product-text-overlay {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(14, 16, 21, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @media (prefers-color-scheme: light) {
@@ -217,11 +229,15 @@ a {
   .product-overlay-gradient {
     background: linear-gradient(
       to top,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.8) 30%,
-      rgba(255, 255, 255, 0.5) 60%,
-      transparent 100%
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(255, 255, 255, 0.1) 30%,
+      transparent 50%
     );
+  }
+
+  .product-text-overlay {
+    background: rgba(255, 255, 255, 0.75);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .threads-layer--dark {
