@@ -7,10 +7,6 @@ interface Props {
 }
 
 const { products } = Astro.props;
-
-const allProducts = [...products, ...products, ...products];
-const originalCount = products.length;
-const startIndex = originalCount;
 ---
 
 <section id="products" class="py-16 md:py-24 bg-onyx-900">
@@ -29,12 +25,12 @@ const startIndex = originalCount;
       </p>
     </div>
 
-    <div class="relative" data-products-gallery data-start-index={startIndex} data-count={originalCount}>
+    <div class="relative" id="products-gallery">
       <!-- Navigation Buttons -->
       <button
         type="button"
         class="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
-        data-scroll="prev"
+        id="scroll-prev"
         aria-label="Previous product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -43,26 +39,21 @@ const startIndex = originalCount;
       <button
         type="button"
         class="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
-        data-scroll="next"
+        id="scroll-next"
         aria-label="Next product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
 
-      <!-- Scrolling Track with Snap -->
-      <div class="overflow-hidden" data-carousel-viewport>
+      <!-- Carousel Track -->
+      <div class="overflow-hidden" id="carousel-viewport">
         <div
-          class="flex transition-transform duration-500 ease-out snap-x snap-mandatory"
-          data-carousel-track
-          style="transform: translateX(0);"
+          class="flex transition-transform duration-500 ease-out"
+          id="carousel-track"
         >
-          {allProducts.map((product, index) => (
-            <div
-              class="product-slide shrink-0 snap-center"
-              data-slide-index={index % originalCount}
-              data-absolute-index={index}
-            >
-              <div class="mx-2 border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
+          {products.map((product) => (
+            <div class="product-slide shrink-0 w-[85%] md:w-[800px] snap-center px-2">
+              <div class="border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
                 <div class="relative w-full aspect-video">
                   {product.imageLight ? (
                     <>
@@ -92,7 +83,6 @@ const startIndex = originalCount;
                   )}
 
                   <div class="absolute inset-0 product-overlay pointer-events-none" aria-hidden="true"></div>
-                  
                   <div class="absolute inset-0 product-overlay-gradient pointer-events-none" aria-hidden="true"></div>
 
                   <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6 product-text-overlay">
@@ -105,7 +95,7 @@ const startIndex = originalCount;
                         href={product.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide hover:bg-spruce-300 transition-colors"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide hover:bg-spruce-300 transition-colors uppercase"
                       >
                         Explore
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -124,8 +114,8 @@ const startIndex = originalCount;
         {products.map((_, index) => (
           <button
             type="button"
-            class="dot w-2 h-2 bg-onyx-600 transition-all duration-300 hover:bg-spruce-400/50"
-            data-goto={index}
+            class={`dot w-2 h-2 transition-all duration-300 hover:bg-spruce-400/50 ${index === 0 ? 'active bg-spruce-400 w-6' : 'bg-onyx-600'}`}
+            data-index={index}
             aria-label={`Go to product ${index + 1}`}
           />
         ))}
@@ -135,126 +125,63 @@ const startIndex = originalCount;
 </section>
 
 <style>
-  .product-slide {
-    flex: 0 0 85%;
-    max-width: 800px;
-  }
-
-  @media (min-width: 768px) {
-    .product-slide {
-      flex: 0 0 80%;
-    }
-  }
-
   .dot.active {
     background-color: var(--color-spruce-400);
     width: 1.5rem;
   }
 
-  [data-carousel-track] {
+  #carousel-track {
     will-change: transform;
-  }
-
-  [data-carousel-viewport] {
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
   }
 </style>
 
 <script is:inline>
   (function() {
-    const galleries = document.querySelectorAll('[data-products-gallery]');
+    const track = document.getElementById('carousel-track');
+    const nextBtn = document.getElementById('scroll-next');
+    const prevBtn = document.getElementById('scroll-prev');
+    const dots = document.querySelectorAll('#products-gallery .dot');
 
-    galleries.forEach(gallery => {
-      const track = gallery.querySelector('[data-carousel-track]');
-      const viewport = gallery.querySelector('[data-carousel-viewport]');
-      const slides = Array.from(track?.children || []);
-      const prevBtn = gallery.querySelector('[data-scroll="prev"]');
-      const nextBtn = gallery.querySelector('[data-scroll="next"]');
-      const dots = gallery.querySelectorAll('[data-goto]');
+    if (!track || !track.children.length) return;
 
-      const count = parseInt(gallery.dataset.count || '0');
-      const startIndex = parseInt(gallery.dataset.startIndex || '0');
+    const count = track.children.length;
+    let current = 0;
 
-      if (!track || slides.length === 0 || count === 0) return;
-
-      let currentIndex = startIndex;
-      let autoScrollInterval;
-      let isPaused = false;
-
-      const getSlideWidth = () => {
-        const slide = slides[0];
-        return slide ? slide.offsetWidth + 16 : 0;
-      };
-
-      const getViewportCenter = () => {
-        return viewport.offsetWidth / 2;
-      };
-
-      const goToSlide = (index) => {
-        const slideWidth = getSlideWidth();
-        const viewportCenter = getViewportCenter();
-        const slideCenter = (slideWidth * index) + (slideWidth / 2) - 8;
-        const offset = viewportCenter - slideCenter;
-        track.style.transform = `translateX(${offset}px)`;
-        currentIndex = index;
-        updateDots();
-      };
-
-      const updateDots = () => {
-        const realIndex = ((currentIndex % count) + count) % count;
-        dots.forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
-      };
-
-      const checkBounds = () => {
-        if (currentIndex < count) {
-          track.style.transition = 'none';
-          currentIndex += count;
-          goToSlide(currentIndex);
-          track.offsetHeight;
-          track.style.transition = 'transform 0.5s ease-out';
-          return;
-        }
-        if (currentIndex >= count * 2) {
-          track.style.transition = 'none';
-          currentIndex -= count;
-          goToSlide(currentIndex);
-          track.offsetHeight;
-          track.style.transition = 'transform 0.5s ease-out';
-        }
-      };
-
-      const prev = () => { goToSlide(currentIndex - 1); setTimeout(checkBounds, 500); resetAutoScroll(); };
-      const next = () => { goToSlide(currentIndex + 1); setTimeout(checkBounds, 500); resetAutoScroll(); };
-      const goTo = (index) => { goToSlide(startIndex + index); resetAutoScroll(); };
-
-      const startAutoScroll = () => {
-        stopAutoScroll();
-        autoScrollInterval = setInterval(() => { if (!isPaused) next(); }, 6000);
-      };
-      const stopAutoScroll = () => clearInterval(autoScrollInterval);
-      const resetAutoScroll = () => { stopAutoScroll(); startAutoScroll(); };
-
-      prevBtn?.addEventListener('click', prev);
-      nextBtn?.addEventListener('click', next);
-      dots.forEach((dot, index) => dot.addEventListener('click', () => goTo(index)));
-      gallery.addEventListener('mouseenter', () => { isPaused = true; });
-      gallery.addEventListener('mouseleave', () => { isPaused = false; });
-
-      const visibilityObserver = new IntersectionObserver(
-        (entries) => entries.forEach(entry => entry.isIntersecting ? startAutoScroll() : stopAutoScroll()),
-        { threshold: 0.2 }
-      );
-      visibilityObserver.observe(gallery);
-
-      const init = () => goToSlide(startIndex);
-      document.readyState === 'complete' ? init() : window.addEventListener('load', init);
-
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => goToSlide(currentIndex), 100);
+    function updateCarousel() {
+      const slide = track.children[0];
+      if (!slide) return;
+      const width = slide.offsetWidth;
+      track.style.transform = 'translateX(-' + (current * width) + 'px)';
+      dots.forEach(function(d, i) {
+        d.classList.toggle('active', i === current);
+        d.classList.toggle('bg-spruce-400', i === current);
+        d.classList.toggle('w-6', i === current);
+        d.classList.toggle('bg-onyx-600', i !== current);
+        d.classList.toggle('w-2', i !== current);
       });
+    }
+
+    if (nextBtn) nextBtn.onclick = function() {
+      current = (current + 1) % count;
+      updateCarousel();
+    };
+
+    if (prevBtn) prevBtn.onclick = function() {
+      current = (current - 1 + count) % count;
+      updateCarousel();
+    };
+
+    dots.forEach(function(d, i) {
+      d.onclick = function() {
+        current = i;
+        updateCarousel();
+      };
+    });
+
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateCarousel, 100);
     });
   })();
 </script>
