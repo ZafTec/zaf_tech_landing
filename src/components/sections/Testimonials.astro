@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import type { Testimonial } from "@/data/content";
+import type { Testimonial, TestimonialSource } from "@/data/content";
+import { testimonialSourceConfigs } from "@/data/content";
 
 interface Props {
   testimonials: Testimonial[];
@@ -9,37 +10,119 @@ interface Props {
 const { testimonials } = Astro.props;
 ---
 
-<section id="testimonials" class="py-16">
-  <div class="mx-auto max-w-6xl px-4">
-    <div class="text-center">
-      <p class="text-sm font-semibold text-accent">Testimonials</p>
-      <h2 class="text-3xl font-semibold">What teams say after delivery.</h2>
+<section id="testimonials" class="py-16 md:py-24 px-6 md:px-12 bg-onyx-900">
+  <div class="max-w-6xl mx-auto">
+    <!-- Section Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-spruce-400 font-mono text-sm">07 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Client Feedback</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
+        What teams say after delivery
+      </h2>
+      <p class="text-onyx-300 max-w-xl text-lg">
+        Real feedback from clients who trusted us with their critical systems.
+      </p>
     </div>
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
-      {testimonials.map((testimonial: Testimonial) => (
-        <div class="rounded-3xl bg-surface p-6 shadow-card">
-          <div class="flex items-center gap-3">
-            <Image
-              src={testimonial.image}
-              alt={testimonial.name}
-              width={96}
-              height={96}
-              widths={[48, 96]}
-              format="webp"
-              quality={65}
-              loading="lazy"
-              decoding="async"
-              class="h-12 w-12 rounded-full object-cover"
-              sizes="48px"
-            />
-            <div>
-              <p class="text-sm font-semibold">{testimonial.name}</p>
-              <p class="text-xs text-ink-muted">{testimonial.role}</p>
+
+    <!-- Testimonials Grid -->
+    <div class="grid gap-6 md:grid-cols-3">
+      {testimonials.map((testimonial: Testimonial, index: number) => {
+        const sourceConfig = testimonialSourceConfigs[testimonial.source];
+
+        return (
+          <div
+            class="group relative flex flex-col p-6 md:p-8 bg-onyx-950 border border-onyx-700 hover:border-spruce-400/30 transition-all duration-200 fade-up-target"
+            data-fade-up
+            style={`--fade-delay: ${index * 0.1}s`}
+          >
+            <!-- Hover Top Border Accent -->
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-spruce-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+
+            <!-- Quote Icon -->
+            <div class="mb-6">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-spruce-400/30">
+                <path d="M11 7H7a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2H6a2 2 0 0 1 2-2h3V7zm10 0h-4a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2h-1a2 2 0 0 1 2-2h3V7z" fill="currentColor"/>
+              </svg>
+            </div>
+
+            <!-- Quote Text -->
+            <p class="text-sm text-onyx-300 leading-relaxed mb-8 flex-grow">
+              "{testimonial.quote}"
+            </p>
+
+            <!-- Author & Source -->
+            <div class="flex items-center justify-between gap-3 pt-6 border-t border-onyx-700">
+              <div class="flex items-center gap-3">
+                <Image
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  width={96}
+                  height={96}
+                  widths={[48, 96]}
+                  format="webp"
+                  quality={65}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-10 w-10 object-cover filter-grayscale"
+                  sizes="40px"
+                />
+                <div>
+                  <p class="text-sm font-semibold text-ivory-100">{testimonial.name}</p>
+                  <p class="text-xs text-onyx-400 font-mono">{testimonial.role}</p>
+                </div>
+              </div>
+
+              <!-- Source Badge -->
+              <div
+                class="testimonial-source-badge flex items-center gap-1.5 px-2.5 py-1 border text-[10px] font-mono uppercase tracking-wider shrink-0"
+                style={`--source-color: ${sourceConfig.color}`}
+              >
+                <span class="material-symbols-outlined text-xs" style={`color: ${sourceConfig.color}`}>{sourceConfig.icon}</span>
+                <span class="testimonial-source-label">{sourceConfig.label}</span>
+              </div>
             </div>
           </div>
-          <p class="mt-4 text-sm text-ink-muted">{testimonial.quote}</p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </div>
 </section>
+
+<!-- Material Icons Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+<style>
+  .testimonial-source-badge {
+    border-color: color-mix(in oklch, var(--source-color) 40%, transparent);
+    background: color-mix(in oklch, var(--source-color) 8%, transparent);
+  }
+
+  .testimonial-source-label {
+    color: var(--source-color);
+  }
+
+  .testimonial-source-badge:hover {
+    border-color: color-mix(in oklch, var(--source-color) 60%, transparent);
+    background: color-mix(in oklch, var(--source-color) 15%, transparent);
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    const targets = document.querySelectorAll('#testimonials [data-fade-up]');
+    if (!targets.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-up-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    targets.forEach(t => observer.observe(t));
+  })();
+</script>

@@ -1,9 +1,10 @@
 ---
+import { stats } from "@/data/content";
 ---
 
 <section id="hero" class="relative w-full overflow-hidden bg-onyx-950" style="min-height: calc(100vh - 64px); max-height: calc(100vh - 64px);">
   <!-- Canvas Background -->
-  <canvas id="hero-waves" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
+  <canvas id="hero-waves" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-70"></canvas>
 
   <div class="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16" style="min-height: calc(100vh - 64px);">
     <div class="max-w-6xl mx-auto w-full">
@@ -23,7 +24,7 @@
 
       <!-- Subheadline -->
       <p class="text-base sm:text-lg text-onyx-300 max-w-xl leading-relaxed mb-10 reveal delay-2">
-        Full-stack engineering and machine learning solutions for organizations that demand reliability, 
+        Full-stack engineering and machine learning solutions for organizations that demand reliability,
         security, and performance at scale.
       </p>
 
@@ -31,13 +32,13 @@
       <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 reveal delay-3">
         <a
           href="#contact"
-          class="inline-flex items-center justify-center px-8 py-4 bg-spruce-400 text-onyx-950 font-bold text-sm tracking-wide uppercase transition-all duration-200 hover:bg-spruce-300"
+          class="hero-cta-pulse inline-flex items-center justify-center px-8 py-4 bg-spruce-400 text-onyx-950 font-bold text-sm tracking-wide uppercase transition-all duration-200 hover:bg-spruce-300"
         >
           Start a Project
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
-        <a 
-          href="#services" 
+        <a
+          href="#services"
           class="group flex items-center gap-2 text-ivory-100 text-sm hover:text-spruce-400 transition-colors py-2"
         >
           <span class="border-b border-transparent group-hover:border-spruce-400">View Capabilities</span>
@@ -46,22 +47,12 @@
 
       <!-- Stats Row -->
       <div class="mt-16 pt-8 border-t border-onyx-800 grid grid-cols-2 md:grid-cols-4 gap-6 reveal delay-4">
-        <div>
-          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">50+</span>
-          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Projects Delivered</span>
-        </div>
-        <div>
-          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">99.9%</span>
-          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Uptime</span>
-        </div>
-        <div>
-          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">&lt;24h</span>
-          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Response Time</span>
-        </div>
-        <div>
-          <span class="block text-2xl md:text-3xl font-bold text-spruce-400">4+</span>
-          <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">Years Experience</span>
-        </div>
+        {stats.map((stat) => (
+          <div>
+            <span class="block text-2xl md:text-3xl font-bold text-spruce-400">{stat.value}</span>
+            <span class="text-[10px] font-mono text-onyx-400 uppercase tracking-widest">{stat.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   </div>
@@ -77,7 +68,7 @@
   function initWaves() {
     const canvas = document.getElementById('hero-waves') as HTMLCanvasElement | null;
     const section = document.getElementById('hero') as HTMLElement | null;
-    
+
     if (!canvas || !section) return;
 
     const ctx = canvas.getContext('2d');
@@ -92,7 +83,7 @@
     const resize = () => {
       width = section.clientWidth;
       height = section.clientHeight;
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
@@ -115,66 +106,84 @@
     section.addEventListener('mousemove', handleMouseMove);
     section.addEventListener('mouseleave', handleMouseLeave);
 
-    // Cinematic teal colors matching the spruce theme
-    const colorRGB = '45, 212, 191'; 
+    // Check for light mode preference
+    const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const colorRGB = isLight ? '30, 140, 130' : '45, 212, 191';
 
     const config = {
-      waves: 7,
-      speed: 0.005,
-      baseAmplitude: 150,
+      waves: 12,
+      speed: 0.004,
+      baseAmplitude: 160,
       frequency: 0.003,
+      mouseRadius: 300,
+      mouseForce: 60,
+      lensStrength: 40,
     };
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      
+
       time += 1;
       ctx.clearRect(0, 0, width, height);
-      
+
       // Smooth mouse interpolation
-      mouse.x += (mouse.targetX - mouse.x) * 0.1;
-      mouse.y += (mouse.targetY - mouse.y) * 0.1;
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
 
       // Draw waves from back to front
       for (let i = 0; i < config.waves; i++) {
         ctx.beginPath();
-        
-        // Progress from 0 (back) to 1 (front)
-        const progress = i / (config.waves - 1);
-        
-        // Opacity fades to the back
-        const alpha = 0.05 + progress * 0.3;
-        ctx.strokeStyle = `rgba(${colorRGB}, ${alpha})`;
-        ctx.lineWidth = 1 + progress * 1.5;
 
-        // Line properties
-        const frequency = config.frequency + i * 0.0005;
-        const phase = time * config.speed + i * (Math.PI / 4);
-        
-        // Draw the wave
-        for (let x = 0; x <= width; x += 5) {
+        const progress = i / (config.waves - 1);
+
+        // More visible opacity range
+        const alpha = 0.04 + progress * 0.35;
+        ctx.strokeStyle = `rgba(${colorRGB}, ${alpha})`;
+        ctx.lineWidth = 0.8 + progress * 2;
+
+        const frequency = config.frequency + i * 0.0004;
+        const phase = time * config.speed + i * (Math.PI / 5);
+
+        // Draw with finer step for smoother curves
+        for (let x = 0; x <= width; x += 4) {
           const nx = x / width;
-          const expandFactor = Math.pow(nx, 2.5);
-          const spread = (progress - 0.5) * expandFactor * height * 0.8;
-          
-          let y = height / 2 + Math.sin(x * frequency + phase) * config.baseAmplitude * expandFactor + spread;
-          
-          // Mouse interaction
+          const expandFactor = Math.pow(nx, 2.2);
+          const spread = (progress - 0.5) * expandFactor * height * 0.9;
+
+          // Multi-frequency wave for organic feel
+          let y = height / 2
+            + Math.sin(x * frequency + phase) * config.baseAmplitude * expandFactor
+            + Math.sin(x * frequency * 0.5 + phase * 1.3) * config.baseAmplitude * 0.3 * expandFactor
+            + spread;
+
+          // Magnifying lens distortion on mouse hover
           const dx = x - mouse.x;
           const dy = y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = 250;
-          
-          if (dist < maxDist) {
-            const force = Math.pow((maxDist - dist) / maxDist, 2);
-            // push waves away from mouse, but more heavily based on their distance
-            y += (dy / dist) * force * 30 * expandFactor;
-          }
+          const maxDist = config.mouseRadius;
 
-          if (x === 0) {
-            ctx.moveTo(x, y);
+          if (dist < maxDist) {
+            const normalizedDist = dist / maxDist;
+            // Smooth lens curve: strong push near center, fades at edges
+            const lensFactor = Math.pow(1 - normalizedDist, 3);
+            // Push outward from cursor with lens-like magnification
+            const pushX = (dx / (dist || 1)) * lensFactor * config.lensStrength * expandFactor;
+            const pushY = (dy / (dist || 1)) * lensFactor * config.mouseForce * expandFactor;
+            y += pushY;
+            // Slight horizontal warping for glass-like feel
+            const warpedX = x + pushX * 0.3;
+
+            if (x === 0) {
+              ctx.moveTo(warpedX, y);
+            } else {
+              ctx.lineTo(warpedX, y);
+            }
           } else {
-            ctx.lineTo(x, y);
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
           }
         }
         ctx.stroke();
@@ -183,7 +192,7 @@
 
     animate();
 
-    // Cleanup when Astro swaps pages (View Transitions support if added later)
+    // Cleanup
     document.addEventListener('astro:before-swap', () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
@@ -192,7 +201,6 @@
     }, { once: true });
   }
 
-  // Run on initial load and after view transitions
   initWaves();
   document.addEventListener('astro:page-load', initWaves);
 </script>

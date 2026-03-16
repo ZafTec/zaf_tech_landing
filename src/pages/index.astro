@@ -10,12 +10,15 @@ import Gallery from "@/components/sections/Gallery.astro";
 import Team from "@/components/sections/Team.astro";
 import Contact from "@/components/sections/Contact.astro";
 
-import { features, services, products, gallery } from "@/data/content";
+import Testimonials from "@/components/sections/Testimonials.astro";
+
+import { features, services, products, gallery, testimonials } from "@/data/content";
 
 export const prerender = true;
 
 const nav = [
   { label: "Capabilities", href: "#services" },
+  { label: "Services", href: "/services" },
   { label: "Products", href: "#products" },
   { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },
@@ -39,7 +42,7 @@ const nav = [
               <a
                 class="text-[10px] font-mono text-onyx-400 hover:text-spruce-400 transition-colors uppercase tracking-widest"
                 href={item.href}
-                data-nav={item.href.replace("#", "")}
+                {...(item.href.startsWith("#") ? { "data-nav": item.href.replace("#", "") } : {})}
               >
                 {item.label}
               </a>
@@ -67,6 +70,7 @@ const nav = [
       <Products products={products} />
       <Gallery gallery={gallery} />
       <Team />
+      <Testimonials testimonials={testimonials} />
       <Features features={features} />
       <Contact />
     </main>
@@ -79,6 +83,7 @@ const nav = [
         </div>
         <div class="flex gap-6">
           <a href="#services" class="hover:text-spruce-400 transition-colors">Capabilities</a>
+          <a href="/services" class="hover:text-spruce-400 transition-colors">Services</a>
           <a href="#contact" class="hover:text-spruce-400 transition-colors">Contact</a>
           <a href="/careers" class="hover:text-spruce-400 transition-colors">Careers</a>
         </div>

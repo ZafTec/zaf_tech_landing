@@ -299,14 +299,20 @@ a {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { 
+  0%, 100% {
     box-shadow: 0 0 4px var(--color-spruce-400);
     opacity: 1;
   }
-  50% { 
+  50% {
     box-shadow: 0 0 12px var(--color-spruce-400);
     opacity: 0.8;
   }
+}
+
+@keyframes cta-pulse {
+  0% { box-shadow: 0 0 0 0 oklch(75.87% 0.087 178.41 / 0.4); }
+  70% { box-shadow: 0 0 0 10px oklch(75.87% 0.087 178.41 / 0); }
+  100% { box-shadow: 0 0 0 0 oklch(75.87% 0.087 178.41 / 0); }
 }
 
 .reveal {
@@ -326,6 +332,27 @@ a {
 
 .animate-pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.hero-cta-pulse {
+  animation: cta-pulse 2.5s ease-in-out infinite;
+}
+
+.hero-cta-pulse:hover {
+  animation: none;
+}
+
+/* Scroll-triggered fade-up animation */
+.fade-up-target {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: var(--fade-delay, 0s);
+}
+
+.fade-up-target.fade-up-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 input:focus, textarea:focus, select:focus {
