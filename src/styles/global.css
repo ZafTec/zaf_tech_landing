@@ -134,6 +134,14 @@
 
     --color-ink: oklch(22.10% 0.017 144.97);
     --color-ink-muted: oklch(43.12% 0.039 144.86);
+
+    /* Darker accent for light backgrounds */
+    --color-spruce-300: oklch(65.00% 0.100 178.41);
+    --color-spruce-400: oklch(55.00% 0.110 178.41);
+    --color-spruce-500: oklch(48.00% 0.105 176.35);
+
+    --color-accent: var(--color-spruce-400);
+    --color-accent-hover: var(--color-spruce-300);
   }
 }
 

@@ -4,7 +4,7 @@ import { stats } from "@/data/content";
 
 <section id="hero" class="relative w-full overflow-hidden bg-onyx-950" style="min-height: calc(100vh - 64px); max-height: calc(100vh - 64px);">
   <!-- Canvas Background -->
-  <canvas id="hero-waves" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-70"></canvas>
+  <canvas id="hero-waves" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-80"></canvas>
 
   <div class="relative z-10 h-full flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16" style="min-height: calc(100vh - 64px);">
     <div class="max-w-6xl mx-auto w-full">
@@ -76,114 +76,61 @@ import { stats } from "@/data/content";
 
     let width = 0;
     let height = 0;
-    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
+    let mouse = { x: -1000, y: -1000 };
     let time = 0;
     let animationFrameId: number;
 
     const resize = () => {
       width = section.clientWidth;
       height = section.clientHeight;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = width;
+      canvas.height = height;
     };
 
     window.addEventListener('resize', resize);
     resize();
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = section.getBoundingClientRect();
-      mouse.targetX = e.clientX - rect.left;
-      mouse.targetY = e.clientY - rect.top;
-    };
+    section.addEventListener('mousemove', (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
 
-    const handleMouseLeave = () => {
-      mouse.targetX = -1000;
-      mouse.targetY = -1000;
-    };
+    section.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
 
-    section.addEventListener('mousemove', handleMouseMove);
-    section.addEventListener('mouseleave', handleMouseLeave);
-
-    // Check for light mode preference
     const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
     const colorRGB = isLight ? '30, 140, 130' : '45, 212, 191';
 
-    const config = {
-      waves: 12,
-      speed: 0.004,
-      baseAmplitude: 160,
-      frequency: 0.003,
-      mouseRadius: 300,
-      mouseForce: 60,
-      lensStrength: 40,
-    };
-
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-
-      time += 1;
+      time += 0.006;
       ctx.clearRect(0, 0, width, height);
 
-      // Smooth mouse interpolation
-      mouse.x += (mouse.targetX - mouse.x) * 0.08;
-      mouse.y += (mouse.targetY - mouse.y) * 0.08;
-
-      // Draw waves from back to front
-      for (let i = 0; i < config.waves; i++) {
+      for (let i = 0; i < 15; i++) {
+        const progress = i / 14;
+        ctx.strokeStyle = `rgba(${colorRGB}, ${0.1 + progress * 0.4})`;
+        ctx.lineWidth = 1 + progress * 1.5;
         ctx.beginPath();
 
-        const progress = i / (config.waves - 1);
-
-        // More visible opacity range
-        const alpha = 0.04 + progress * 0.35;
-        ctx.strokeStyle = `rgba(${colorRGB}, ${alpha})`;
-        ctx.lineWidth = 0.8 + progress * 2;
-
-        const frequency = config.frequency + i * 0.0004;
-        const phase = time * config.speed + i * (Math.PI / 5);
-
-        // Draw with finer step for smoother curves
-        for (let x = 0; x <= width; x += 4) {
+        for (let x = 0; x <= width; x += 10) {
           const nx = x / width;
-          const expandFactor = Math.pow(nx, 2.2);
-          const spread = (progress - 0.5) * expandFactor * height * 0.9;
-
-          // Multi-frequency wave for organic feel
-          let y = height / 2
-            + Math.sin(x * frequency + phase) * config.baseAmplitude * expandFactor
-            + Math.sin(x * frequency * 0.5 + phase * 1.3) * config.baseAmplitude * 0.3 * expandFactor
+          const distToMouse = Math.sqrt(
+            Math.pow(x - mouse.x, 2) + Math.pow(height / 2 - mouse.y, 2)
+          );
+          const mag = distToMouse < 200 ? (1 - distToMouse / 200) * 40 : 0;
+          const phase = x * 0.003 + time + i * 0.5;
+          const spread = (progress - 0.5) * Math.pow(nx, 2) * height * 0.9;
+          const y = height / 2
+            + Math.sin(phase) * (140 + mag) * Math.pow(nx, 2.5)
             + spread;
 
-          // Magnifying lens distortion on mouse hover
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = config.mouseRadius;
-
-          if (dist < maxDist) {
-            const normalizedDist = dist / maxDist;
-            // Smooth lens curve: strong push near center, fades at edges
-            const lensFactor = Math.pow(1 - normalizedDist, 3);
-            // Push outward from cursor with lens-like magnification
-            const pushX = (dx / (dist || 1)) * lensFactor * config.lensStrength * expandFactor;
-            const pushY = (dy / (dist || 1)) * lensFactor * config.mouseForce * expandFactor;
-            y += pushY;
-            // Slight horizontal warping for glass-like feel
-            const warpedX = x + pushX * 0.3;
-
-            if (x === 0) {
-              ctx.moveTo(warpedX, y);
-            } else {
-              ctx.lineTo(warpedX, y);
-            }
+          if (x === 0) {
+            ctx.moveTo(x, y);
           } else {
-            if (x === 0) {
-              ctx.moveTo(x, y);
-            } else {
-              ctx.lineTo(x, y);
-            }
+            ctx.lineTo(x, y);
           }
         }
         ctx.stroke();
@@ -192,12 +139,9 @@ import { stats } from "@/data/content";
 
     animate();
 
-    // Cleanup
     document.addEventListener('astro:before-swap', () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
-      section.removeEventListener('mousemove', handleMouseMove);
-      section.removeEventListener('mouseleave', handleMouseLeave);
     }, { once: true });
   }
 
