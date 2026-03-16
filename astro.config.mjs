@@ -14,19 +14,13 @@ export default defineConfig({
   vite: {
     build: {
       outDir: "dist",
-    },
-    plugins: [tailwindcss()],
-    ssr: {
-      external: ["bun"],
-      noExternal: ["ogl"],
-    },
-    build: {
       rollupOptions: {
         external: ["bun"],
       },
     },
-    optimizeDeps: {
-      include: ["ogl"],
+    plugins: [tailwindcss()],
+    ssr: {
+      external: ["bun"],
     },
   },
   site: "https://zaftech.co",

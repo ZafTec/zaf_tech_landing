@@ -1,6 +1,4 @@
 // Import images
-import heroImage from "@/assets/stock_images/ian-schneider-TamMbr4okv4-unsplash.jpg";
-import aboutImage from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
 import girumgizaw from "@/assets/projects/girumgizaw.png";
 import weventurehub from "@/assets/projects/weventure.png";
 import bathra from "@/assets/projects/bathra.png";
@@ -161,13 +159,6 @@ export interface OpenPosition {
   description: string;
   requirements: string[];
 }
-
-// Images
-export const images = {
-  hero: heroImage,
-  about: aboutImage,
-  anchor: anchorImage,
-};
 
 // Products data
 export const products: Product[] = [

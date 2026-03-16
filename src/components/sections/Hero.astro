@@ -76,15 +76,18 @@ import { stats } from "@/data/content";
 
     let width = 0;
     let height = 0;
-    let mouse = { x: -1000, y: -1000 };
+    // Smooth interpolated mouse position
+    let mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
     let time = 0;
     let animationFrameId: number;
 
     const resize = () => {
       width = section.clientWidth;
       height = section.clientHeight;
-      canvas.width = width;
-      canvas.height = height;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     window.addEventListener('resize', resize);
@@ -92,40 +95,59 @@ import { stats } from "@/data/content";
 
     section.addEventListener('mousemove', (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
     });
 
     section.addEventListener('mouseleave', () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
     });
 
     const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
     const colorRGB = isLight ? '30, 140, 130' : '45, 212, 191';
+    const magnetRadius = 250;
+    const magnetStrength = 55;
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       time += 0.006;
+
+      // Smooth mouse interpolation — prevents glitchy jumps
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < 15; i++) {
         const progress = i / 14;
-        ctx.strokeStyle = `rgba(${colorRGB}, ${0.1 + progress * 0.4})`;
-        ctx.lineWidth = 1 + progress * 1.5;
+        ctx.strokeStyle = `rgba(${colorRGB}, ${0.08 + progress * 0.38})`;
+        ctx.lineWidth = 0.8 + progress * 1.8;
         ctx.beginPath();
 
-        for (let x = 0; x <= width; x += 10) {
+        for (let x = 0; x <= width; x += 8) {
           const nx = x / width;
-          const distToMouse = Math.sqrt(
-            Math.pow(x - mouse.x, 2) + Math.pow(height / 2 - mouse.y, 2)
-          );
-          const mag = distToMouse < 200 ? (1 - distToMouse / 200) * 40 : 0;
+          const expandFactor = Math.pow(nx, 2.5);
           const phase = x * 0.003 + time + i * 0.5;
           const spread = (progress - 0.5) * Math.pow(nx, 2) * height * 0.9;
-          const y = height / 2
-            + Math.sin(phase) * (140 + mag) * Math.pow(nx, 2.5)
+
+          // Base wave position
+          let y = height / 2
+            + Math.sin(phase) * 140 * expandFactor
             + spread;
+
+          // Magnetic distortion — uses actual wave point position
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < magnetRadius && dist > 0) {
+            // Smooth cubic falloff for magnetic feel
+            const t = 1 - dist / magnetRadius;
+            const force = t * t * t * magnetStrength;
+            // Push away from cursor along the radial direction
+            y += (dy / dist) * force;
+          }
 
           if (x === 0) {
             ctx.moveTo(x, y);
