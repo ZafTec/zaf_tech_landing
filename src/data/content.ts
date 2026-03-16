@@ -382,25 +382,25 @@ export const roleConfigs: Record<string, RoleConfig> = {
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "ZafTech built our entire backend infrastructure from scratch. The system handles millions of requests daily with zero downtime.",
-    name: "Taylor Morgan",
-    role: "CTO, Northwind Systems",
+      "ZafTech built our support system and entire backend infrastructure from scratch. The system handles millions of requests daily with zero downtime.",
+    name: "Robel Befirdu",
+    role: "Manager, RnE Consultancy",
     image: testimonialOne,
     source: "direct",
   },
   {
     quote:
-      "Their ML team built a RAG system that transformed our support operations. The accuracy and response quality exceeded our expectations.",
-    name: "Rafael Diaz",
-    role: "VP Engineering, Signal Loop",
+      "Working with ZafTech was excellent. Their work was immaculate, they communicated clearly at every stage, and the project was completed successfully. A reliable partner for production-grade development.",
+    name: "Kalab Assefa",
+    role: "VP Engineering, mBar",
     image: testimonialTwo,
     source: "upwork",
   },
   {
     quote:
       "The full-stack team delivered a complex multi-tenant platform on time. Their architecture decisions were spot-on for our scale.",
-    name: "Jamie Lee",
-    role: "VP Product, Forge Technologies",
+    name: "Munis Badar",
+    role: "Founder, Securetron",
     image: testimonialThree,
     source: "fiverr",
   },
