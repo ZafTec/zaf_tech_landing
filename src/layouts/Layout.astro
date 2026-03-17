@@ -2,8 +2,8 @@
 import "@/styles/global.css";
 
 const {
-  title = "ZafTech | Web and RAG Studio",
-  description = "Web, product, and RAG assistant delivery for growth teams.",
+  title = "Zaftech Solutions | Full-stack Development & Machine Learning",
+  description = "Full-stack engineering & ML solutions for high-stakes environments.",
 } = Astro.props;
 ---
 <!doctype html>
@@ -12,10 +12,21 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
+    <meta name="theme-color" content="#0D0D0D" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" href="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo/ZAFTECH_LOGO_Square_light_theme.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/logo/ZAFTECH_LOGO_Dark_Theme.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/logo/ZAFTECH_LOGO_Dark_Theme.png" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="preload"
       href="/fonts/plus-jakarta-sans/plus-jakarta-sans-400.woff2"
@@ -30,10 +41,16 @@ const {
       type="font/woff2"
       crossorigin
     />
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono/jetbrains-mono-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <title>{title}</title>
 
-    <!-- Google tag (gtag.js) -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-7C4HBS7YTG"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -42,9 +59,7 @@ const {
       gtag('config', 'G-7C4HBS7YTG');
     </script>
   </head>
-  <body class="text-(--color-ink)">
+  <body class="bg-onyx-950 text-ivory-100 antialiased selection:bg-spruce-500 selection:text-onyx-950">
     <slot />
   </body>
 </html>
-
-

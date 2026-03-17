@@ -1,28 +1,147 @@
 ---
+import { aboutTabs } from "@/data/content";
 
+const tabs = aboutTabs;
 ---
 
-<section id="about" class="py-16">
-  <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 lg:grid-cols-[1fr,1.1fr]">
-    <div class="space-y-4">
-      <p class="text-sm font-semibold text-accent">About us</p>
-      <h2 class="text-3xl font-semibold">Engineering teams that ship production systems.</h2>
-      <p class="text-ink-muted">
-        We combine deep technical expertise with product thinking. Every engagement
-        includes senior engineers, iterative delivery, and maintainable architecture.
+<section id="about" class="py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
+  <!-- Background Grid -->
+  <div class="absolute inset-0 technical-grid opacity-[0.05] pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto relative z-10">
+    <!-- Section Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-spruce-400 font-mono text-sm">03 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">What We Do</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
+        Expertise that delivers
+      </h2>
+      <p class="text-onyx-300 max-w-xl text-lg leading-relaxed">
+        End-to-end solutions from concept to deployment. Select an area to learn more.
       </p>
-      <div class="grid gap-3 sm:grid-cols-2">
-        {[
-          "UI/UX Design",
-          "Backend Engineering",
-          "Cloud Infrastructure",
-          "Machine Learning",
-        ].map((item: string) => (
-          <div class="rounded-2xl bg-surface px-4 py-3 text-sm font-semibold shadow-card">
-            {item}
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-2 items-start">
+      <!-- Tab Navigation -->
+      <div class="space-y-3" data-tabs-nav>
+        {tabs.map((tab, index) => (
+          <button
+            type="button"
+            data-tab-btn={tab.id}
+            class={`w-full flex items-center gap-4 p-5 border transition-all duration-200 text-left ${
+              index === 0
+                ? 'bg-onyx-800 border-spruce-400/50'
+                : 'bg-onyx-900 border-onyx-700 hover:bg-onyx-800 hover:border-onyx-600'
+            }`}
+          >
+            <span class={`material-symbols-outlined text-2xl ${index === 0 ? 'text-spruce-400' : 'text-onyx-400'}`}>
+              {tab.icon}
+            </span>
+            <div class="flex-1">
+              <h3 class={`font-semibold ${index === 0 ? 'text-ivory-100' : 'text-onyx-300'}`}>
+                {tab.title}
+              </h3>
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class={`transition-transform ${index === 0 ? 'text-spruce-400' : 'text-onyx-500'}`}
+              data-tab-arrow={tab.id}
+            >
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        ))}
+      </div>
+
+      <!-- Tab Content -->
+      <div class="border border-onyx-700 bg-onyx-900 p-8" data-tabs-content>
+        {tabs.map((tab, index) => (
+          <div
+            data-tab-content={tab.id}
+            class={index === 0 ? '' : 'hidden'}
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <span class="material-symbols-outlined text-3xl text-spruce-400">{tab.icon}</span>
+              <h3 class="text-xl font-bold text-ivory-100">{tab.title}</h3>
+            </div>
+
+            <p class="text-onyx-300 leading-relaxed mb-8">
+              {tab.description}
+            </p>
+
+            <div>
+              <h4 class="font-mono text-[10px] uppercase tracking-widest text-onyx-400 mb-4">Technology Stack</h4>
+              <div class="flex flex-wrap gap-2">
+                {tab.stack.map((tech) => (
+                  <span class="px-3 py-1.5 bg-onyx-800 border border-onyx-700 text-xs font-mono text-ivory-100">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-onyx-700">
+              <a
+                href="#contact"
+                class="inline-flex items-center gap-2 text-spruce-400 text-sm font-medium hover:text-spruce-300 transition-colors"
+              >
+                Discuss your project
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            </div>
           </div>
         ))}
       </div>
     </div>
   </div>
 </section>
+
+<!-- Material Icons Link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+<script is:inline>
+  const tabBtns = document.querySelectorAll('[data-tab-btn]');
+  const tabContents = document.querySelectorAll('[data-tab-content]');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tabBtn;
+
+      // Update button states
+      tabBtns.forEach(b => {
+        const isActive = b.dataset.tabBtn === tabId;
+        b.classList.toggle('bg-onyx-800', isActive);
+        b.classList.toggle('border-spruce-400/50', isActive);
+        b.classList.toggle('bg-onyx-900', !isActive);
+        b.classList.toggle('border-onyx-700', !isActive);
+
+        const icon = b.querySelector('.material-symbols-outlined');
+        const title = b.querySelector('h3');
+        const arrow = b.querySelector('[data-tab-arrow]');
+
+        if (icon) icon.classList.toggle('text-spruce-400', isActive);
+        if (icon) icon.classList.toggle('text-onyx-400', !isActive);
+        if (title) title.classList.toggle('text-ivory-100', isActive);
+        if (title) title.classList.toggle('text-onyx-300', !isActive);
+        if (arrow) arrow.classList.toggle('text-spruce-400', isActive);
+        if (arrow) arrow.classList.toggle('text-onyx-500', !isActive);
+      });
+
+      // Update content visibility
+      tabContents.forEach(content => {
+        const isActive = content.dataset.tabContent === tabId;
+        content.classList.toggle('hidden', !isActive);
+      });
+    });
+  });
+</script>

@@ -7,76 +7,70 @@ interface Props {
 }
 
 const { products } = Astro.props;
-
-// Triple the products for seamless infinite scroll
-const allProducts = [...products, ...products, ...products];
-const originalCount = products.length;
-const startIndex = originalCount;
 ---
 
-<section id="products" class="bg-bg py-16 md:py-20">
-  <div class="mx-auto max-w-6xl px-4">
-    <div class="text-center mb-8 md:mb-12">
-      <p class="text-sm font-semibold text-accent">Products</p>
-      <h2 class="text-2xl md:text-3xl font-semibold">Enterprise AI Solutions</h2>
-      <p class="mt-2 text-sm md:text-base text-ink-muted">Custom-built intelligent systems that transform your business operations.</p>
+<section id="products" class="py-16 md:py-24 bg-onyx-900">
+  <div class="max-w-6xl mx-auto px-6 md:px-12">
+    <!-- Section Header -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-spruce-400 font-mono text-sm">04 //</span>
+        <span class="text-onyx-400 font-mono text-xs uppercase tracking-widest">Our Products</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-ivory-100 mb-4">
+        Proprietary Products
+      </h2>
+      <p class="text-onyx-300 max-w-xl text-lg">
+        Enterprise solutions built in-house, battle-tested in production.
+      </p>
     </div>
 
-    <div class="relative" data-products-gallery data-start-index={startIndex} data-count={originalCount}>
+    <div class="relative" id="products-gallery">
       <!-- Navigation Buttons -->
-      <button 
+      <button
         type="button"
-        class="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
-        data-scroll="prev"
+        class="absolute left-0 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
+        id="scroll-prev"
         aria-label="Previous product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
-      <button 
+      <button
         type="button"
-        class="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink hover:bg-surface-2 hover:scale-110 transition-all duration-300"
-        data-scroll="next"
+        class="absolute right-0 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-onyx-800 border border-onyx-700 flex items-center justify-center text-ivory-100 hover:bg-onyx-700 hover:border-spruce-400 hover:text-spruce-400 transition-all duration-300"
+        id="scroll-next"
         aria-label="Next product"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
 
-      <!-- Scrolling Track -->
-      <div class="overflow-hidden" data-carousel-viewport>
-        <div 
+      <!-- Carousel Track -->
+      <div class="overflow-hidden" id="carousel-viewport">
+        <div
           class="flex transition-transform duration-500 ease-out"
-          data-carousel-track
-          style="transform: translateX(0);"
+          id="carousel-track"
         >
-          {allProducts.map((product, index) => (
-            <div 
-              class="product-slide shrink-0 w-full"
-              data-slide-index={index % originalCount}
-              data-absolute-index={index}
-            >
-              <div class="rounded-2xl md:rounded-3xl overflow-hidden border border-border bg-surface-2">
-                <div class="relative w-full aspect-video md:aspect-21/9">
+          {products.map((product) => (
+            <div class="product-slide shrink-0 w-[85%] md:w-200 snap-center px-2">
+              <div class="border border-onyx-700 bg-onyx-900 overflow-hidden hover:border-spruce-400/30 transition-colors duration-300">
+                <div class="relative w-full aspect-video">
                   {product.imageLight ? (
                     <>
-                      <div class="hidden dark:block w-full h-full">
-                        <Image
-                          src={product.image}
-                          alt={`${product.name} - ${product.tagline}`}
-                          class="w-full h-full object-cover object-top"
-                          widths={[640, 960, 1280, 1600, 1920]}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                        />
-                      </div>
-                      <div class="block dark:hidden w-full h-full">
-                        <Image
-                          src={product.imageLight}
-                          alt={`${product.name} - ${product.tagline}`}
-                          class="w-full h-full object-cover object-top"
-                          widths={[640, 960, 1280, 1600, 1920]}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                        />
-                      </div>
+                      <Image
+                        src={product.image}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top product-image--dark"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 85vw, 800px"
+                      />
+                      <Image
+                        src={product.imageLight}
+                        alt={`${product.name} - ${product.tagline}`}
+                        class="w-full h-full object-cover object-top product-image--light"
+                        widths={[640, 960, 1280, 1600, 1920]}
+                        sizes="(max-width: 768px) 85vw, 800px"
+                      />
                     </>
                   ) : (
                     <Image
@@ -84,26 +78,27 @@ const startIndex = originalCount;
                       alt={`${product.name} - ${product.tagline}`}
                       class="w-full h-full object-cover object-top"
                       widths={[640, 960, 1280, 1600, 1920]}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                      sizes="(max-width: 768px) 85vw, 800px"
                     />
                   )}
-                  
-                  <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/80 to-transparent pointer-events-none" aria-hidden="true"></div>
-                  
-                  <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8 lg:p-12">
-                    <div class="max-w-3xl mx-auto md:mx-0 text-center md:text-left">
-                      <p class="text-[10px] md:text-sm font-semibold text-contrast dark:text-accent uppercase tracking-wider md:tracking-normal mb-1 md:mb-2">{product.tagline}</p>
-                      <h3 class="text-lg md:text-3xl lg:text-4xl font-semibold mb-2 md:mb-4 leading-tight">{product.headline}</h3>
-                      <p class="hidden md:block text-base md:text-lg text-ink-muted leading-relaxed mb-6">{product.description}</p>
-                      
+
+                  <div class="absolute inset-0 product-overlay pointer-events-none" aria-hidden="true"></div>
+                  <div class="absolute inset-0 product-overlay-gradient pointer-events-none" aria-hidden="true"></div>
+
+                  <div class="absolute bottom-0 left-0 right-0 p-5 md:p-6 product-text-overlay">
+                    <div class="max-w-2xl">
+                      <p class="font-mono text-[10px] text-spruce-400 uppercase tracking-widest mb-2">{product.tagline}</p>
+                      <h3 class="text-lg md:text-xl lg:text-2xl font-bold text-ivory-100 mb-2">{product.headline}</h3>
+                      <p class="hidden md:block text-sm text-onyx-300 leading-relaxed mb-4">{product.description}</p>
+
                       <a
                         href={product.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-contrast text-white text-xs md:text-base font-semibold rounded-full hover:bg-contrast/90 transition-colors mt-2 md:mt-0"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wide hover:bg-spruce-300 transition-colors uppercase"
                       >
                         Explore
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 md:w-4 md:h-4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                       </a>
                     </div>
                   </div>
@@ -119,8 +114,8 @@ const startIndex = originalCount;
         {products.map((_, index) => (
           <button
             type="button"
-            class="dot w-2 h-2 rounded-full bg-border transition-all duration-300 hover:bg-accent/50"
-            data-goto={index}
+            class={`dot w-2 h-2 transition-all duration-300 hover:bg-spruce-400/50 ${index === 0 ? 'active bg-spruce-400 w-6' : 'bg-onyx-600'}`}
+            data-index={index}
             aria-label={`Go to product ${index + 1}`}
           />
         ))}
@@ -130,176 +125,63 @@ const startIndex = originalCount;
 </section>
 
 <style>
-  .product-slide {
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding: 0 4px;
-  }
-  
   .dot.active {
-    background-color: var(--color-accent);
+    background-color: var(--color-spruce-400);
     width: 1.5rem;
   }
-  
-  [data-carousel-track] {
+
+  #carousel-track {
     will-change: transform;
   }
 </style>
 
 <script is:inline>
   (function() {
-    const galleries = document.querySelectorAll('[data-products-gallery]');
-    
-    galleries.forEach(gallery => {
-      const track = gallery.querySelector('[data-carousel-track]');
-      const viewport = gallery.querySelector('[data-carousel-viewport]');
-      const slides = Array.from(track?.children || []);
-      const prevBtn = gallery.querySelector('[data-scroll="prev"]');
-      const nextBtn = gallery.querySelector('[data-scroll="next"]');
-      const dots = gallery.querySelectorAll('[data-goto]');
-      
-      const count = parseInt(gallery.dataset.count || '0');
-      const startIndex = parseInt(gallery.dataset.startIndex || '0');
-      
-      if (!track || slides.length === 0 || count === 0) return;
-      
-      let currentIndex = startIndex;
-      let autoScrollInterval;
-      let isPaused = false;
-      
-      // Calculate slide width
-      const getSlideWidth = () => {
-        return viewport?.offsetWidth || slides[0]?.offsetWidth || 0;
-      };
-      
-      // Move to specific index with CSS transform
-      const goToSlide = (index) => {
-        const slideWidth = getSlideWidth();
-        const offset = -index * slideWidth;
-        track.style.transform = `translateX(${offset}px)`;
-        currentIndex = index;
-        updateDots();
-      };
-      
-      // Update dot indicators
-      const updateDots = () => {
-        const realIndex = ((currentIndex % count) + count) % count;
-        dots.forEach((dot, i) => {
-          dot.classList.toggle('active', i === realIndex);
-        });
-      };
-      
-      // Handle infinite loop reset
-      const checkBounds = () => {
-        const slideWidth = getSlideWidth();
-        
-        // If we're in the first set, jump to third set
-        if (currentIndex < count) {
-          track.style.transition = 'none';
-          currentIndex += count;
-          const offset = -currentIndex * slideWidth;
-          track.style.transform = `translateX(${offset}px)`;
-          // Force reflow
-          track.offsetHeight;
-          track.style.transition = 'transform 0.5s ease-out';
-          return;
-        }
-        
-        // If we're in the third set, jump to second set
-        if (currentIndex >= count * 2) {
-          track.style.transition = 'none';
-          currentIndex -= count;
-          const offset = -currentIndex * slideWidth;
-          track.style.transform = `translateX(${offset}px)`;
-          // Force reflow
-          track.offsetHeight;
-          track.style.transition = 'transform 0.5s ease-out';
-        }
-      };
-      
-      // Navigation handlers
-      const prev = () => {
-        goToSlide(currentIndex - 1);
-        setTimeout(checkBounds, 500);
-        resetAutoScroll();
-      };
-      
-      const next = () => {
-        goToSlide(currentIndex + 1);
-        setTimeout(checkBounds, 500);
-        resetAutoScroll();
-      };
-      
-      const goTo = (index) => {
-        goToSlide(startIndex + index);
-        resetAutoScroll();
-      };
-      
-      // Auto-scroll
-      const startAutoScroll = () => {
-        stopAutoScroll();
-        autoScrollInterval = setInterval(() => {
-          if (!isPaused) {
-            next();
-          }
-        }, 6000);
-      };
-      
-      const stopAutoScroll = () => {
-        clearInterval(autoScrollInterval);
-      };
-      
-      const resetAutoScroll = () => {
-        stopAutoScroll();
-        startAutoScroll();
-      };
-      
-      // Event listeners
-      prevBtn?.addEventListener('click', prev);
-      nextBtn?.addEventListener('click', next);
-      
-      dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => goTo(index));
+    const track = document.getElementById('carousel-track');
+    const nextBtn = document.getElementById('scroll-next');
+    const prevBtn = document.getElementById('scroll-prev');
+    const dots = document.querySelectorAll('#products-gallery .dot');
+
+    if (!track || !track.children.length) return;
+
+    const count = track.children.length;
+    let current = 0;
+
+    function updateCarousel() {
+      const slide = track.children[0];
+      if (!slide) return;
+      const width = slide.offsetWidth;
+      track.style.transform = 'translateX(-' + (current * width) + 'px)';
+      dots.forEach(function(d, i) {
+        d.classList.toggle('active', i === current);
+        d.classList.toggle('bg-spruce-400', i === current);
+        d.classList.toggle('w-6', i === current);
+        d.classList.toggle('bg-onyx-600', i !== current);
+        d.classList.toggle('w-2', i !== current);
       });
-      
-      gallery.addEventListener('mouseenter', () => { isPaused = true; });
-      gallery.addEventListener('mouseleave', () => { isPaused = false; });
-      
-      // Visibility observer
-      const visibilityObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              startAutoScroll();
-            } else {
-              stopAutoScroll();
-            }
-          });
-        },
-        { threshold: 0.2 }
-      );
-      
-      visibilityObserver.observe(gallery);
-      
-      // Initial position
-      const init = () => {
-        goToSlide(startIndex);
+    }
+
+    if (nextBtn) nextBtn.onclick = function() {
+      current = (current + 1) % count;
+      updateCarousel();
+    };
+
+    if (prevBtn) prevBtn.onclick = function() {
+      current = (current - 1 + count) % count;
+      updateCarousel();
+    };
+
+    dots.forEach(function(d, i) {
+      d.onclick = function() {
+        current = i;
+        updateCarousel();
       };
-      
-      if (document.readyState === 'complete') {
-        init();
-      } else {
-        window.addEventListener('load', init);
-      }
-      
-      // Handle resize
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          goToSlide(currentIndex);
-        }, 100);
-      });
+    });
+
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateCarousel, 100);
     });
   })();
 </script>
