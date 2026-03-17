@@ -356,23 +356,28 @@ export const team: TeamMember[] = [
 export const roleConfigs: Record<string, RoleConfig> = {
   "Backend and ML Lead": {
     icon: "psychology",
-    label: "ML Engineer",
-    skills: ["Python", "TensorFlow", "PyTorch", "CUDA"],
+    label: "ML Lead",
+    skills: [
+      "RAG Systems",
+      "Deep Learning",
+      "Pipelines",
+      "Model Deployment",
+    ],
   },
   "Backend and Database Lead": {
     icon: "storage",
-    label: "Database Lead",
-    skills: ["PostgreSQL", "Redis", "MongoDB", "GraphQL"],
+    label: "Backend Lead",
+    skills: ["Database", "Security", "Microservices", "ERP Systems"],
   },
   "Fullstack Architect and Cloud Lead": {
     icon: "dns",
-    label: "Architect",
-    skills: ["System Design", "Cloud", "Kubernetes"],
+    label: "Cloud Lead",
+    skills: ["Distributed Systems", "DevOps", "Cloud Architecture", "CI/CD"],
   },
   "Frontend and UI/UX Lead": {
     icon: "palette",
     label: "Design Lead",
-    skills: ["React", "TypeScript", "Figma"],
+    skills: ["Frontend", "UI/UX Design", "Design Systems", "Animation"],
   },
 };
 
