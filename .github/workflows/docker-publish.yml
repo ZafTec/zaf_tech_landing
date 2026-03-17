@@ -10,9 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      short-sha: ${{ steps.vars.outputs.short-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set vars
+        id: vars
+        run: echo "short-sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -38,3 +44,20 @@ jobs:
             org.opencontainers.image.source=${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
           platforms: linux/amd64,linux/arm64
+
+  release:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: deploy-${{ needs.build-and-push.outputs.short-sha }}
+          name: Deploy ${{ needs.build-and-push.outputs.short-sha }}
+          generate_release_notes: true
+          body: |
+            **Docker images pushed:**
+            - `${{ vars.DOCKERHUB_USERNAME }}/zaftech:latest`
+            - `${{ vars.DOCKERHUB_USERNAME }}/zaftech:sha-${{ github.sha }}`
