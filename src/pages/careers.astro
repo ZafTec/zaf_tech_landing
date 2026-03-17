@@ -11,9 +11,11 @@ export const prerender = true;
     <header class="fixed top-0 left-0 w-full z-50 border-b border-onyx-700 bg-onyx-950/95 backdrop-blur-sm">
       <div class="px-6 md:px-12 py-4 flex items-center justify-between">
         <div class="flex items-center gap-6">
-          <a href="/" class="flex items-center gap-2">
-            <div class="w-2 h-2 bg-spruce-400"></div>
-            <span class="text-ivory-100 text-sm font-bold tracking-wider">Zaftech Solutions</span>
+          <a href="/" class="flex items-center">
+            <picture>
+              <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+              <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="Zaftech Solutions" class="h-8 w-auto" />
+            </picture>
           </a>
         </div>
         <div class="flex items-center gap-4">
@@ -241,7 +243,11 @@ export const prerender = true;
     <!-- Footer -->
     <footer class="border-t border-onyx-700 py-8 px-6 md:px-12 mt-auto">
       <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-onyx-400">
-        <span class="text-spruce-400">2026 Zaftech Solutions</span>
+          <picture>
+            <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+            <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="Zaftech Solutions" class="h-5 w-auto" />
+          </picture>
+          <span>2026 All rights reserved.</span>
         <a href="/" class="hover:text-spruce-400 transition-colors">Back to Home</a>
       </div>
     </footer>

@@ -1,0 +1,23 @@
+{
+  "name": "Zaftech Solutions",
+  "short_name": "Zaftech",
+  "description": "Full-stack engineering & ML solutions for high-stakes environments.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
+  "icons": [
+    {
+      "src": "/logo/ZAFTECH_LOGO_Square_light_theme.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo/ZAFTECH_LOGO_Square_dark_theme.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

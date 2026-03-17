@@ -8,9 +8,7 @@ import afrochat from "@/assets/projects/afrochat.png";
 import nahomProfile from "@/assets/people/nahom-profile.jpg";
 import euaelProfile from "@/assets/people/euael-profile.jpg";
 import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
-import testimonialOne from "@/assets/stock_images/kevin-woblick-MYdnS46KRDs-unsplash.jpg";
-import testimonialTwo from "@/assets/stock_images/jakub-zerdzicki-C0s91Brvii4-unsplash.jpg";
-import testimonialThree from "@/assets/stock_images/marvin-meyer-SYTO3xs06fU-unsplash.jpg";
+import genericAvatar from "@/assets/people/Generic.jpg";
 import anchorImage from "@/assets/product/anchor.png";
 import anchorLightImage from "@/assets/product/anchor_light.png";
 import talosImage from "@/assets/product/talos.png";
@@ -385,7 +383,7 @@ export const testimonials: Testimonial[] = [
       "ZafTech built our support system and entire backend infrastructure from scratch. The system handles millions of requests daily with zero downtime.",
     name: "Robel Befirdu",
     role: "Manager, RnE Consultancy",
-    image: testimonialOne,
+    image: genericAvatar,
     source: "direct",
   },
   {
@@ -393,7 +391,7 @@ export const testimonials: Testimonial[] = [
       "Working with ZafTech was excellent. Their work was immaculate, they communicated clearly at every stage, and the project was completed successfully. A reliable partner for production-grade development.",
     name: "Kalab Assefa",
     role: "VP Engineering, mBar",
-    image: testimonialTwo,
+    image: genericAvatar,
     source: "upwork",
   },
   {
@@ -401,7 +399,7 @@ export const testimonials: Testimonial[] = [
       "The full-stack team delivered a complex multi-tenant platform on time. Their architecture decisions were spot-on for our scale.",
     name: "Munis Badar",
     role: "Founder, Securetron",
-    image: testimonialThree,
+    image: genericAvatar,
     source: "fiverr",
   },
 ];
