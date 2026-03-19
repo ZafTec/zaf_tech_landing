@@ -1,6 +1,7 @@
 // Import images
 import girumgizaw from "@/assets/projects/girumgizaw.png";
 import weventurehub from "@/assets/projects/weventure.png";
+import akoyaproperties from "@/assets/projects/akoyapropertises.png";
 import bathra from "@/assets/projects/bathra.png";
 import mizan from "@/assets/projects/mizan.png";
 import bitbricks from "@/assets/projects/bitbricks.png";
@@ -306,10 +307,10 @@ export const gallery: GalleryItem[] = [
     link: "https://girumgizaw.com/",
   },
   {
-    title: "weVenture Hub",
-    tag: "Service provider website",
-    image: weventurehub,
-    link: "https://weventurehub.com/",
+    title: "Akoya Properties",
+    tag: "Real estate service provider website",
+    image: akoyaproperties,
+    link: "https://akoyaproperties.com/",
   },
   {
     title: "Bathra",
