@@ -7,6 +7,7 @@ import mizan from "@/assets/projects/mizan.png";
 import bitbricks from "@/assets/projects/bitbricks.png";
 import afrochat from "@/assets/projects/afrochat.png";
 import nahomProfile from "@/assets/people/nahom-profile.jpg";
+import abelProfile from "@/assets/people/abel-profile.jpg";
 import euaelProfile from "@/assets/people/euael-profile.jpg";
 import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
 import genericAvatar from "@/assets/people/Generic.jpg";
@@ -351,6 +352,11 @@ export const team: TeamMember[] = [
     role: "Fullstack Architect and Cloud Lead",
     image: milkiyasProfile,
   },
+  {
+    name: "Abel Yifru",
+    role: "Frontend, UI/UX Lead, Wordpress Developer",
+    image: abelProfile,
+  }
 ];
 
 // Role configurations
@@ -375,7 +381,7 @@ export const roleConfigs: Record<string, RoleConfig> = {
     label: "Cloud Lead",
     skills: ["Distributed Systems", "DevOps", "Cloud Architecture", "CI/CD"],
   },
-  "Frontend and UI/UX Lead": {
+  "Frontend, UI/UX Lead, Wordpress Developer": {
     icon: "palette",
     label: "Design Lead",
     skills: ["Frontend", "UI/UX Design", "Design Systems", "Animation"],
