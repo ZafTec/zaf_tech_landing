@@ -7,20 +7,18 @@ import About from "@/components/sections/About.astro";
 import Services from "@/components/sections/Services.astro";
 import Products from "@/components/sections/Products.astro";
 import Gallery from "@/components/sections/Gallery.astro";
-import Team from "@/components/sections/Team.astro";
 import Contact from "@/components/sections/Contact.astro";
 
 import Testimonials from "@/components/sections/Testimonials.astro";
 
-import { features, services, products, gallery, testimonials } from "@/data/content";
+import { features, products, gallery, testimonials } from "@/data/content";
 
 export const prerender = true;
 
 const nav = [
-  { label: "Capabilities", href: "#services" },
+  { label: "Capabilities", href: "#about" },
   { label: "Services", href: "/services" },
   { label: "Products", href: "#products" },
-  { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },
 ];
 ---
@@ -99,11 +97,9 @@ const nav = [
 
     <main class="pt-16">
       <Hero />
-      <Services services={services} />
       <About />
       <Products products={products} />
       <Gallery gallery={gallery} />
-      <Team />
       <Testimonials testimonials={testimonials} />
       <Features features={features} />
       <Contact />
