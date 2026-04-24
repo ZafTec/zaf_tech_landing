@@ -52,6 +52,15 @@
   --font-sans: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
+  /* Motion tokens — Emil-style strong curves */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --dur-press: 160ms;
+  --dur-hover: 220ms;
+  --dur-reveal: 400ms;
+
   --color-onyx-50: oklch(96.40% 0.005 145.54);
   --color-onyx-100: oklch(92.67% 0.012 145.48);
   --color-onyx-200: oklch(85.22% 0.024 145.36);
@@ -631,4 +640,196 @@ input:focus, textarea:focus, select:focus {
   margin: 1.5rem 0;
   font-size: 0.875rem;
   color: var(--color-onyx-200);
+}
+
+/* =============================================================
+   Emil-style motion primitives
+   ============================================================= */
+
+/* Press feedback on any pressable element */
+.btn-press {
+  transition: transform var(--dur-press) var(--ease-out-strong);
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Primary solid button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  background: var(--color-spruce-400);
+  color: var(--color-onyx-950);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-spruce-400);
+  transition:
+    background-color var(--dur-hover) ease,
+    transform var(--dur-press) var(--ease-out-strong);
+}
+.btn-primary:hover {
+  background: var(--color-spruce-300);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* Ghost outline button */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  background: transparent;
+  color: var(--color-ivory-100);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-onyx-700);
+  transition:
+    border-color var(--dur-hover) ease,
+    color var(--dur-hover) ease,
+    transform var(--dur-press) var(--ease-out-strong);
+}
+.btn-ghost:hover {
+  border-color: var(--color-spruce-400);
+  color: var(--color-spruce-400);
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+
+/* Mono kicker label */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-spruce-400);
+}
+.kicker-muted {
+  color: var(--color-onyx-400);
+}
+
+/* Card with hover accent bar — scales only the bar with clip-path */
+.card-accent-bar {
+  position: relative;
+  overflow: hidden;
+}
+.card-accent-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: var(--color-spruce-400);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-hover) var(--ease-out-strong);
+}
+.card-accent-bar:hover::before,
+.card-accent-bar:focus-within::before {
+  transform: scaleX(1);
+}
+
+/* Scroll-reveal: starts just below and opacity 0, IntersectionObserver adds .is-in */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out-strong),
+    transform var(--dur-reveal) var(--ease-out-strong);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-up.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .btn-press:active,
+  .btn-primary:active,
+  .btn-ghost:active {
+    transform: none;
+  }
+  .card-accent-bar::before {
+    transition: none;
+  }
+}
+
+/* Hairline section divider */
+.hairline {
+  height: 1px;
+  background: var(--color-onyx-800);
+  border: 0;
+}
+
+/* Metric tile for case studies */
+.metric-tile {
+  border: 1px solid var(--color-onyx-800);
+  padding: 1.25rem 1.5rem;
+}
+.metric-tile .value {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--color-ivory-100);
+  letter-spacing: -0.01em;
+}
+.metric-tile .label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-onyx-400);
+  margin-top: 0.25rem;
+}
+
+/* Window chrome for product screenshots */
+.window-chrome {
+  border: 1px solid var(--color-onyx-800);
+  background: var(--color-onyx-900);
+}
+.window-chrome-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--color-onyx-800);
+}
+.window-chrome-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-onyx-700);
+}
+.window-chrome-filename {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-onyx-400);
+  letter-spacing: 0.08em;
+  margin-left: 0.5rem;
+}
+
+/* Display heading tracking */
+.display-tight {
+  letter-spacing: -0.035em;
+  line-height: 0.95;
 }

@@ -1,0 +1,12 @@
+---
+interface Props {
+  num?: string;
+  label: string;
+  tone?: "accent" | "muted";
+}
+const { num, label, tone = "accent" } = Astro.props;
+---
+<p class:list={["kicker", tone === "muted" && "kicker-muted"]}>
+  {num && <span class="text-onyx-500 mr-1">//{" "}{num}</span>}
+  <span>{label}</span>
+</p>
