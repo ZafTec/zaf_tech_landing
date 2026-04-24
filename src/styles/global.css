@@ -485,3 +485,150 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--color-spruce-400);
   color: var(--color-spruce-400);
 }
+
+/* Legal / long-form prose */
+.prose-legal {
+  color: var(--color-onyx-200);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  max-width: 72ch;
+}
+
+.prose-legal h2 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-ivory-100);
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 5rem;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.prose-legal h2::before {
+  content: attr(data-num);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-spruce-400);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+.prose-legal h2:first-child {
+  margin-top: 0;
+}
+
+.prose-legal h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-ivory-100);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 5rem;
+}
+
+.prose-legal p {
+  margin-bottom: 1rem;
+}
+
+.prose-legal strong {
+  color: var(--color-ivory-100);
+  font-weight: 600;
+}
+
+.prose-legal a {
+  color: var(--color-spruce-400);
+  text-decoration: underline;
+  text-decoration-color: var(--color-spruce-700);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.prose-legal a:hover {
+  text-decoration-color: var(--color-spruce-400);
+}
+
+.prose-legal ul,
+.prose-legal ol {
+  margin: 1rem 0 1.25rem 1.25rem;
+  padding: 0;
+}
+
+.prose-legal ul li,
+.prose-legal ol li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.prose-legal ul {
+  list-style: disc;
+}
+
+.prose-legal ol {
+  list-style: decimal;
+}
+
+.prose-legal ul li::marker,
+.prose-legal ol li::marker {
+  color: var(--color-spruce-500);
+}
+
+.prose-legal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+}
+
+.prose-legal th,
+.prose-legal td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-onyx-800);
+  vertical-align: top;
+}
+
+.prose-legal th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-spruce-400);
+  font-weight: 500;
+  border-bottom-color: var(--color-onyx-700);
+}
+
+.prose-legal blockquote {
+  border-left: 2px solid var(--color-spruce-500);
+  padding-left: 1rem;
+  color: var(--color-onyx-300);
+  margin: 1.25rem 0;
+  font-style: normal;
+}
+
+.prose-legal code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-onyx-900);
+  border: 1px solid var(--color-onyx-800);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  color: var(--color-ivory-200);
+}
+
+.prose-legal hr {
+  border: 0;
+  border-top: 1px solid var(--color-onyx-800);
+  margin: 2.5rem 0;
+}
+
+.prose-legal .callout {
+  background: var(--color-onyx-900);
+  border-left: 2px solid var(--color-spruce-500);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  color: var(--color-onyx-200);
+}

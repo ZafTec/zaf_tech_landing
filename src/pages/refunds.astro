@@ -1,0 +1,122 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro";
+
+export const prerender = true;
+
+const sections = [
+  { id: "summary", label: "Summary" },
+  { id: "general", label: "General policy" },
+  { id: "per-product", label: "Per-product rules" },
+  { id: "agency", label: "Agency engagements" },
+  { id: "how-to-request", label: "How to request a refund" },
+  { id: "processing", label: "Processing time" },
+  { id: "exceptions", label: "Exceptions" },
+  { id: "disputes", label: "Disputes" },
+];
+---
+<LegalLayout
+  title="Refund Policy"
+  description="ZafTech's refund rules for SaaS subscriptions, per-product terms, and agency engagements."
+  effectiveDate="2026-04-24"
+  lastUpdated="2026-04-24"
+  sections={sections}
+  summary="We want you paying for something that actually works for you. This policy lays out exactly when you can get your money back, by product, and how to request it."
+>
+  <h2 id="summary" data-num="01">Summary</h2>
+  <p>The short version:</p>
+  <ul>
+    <li><strong>14-day money-back guarantee</strong> on your first purchase of any ZafTech SaaS product.</li>
+    <li><strong>Annual plans</strong>: pro-rated refund if you cancel within the first 30 days; after that, cancellation ends renewal but no refund.</li>
+    <li><strong>Monthly plans</strong>: no refund after the current billing period starts, but cancellation takes effect at the end of the period.</li>
+    <li><strong>Agency services</strong>: governed by the signed Statement of Work, not this policy.</li>
+  </ul>
+
+  <h2 id="general" data-num="02">General policy</h2>
+  <p>
+    If you are unhappy with a ZafTech SaaS product within 14 days of your first payment,
+    email <a href="mailto:contact@zaftech.co">contact@zaftech.co</a> and we will refund
+    you in full, no questions asked, subject to the per-product rules below. The 14-day
+    window applies to first purchase only, not to renewals.
+  </p>
+  <p>
+    After the 14-day window:
+  </p>
+  <ul>
+    <li>Monthly plans are non-refundable for the current billing period. You can cancel to stop future renewals.</li>
+    <li>Annual plans are pro-rated to the nearest full month if cancelled within the first 30 days of that annual term, and non-refundable thereafter.</li>
+    <li>Automatic renewal charges are refundable within 14 days of the renewal date if the account shows no significant usage in the renewed period.</li>
+  </ul>
+
+  <h2 id="per-product" data-num="03">Per-product rules</h2>
+  <h3>Convia</h3>
+  <ul>
+    <li>14-day full refund on first purchase if fewer than 50 form responses have been collected across your account.</li>
+    <li>Annual-plan pro-rated refund within first 30 days.</li>
+    <li>Add-on credits (extra responses, custom domains) are non-refundable once consumed.</li>
+  </ul>
+  <h3>Mizan</h3>
+  <ul>
+    <li>14-day full refund on first subscription.</li>
+    <li>Annual-plan pro-rated refund within first 30 days.</li>
+    <li>One-time purchases (custom meal plans, coach packages) follow the per-offer refund rules shown at checkout.</li>
+  </ul>
+  <h3>RMS</h3>
+  <ul>
+    <li>Monthly subscription pro-rated refund within first 30 days of your first subscription; full refund if no transactions have been processed.</li>
+    <li>Setup and onboarding fees are non-refundable once onboarding has begun. If we have not yet started onboarding, a full refund is available.</li>
+    <li>Hardware, printed materials, and custom integration fees are non-refundable unless the item is defective on arrival.</li>
+  </ul>
+  <h3>Anchor</h3>
+  <ul>
+    <li>14-day full refund on first purchase.</li>
+    <li>Usage-based charges (API calls, indexed document volume) beyond the included allowance are non-refundable.</li>
+    <li>Custom integration, training, and consulting fees are non-refundable once work has started.</li>
+  </ul>
+  <h3>Talos</h3>
+  <ul>
+    <li>14-day full refund on first purchase.</li>
+    <li>Compute charges for executed sandboxes beyond the included allowance are non-refundable.</li>
+    <li>Custom integration fees follow the Anchor rule.</li>
+  </ul>
+
+  <h2 id="agency" data-num="04">Agency engagements</h2>
+  <p>
+    Custom engineering engagements, including discovery, design, development, and support
+    retainers, are governed by the <strong>Statement of Work (SoW)</strong> signed for
+    that engagement. The SoW sets out the payment schedule, deliverables, and any
+    refund, clawback, or cancellation terms. This Refund Policy does <em>not</em> apply
+    to agency engagements.
+  </p>
+
+  <h2 id="how-to-request" data-num="05">How to request a refund</h2>
+  <ol>
+    <li>Email <a href="mailto:contact@zaftech.co">contact@zaftech.co</a> from the email address on your account.</li>
+    <li>Include the product name, the order or invoice ID from your Paddle receipt, and a short reason.</li>
+    <li>We respond within 2 business days with a decision. If it helps, we may also suggest a downgrade, pause, or credit instead.</li>
+  </ol>
+
+  <h2 id="processing" data-num="06">Processing time</h2>
+  <p>
+    Approved refunds are processed by Paddle (our Merchant of Record) to the original
+    payment method. Most refunds arrive within 5 to 10 business days; the timing
+    ultimately depends on your card issuer or bank.
+  </p>
+
+  <h2 id="exceptions" data-num="07">Exceptions</h2>
+  <p>
+    We reserve the right to deny refunds in cases of:
+  </p>
+  <ul>
+    <li>Repeat refund requests on the same product by the same user.</li>
+    <li>Accounts that have violated the <a href="/terms">Terms of Service</a> or <a href="/acceptable-use">Acceptable Use Policy</a>.</li>
+    <li>Suspected fraudulent, abusive, or automated signup activity.</li>
+  </ul>
+
+  <h2 id="disputes" data-num="08">Disputes</h2>
+  <p>
+    If you disagree with a refund decision, reply to our email and ask for escalation.
+    Most issues are resolved this way. You also have the right to raise the matter with
+    Paddle as the Merchant of Record, and, where applicable, your card issuer. Please
+    talk to us first; we are small and responsive.
+  </p>
+</LegalLayout>

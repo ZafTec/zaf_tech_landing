@@ -1,0 +1,246 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro";
+
+export const prerender = true;
+
+const sections = [
+  { id: "acceptance", label: "Acceptance of terms" },
+  { id: "services", label: "Services we provide" },
+  { id: "account", label: "Account registration" },
+  { id: "subscriptions", label: "Subscriptions & billing" },
+  { id: "payment", label: "Payment processing" },
+  { id: "cancellation", label: "Cancellation" },
+  { id: "refunds", label: "Refunds" },
+  { id: "ip", label: "Intellectual property" },
+  { id: "acceptable-use", label: "Acceptable use" },
+  { id: "user-content", label: "User-generated content" },
+  { id: "availability", label: "Service availability" },
+  { id: "termination", label: "Termination" },
+  { id: "disclaimers", label: "Disclaimers" },
+  { id: "liability", label: "Limitation of liability" },
+  { id: "indemnification", label: "Indemnification" },
+  { id: "governing-law", label: "Governing law" },
+  { id: "changes", label: "Changes to these terms" },
+  { id: "contact", label: "Contact" },
+];
+---
+<LegalLayout
+  title="Terms of Service"
+  description="The terms that govern your use of ZafTech's website, services, and software products."
+  effectiveDate="2026-04-24"
+  lastUpdated="2026-04-24"
+  sections={sections}
+  summary="These Terms govern your use of ZafTech's website, engineering services, and SaaS products (including Convia, Mizan, RMS, Anchor, and Talos). Read carefully; using our services means you agree."
+>
+  <h2 id="acceptance" data-num="01">Acceptance of terms</h2>
+  <p>
+    These Terms of Service ("Terms") form a binding agreement between you ("you", "User")
+    and ZafTech Solutions ("ZafTech", "we", "our", "us"), a software company based in
+    Addis Ababa, Ethiopia. By accessing <a href="https://zaftech.co">zaftech.co</a>,
+    creating an account on any ZafTech product, or engaging us for engineering services,
+    you confirm that you have read, understood, and agreed to these Terms.
+  </p>
+  <p>
+    If you do not agree, do not use our services.
+  </p>
+
+  <h2 id="services" data-num="02">Services we provide</h2>
+  <p>ZafTech offers two categories of services:</p>
+  <ul>
+    <li>
+      <strong>Engineering services</strong>: custom software development, AI integration,
+      cloud infrastructure, UI/UX design, and related consulting delivered under
+      separate written agreements or statements of work (each, an "SoW").
+    </li>
+    <li>
+      <strong>SaaS products</strong>: proprietary software-as-a-service offerings,
+      including but not limited to Convia (form builder), Mizan (nutrition tracking),
+      RMS (restaurant management), Anchor (AI integration platform), and Talos
+      (authentication and sandboxed execution). Each product may have additional
+      product-specific terms, referenced from its product page.
+    </li>
+  </ul>
+  <p>
+    Where engineering services are governed by a signed SoW, the SoW controls over any
+    conflict with these Terms for that engagement.
+  </p>
+
+  <h2 id="account" data-num="03">Account registration</h2>
+  <p>To use most of our products, you must create an account. When you do, you agree that:</p>
+  <ul>
+    <li>You are at least 18 years old, or the age of majority in your jurisdiction if higher.</li>
+    <li>The information you provide is accurate and complete, and you will keep it current.</li>
+    <li>You are responsible for all activity on your account and for keeping your credentials confidential.</li>
+    <li>You will notify us promptly at <a href="mailto:contact@zaftech.co">contact@zaftech.co</a> if you suspect unauthorized access.</li>
+  </ul>
+  <p>
+    We may refuse, suspend, or close any account at our discretion if we reasonably
+    believe it has been used to breach these Terms or applicable law.
+  </p>
+
+  <h2 id="subscriptions" data-num="04">Subscriptions &amp; billing</h2>
+  <p>
+    Paid ZafTech products are offered as subscriptions, typically with monthly or annual
+    billing cycles. When you subscribe:
+  </p>
+  <ul>
+    <li>Your subscription begins on the date of first payment.</li>
+    <li>It renews automatically at the end of each billing cycle at the then-current rate for your plan, unless you cancel before renewal.</li>
+    <li>Prices are shown exclusive of taxes; applicable taxes are added by our payment processor based on your billing location.</li>
+    <li>We may change pricing with at least 30 days' advance notice. Price changes apply at your next renewal.</li>
+  </ul>
+
+  <h2 id="payment" data-num="05">Payment processing</h2>
+  <p>
+    We use <strong>Paddle.com Market Limited</strong> ("Paddle") as our Merchant of Record
+    for SaaS product sales. When you purchase a subscription, your contract of sale is
+    with Paddle, who handles payment, invoicing, currency conversion, and sales tax or
+    VAT collection. You should also read Paddle's
+    <a href="https://www.paddle.com/legal/checkout-buyer-terms" target="_blank" rel="noopener noreferrer">Buyer Terms</a>.
+  </p>
+  <p>
+    ZafTech does not store your full payment card details. If a payment fails, Paddle may
+    retry the charge; if the subscription remains unpaid after a reasonable retry period,
+    access may be suspended or terminated.
+  </p>
+
+  <h2 id="cancellation" data-num="06">Cancellation</h2>
+  <p>
+    You can cancel your subscription at any time from your account dashboard, or by
+    emailing <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>. Cancellation
+    stops future renewals; it does not trigger an automatic refund of the current period
+    unless a refund right applies under our <a href="/refunds">Refund Policy</a>.
+  </p>
+  <p>
+    After cancellation, you will retain access to paid features until the end of the
+    billing period already paid for, after which the account will revert to the free tier
+    (where one exists) or be deactivated.
+  </p>
+
+  <h2 id="refunds" data-num="07">Refunds</h2>
+  <p>
+    Refund eligibility, windows, and processes are described in our
+    <a href="/refunds">Refund Policy</a>, which is incorporated into these Terms. Where a
+    refund is issued, it is processed through Paddle back to the original payment method.
+  </p>
+
+  <h2 id="ip" data-num="08">Intellectual property</h2>
+  <p>
+    <strong>Our property.</strong> ZafTech owns all rights, title, and interest in our
+    websites, SaaS products, documentation, trademarks, logos, and any underlying
+    software, including derivative works. You receive a limited, non-exclusive,
+    non-transferable, revocable licence to use our products for their intended purpose
+    while your account is in good standing.
+  </p>
+  <p>
+    <strong>Client work.</strong> For engineering services delivered under an SoW,
+    ownership of deliverables transfers to the client on full payment, subject to the
+    terms of that SoW. ZafTech retains ownership of any reusable components, libraries,
+    or tools developed before or independently of the engagement.
+  </p>
+  <p>
+    <strong>Feedback.</strong> If you send us feedback, ideas, or suggestions, you grant
+    us a perpetual, royalty-free licence to use them without obligation to you.
+  </p>
+
+  <h2 id="acceptable-use" data-num="09">Acceptable use</h2>
+  <p>
+    Your use of our services is also subject to our
+    <a href="/acceptable-use">Acceptable Use Policy</a>, which prohibits illegal activity,
+    abuse, reverse engineering, scraping, unauthorized API access, and the use of our
+    products to build directly competing products. Violating the AUP is a material breach
+    of these Terms.
+  </p>
+
+  <h2 id="user-content" data-num="10">User-generated content</h2>
+  <p>
+    Some of our products let you submit or upload content (for example, form questions in
+    Convia, meal entries in Mizan, menu items in RMS). You retain ownership of your
+    content. You grant ZafTech a worldwide, royalty-free licence to host, store, display,
+    and process your content solely to operate and improve the service you are using.
+  </p>
+  <p>
+    You are solely responsible for the legality and accuracy of the content you submit
+    and for ensuring you have the right to submit it. We may remove content that violates
+    these Terms, the AUP, or applicable law.
+  </p>
+
+  <h2 id="availability" data-num="11">Service availability</h2>
+  <p>
+    We target availability of at least 99.5% on production products, measured monthly,
+    excluding scheduled maintenance and events outside our reasonable control. We do not,
+    however, guarantee uninterrupted access. We may perform maintenance, with advance
+    notice where practical, that temporarily limits or disables access.
+  </p>
+
+  <h2 id="termination" data-num="12">Termination</h2>
+  <p>
+    You may close your account at any time. We may suspend or terminate your access
+    immediately, with or without notice, if you materially breach these Terms, use our
+    services unlawfully, expose us to legal risk, or fail to pay fees when due.
+  </p>
+  <p>
+    On termination, your right to use the services ends. Clauses that by their nature
+    should survive termination (including intellectual property, limitation of liability,
+    indemnification, and governing law) will survive.
+  </p>
+
+  <h2 id="disclaimers" data-num="13">Disclaimers</h2>
+  <p>
+    To the maximum extent permitted by law, our services are provided <strong>"as is"</strong>
+    and <strong>"as available"</strong>. We disclaim all warranties, express or implied,
+    including warranties of merchantability, fitness for a particular purpose, and
+    non-infringement. We do not warrant that the services will be error-free,
+    uninterrupted, or meet your specific requirements.
+  </p>
+
+  <h2 id="liability" data-num="14">Limitation of liability</h2>
+  <p>
+    To the maximum extent permitted by law, ZafTech's total aggregate liability to you
+    under these Terms for any cause of action, whether in contract, tort, or otherwise,
+    is limited to the total fees you paid us in the 12 months preceding the event giving
+    rise to the claim.
+  </p>
+  <p>
+    We will not be liable for any indirect, incidental, special, consequential, punitive,
+    or exemplary damages, including loss of profits, revenue, data, goodwill, or business
+    opportunity, even if advised of their possibility. Some jurisdictions do not allow
+    these limits; in that case, the limits apply to the extent permitted by law.
+  </p>
+
+  <h2 id="indemnification" data-num="15">Indemnification</h2>
+  <p>
+    You will defend, indemnify, and hold harmless ZafTech and its officers, employees,
+    and contractors from and against any claims, damages, liabilities, losses, and
+    expenses (including reasonable legal fees) arising from (a) your use of the services
+    in breach of these Terms; (b) your violation of applicable law; or (c) content you
+    submit to the services.
+  </p>
+
+  <h2 id="governing-law" data-num="16">Governing law</h2>
+  <p>
+    These Terms are governed by the laws of the Federal Democratic Republic of Ethiopia,
+    without regard to conflict-of-laws rules. Disputes that are not resolved informally
+    within 60 days will be submitted to the exclusive jurisdiction of the competent
+    courts sitting in Addis Ababa, except that either party may seek injunctive relief
+    in any court of competent jurisdiction to protect its intellectual property.
+  </p>
+
+  <h2 id="changes" data-num="17">Changes to these terms</h2>
+  <p>
+    We may update these Terms from time to time. If we make material changes, we will
+    give at least 30 days' notice by email to the address on file or by posting a prominent
+    notice in-product. Your continued use of the services after the effective date of the
+    revised Terms constitutes acceptance of them.
+  </p>
+
+  <h2 id="contact" data-num="18">Contact</h2>
+  <p>
+    Questions about these Terms? Email <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>
+    or write to:
+  </p>
+  <p>
+    ZafTech Solutions<br />
+    Addis Ababa, Ethiopia
+  </p>
+</LegalLayout>

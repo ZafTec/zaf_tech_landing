@@ -1,0 +1,51 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalPath?: string;
+  type?: "website" | "article";
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  image = "/logo/ZAFTECH_LOGO_Dark_Theme.png",
+  canonicalPath,
+  type = "website",
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const siteUrl = "https://zaftech.co";
+const path = canonicalPath ?? Astro.url.pathname;
+const canonical = new URL(path, siteUrl).toString();
+const ogImage = new URL(image, siteUrl).toString();
+const ldArray = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : [];
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content="ZafTech" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{ldArray.map((obj) => (
+  <script type="application/ld+json" set:html={JSON.stringify(obj)} />
+))}

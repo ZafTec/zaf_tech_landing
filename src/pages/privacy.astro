@@ -1,0 +1,230 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro";
+
+export const prerender = true;
+
+const sections = [
+  { id: "who-we-are", label: "Who we are" },
+  { id: "data-collected", label: "Data we collect" },
+  { id: "how-used", label: "How we use it" },
+  { id: "legal-basis", label: "Legal basis (GDPR)" },
+  { id: "sharing", label: "Who we share with" },
+  { id: "transfers", label: "International transfers" },
+  { id: "retention", label: "Retention" },
+  { id: "rights", label: "Your rights" },
+  { id: "children", label: "Children" },
+  { id: "security", label: "Security" },
+  { id: "cookies", label: "Cookies" },
+  { id: "per-product", label: "Per-product notes" },
+  { id: "changes", label: "Changes" },
+  { id: "contact", label: "Contact & DPO" },
+];
+---
+<LegalLayout
+  title="Privacy Policy"
+  description="How ZafTech collects, uses, and protects your personal data across zaftech.co and our products."
+  effectiveDate="2026-04-24"
+  lastUpdated="2026-04-24"
+  sections={sections}
+  summary="This policy describes how ZafTech Solutions collects, uses, stores, and shares personal data across our website and products. It is written to comply with the EU GDPR, the California CCPA, and Ethiopian data-protection rules."
+>
+  <h2 id="who-we-are" data-num="01">Who we are</h2>
+  <p>
+    ZafTech Solutions ("ZafTech", "we") is the data controller for personal data
+    collected via <a href="https://zaftech.co">zaftech.co</a> and our SaaS products
+    (Convia, Mizan, RMS, Anchor, Talos, and any future products we launch).
+  </p>
+  <p>
+    Contact for privacy matters: <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>
+    (subject line: "Privacy").
+  </p>
+
+  <h2 id="data-collected" data-num="02">Data we collect</h2>
+  <p>We collect the following categories of data:</p>
+  <ul>
+    <li><strong>Account data</strong>: name, email address, password (stored as a hashed value), profile details you provide.</li>
+    <li><strong>Billing data</strong>: handled by our payment processor Paddle. We do not store full card numbers. Paddle provides us with the country of residence, last four digits, invoice amount, and tax status.</li>
+    <li><strong>Usage data</strong>: pages visited, features used, device and browser type, IP address (truncated where feasible), timestamps, referral sources.</li>
+    <li><strong>Product content</strong>: data you submit to the product you are using (for example, form responses in Convia, meals logged in Mizan, orders in RMS).</li>
+    <li><strong>Communications</strong>: emails, support tickets, and chat messages you send us.</li>
+    <li><strong>Cookies and similar technologies</strong>: see our <a href="/cookies">Cookie Policy</a>.</li>
+  </ul>
+
+  <h2 id="how-used" data-num="03">How we use it</h2>
+  <ul>
+    <li>Provide, operate, and maintain the services you use.</li>
+    <li>Process payments and manage subscriptions (via Paddle).</li>
+    <li>Send service communications: account notices, receipts, security alerts, policy updates.</li>
+    <li>Send product updates and occasional marketing (only if you opted in; unsubscribe any time).</li>
+    <li>Improve our products through aggregated analytics and bug investigation.</li>
+    <li>Prevent fraud, abuse, and breaches of our Terms or Acceptable Use Policy.</li>
+    <li>Comply with legal, tax, and regulatory obligations.</li>
+  </ul>
+  <p>
+    We do not sell your personal data. We do not use your product content to train
+    general-purpose machine-learning models.
+  </p>
+
+  <h2 id="legal-basis" data-num="04">Legal basis (GDPR)</h2>
+  <p>If you are in the EU or UK, our legal basis for processing your data is one of:</p>
+  <ul>
+    <li><strong>Contract</strong>: to deliver the service you subscribed to.</li>
+    <li><strong>Legitimate interest</strong>: to secure our services, analyse usage in aggregate, and prevent fraud, balanced against your rights.</li>
+    <li><strong>Consent</strong>: for marketing emails, non-essential cookies, and any special-category data. You can withdraw consent at any time.</li>
+    <li><strong>Legal obligation</strong>: to meet tax, accounting, and law-enforcement requirements.</li>
+  </ul>
+
+  <h2 id="sharing" data-num="05">Who we share with</h2>
+  <p>We share data with a limited set of processors and partners:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Recipient</th>
+        <th>Purpose</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Paddle.com Market Limited</td>
+        <td>Merchant of Record: payments, invoicing, tax</td>
+        <td>UK / EEA</td>
+      </tr>
+      <tr>
+        <td>Amazon Web Services, Google Cloud, Microsoft Azure</td>
+        <td>Hosting, storage, compute for products</td>
+        <td>EU, US regions</td>
+      </tr>
+      <tr>
+        <td>Resend / transactional email provider</td>
+        <td>Account emails, receipts, password resets</td>
+        <td>US</td>
+      </tr>
+      <tr>
+        <td>Plausible or PostHog</td>
+        <td>Privacy-respecting product analytics</td>
+        <td>EU / US</td>
+      </tr>
+      <tr>
+        <td>Support tooling (email, issue tracker)</td>
+        <td>Responding to your requests</td>
+        <td>EU / US</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    Each processor is bound by a Data Processing Agreement and may only use your data to
+    deliver services to us. We will never sell your data to third parties. We may
+    disclose data where required by law, court order, or to protect our rights or the
+    safety of our users.
+  </p>
+
+  <h2 id="transfers" data-num="06">International transfers</h2>
+  <p>
+    Because ZafTech is based in Ethiopia and our infrastructure providers operate
+    globally, your data may be transferred to and processed in countries other than the
+    one you live in. When we transfer personal data of EU/UK users outside the EEA, we
+    rely on Standard Contractual Clauses (SCCs) or equivalent safeguards approved under
+    GDPR.
+  </p>
+
+  <h2 id="retention" data-num="07">Retention</h2>
+  <ul>
+    <li><strong>Account data</strong>: while your account is active and for up to 12 months after closure, unless a longer period is required by law.</li>
+    <li><strong>Billing records</strong>: up to 7 years, as required by tax and accounting law.</li>
+    <li><strong>Product content</strong>: deleted or anonymised within 90 days of account closure unless you export it first.</li>
+    <li><strong>Support tickets</strong>: 24 months.</li>
+    <li><strong>Analytics</strong>: stored in aggregated, non-identifiable form.</li>
+  </ul>
+
+  <h2 id="rights" data-num="08">Your rights</h2>
+  <p>Depending on where you live, you have the right to:</p>
+  <ul>
+    <li>Access a copy of the personal data we hold about you.</li>
+    <li>Rectify inaccurate or incomplete data.</li>
+    <li>Erase your data (subject to legal retention requirements).</li>
+    <li>Restrict or object to certain processing.</li>
+    <li>Port your data to another service in a machine-readable format.</li>
+    <li>Withdraw consent where we process your data on that basis.</li>
+    <li>Lodge a complaint with your local data-protection authority.</li>
+  </ul>
+  <p>
+    To exercise any of these rights, email <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>.
+    We respond within 30 days. We may need to verify your identity before fulfilling the
+    request.
+  </p>
+
+  <h2 id="children" data-num="09">Children</h2>
+  <p>
+    Our services are not directed at people under 18. We do not knowingly collect
+    personal data from children. If you believe a child has given us personal data,
+    contact us and we will delete it.
+  </p>
+
+  <h2 id="security" data-num="10">Security</h2>
+  <p>
+    We protect your data using industry-standard measures: TLS in transit, encryption at
+    rest, role-based access control, audit logging, and routine security reviews.
+    Passwords are stored using strong one-way hashing.
+  </p>
+  <p>
+    No system is 100% secure. If we become aware of a personal-data breach that is likely
+    to affect your rights, we will notify you and, where required, the relevant authority
+    within 72 hours.
+  </p>
+
+  <h2 id="cookies" data-num="11">Cookies</h2>
+  <p>
+    We use cookies and similar technologies for session management, analytics, and
+    preferences. See our <a href="/cookies">Cookie Policy</a> for the full list and how
+    to opt out.
+  </p>
+
+  <h2 id="per-product" data-num="12">Per-product notes</h2>
+  <p>Additional data specifics by product:</p>
+  <h3>Convia (form builder)</h3>
+  <p>
+    Collects form responses submitted by your respondents. You are the controller of
+    respondent data; ZafTech is the processor. You must obtain any consents required by
+    law before using Convia to collect responses.
+  </p>
+  <h3>Mizan (nutrition &amp; fitness)</h3>
+  <p>
+    Collects meal logs, workout logs, body measurements, and (optionally) photos you
+    attach. This may include health-related data, which we treat as sensitive under
+    GDPR. Processing is based on your explicit consent; you can revoke it and export or
+    delete your data from your profile.
+  </p>
+  <h3>RMS (restaurant management)</h3>
+  <p>
+    Collects menu, inventory, staff roster, and order data for your restaurant. You are
+    the controller of customer data processed through RMS; ZafTech is the processor.
+  </p>
+  <h3>Anchor (AI integration)</h3>
+  <p>
+    Processes documents and queries you submit to build retrieval-augmented generation
+    pipelines. Your corpus is not used to train general AI models.
+  </p>
+  <h3>Talos (authentication &amp; sandbox execution)</h3>
+  <p>
+    Collects authentication events, including IP addresses and device fingerprints, for
+    security. Executed code runs in ephemeral sandboxes and is not retained after the
+    session ends unless you save it to your account.
+  </p>
+
+  <h2 id="changes" data-num="13">Changes</h2>
+  <p>
+    We may update this Privacy Policy. We will notify you of material changes by email
+    and by posting a notice on the site. The "Last updated" date at the top always
+    reflects the latest version.
+  </p>
+
+  <h2 id="contact" data-num="14">Contact &amp; DPO</h2>
+  <p>
+    Privacy questions and requests: <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>
+    (please put "Privacy" in the subject).
+  </p>
+  <p>
+    Postal address: ZafTech Solutions, Addis Ababa, Ethiopia.
+  </p>
+</LegalLayout>
