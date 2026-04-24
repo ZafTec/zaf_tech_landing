@@ -1,118 +1,16 @@
-// Import images
+import type { ImageMetadata } from "astro";
+
 import girumgizaw from "@/assets/projects/girumgizaw.png";
 import akoyaproperties from "@/assets/projects/akoyapropertises.png";
 import bathra from "@/assets/projects/bathra.png";
 import mizan from "@/assets/projects/mizan.png";
 import bitbricks from "@/assets/projects/bitbricks.png";
 import afrochat from "@/assets/projects/afrochat.png";
-import nahomProfile from "@/assets/people/nahom-profile.jpg";
-import abelProfile from "@/assets/people/abel-profile.jpg";
-import euaelProfile from "@/assets/people/euael-profile.jpg";
-import milkiyasProfile from "@/assets/people/milkiyas-profile.jpg";
 import genericAvatar from "@/assets/people/Generic.jpg";
-import anchorImage from "@/assets/product/anchor.png";
-import anchorLightImage from "@/assets/product/anchor_light.png";
-import talosImage from "@/assets/product/talos.png";
-import talosLightImage from "@/assets/product/talos_light.png";
-import tarikImage from "@/assets/product/tarik.png";
-import tarikLightImage from "@/assets/product/tarik_light.png";
-import type { ImageMetadata } from "astro";
 
-// Type definitions
-export interface TabItem {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  stack: string[];
-}
-
-export interface StatsItem {
-  value: string;
-  label: string;
-}
-
-// Stats data
-export const stats: StatsItem[] = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "99.9%", label: "Uptime" },
-  { value: "<24h", label: "Response Time" },
-  { value: "4+", label: "Years Experience" },
-];
-
-// About Tabs data
-export const aboutTabs: TabItem[] = [
-  {
-    id: "fullstack",
-    icon: "code",
-    title: "Full-Stack Engineering",
-    description: "Frontend design and development, scalable APIs, microservices, and server architecture built for performance and maintainability.",
-    stack: ["React", "Next.js", "Node.js", "PostgreSQL", "GraphQL"],
-  },
-  {
-    id: "ml",
-    icon: "psychology",
-    title: "Machine Learning",
-    description: "Custom ML models, RAG systems, and AI-powered applications that learn and adapt. From prototyping to production deployment.",
-    stack: ["Python", "TensorFlow", "PyTorch", "OpenAI", "LangChain"],
-  },
-  {
-    id: "cloud",
-    icon: "cloud",
-    title: "Cloud Infrastructure",
-    description: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling. Infrastructure as code for reproducible environments.",
-    stack: ["AWS", "Docker", "Kubernetes", "Terraform", "GitHub Actions"],
-  },
-  {
-    id: "wordpress",
-    icon: "language",
-    title: "WordPress Development",
-    description: "Custom WordPress themes, plugins, and WooCommerce solutions. Performance-optimized sites with headless and traditional architectures.",
-    stack: ["WordPress", "PHP", "WooCommerce", "Elementor", "REST API"],
-  },
-  {
-    id: "security",
-    icon: "security",
-    title: "Security & DevOps",
-    description: "CI/CD pipelines, penetration testing, and automated workflows. Building secure systems from the ground up.",
-    stack: ["CI/CD", "InfoSec", "Vault", "SonarQube", "OWASP"],
-  },
-];
-
-export interface Product {
-  name: string;
-  tagline: string;
-  headline: string;
-  description: string;
-  image: ImageMetadata;
-  imageLight?: ImageMetadata;
-  link: string;
-}
-
-export interface Feature {
-  title: string;
-  body: string;
-}
-
-export type TestimonialSource =
-  | "upwork"
-  | "fiverr"
-  | "gumroad"
-  | "direct";
-
-export interface TestimonialSourceConfig {
-  label: string;
-  icon: string;
-  color: string;
-}
-
-export const testimonialSourceConfigs: Record<TestimonialSource, TestimonialSourceConfig> = {
-  upwork: { label: "Upwork", icon: "work", color: "#14a800" },
-  fiverr: { label: "Fiverr", icon: "storefront", color: "#1dbf73" },
-  gumroad: { label: "Gumroad", icon: "shopping_bag", color: "#ff90e8" },
-  direct: { label: "Direct Feedback", icon: "chat_bubble", color: "#75bfa7" },
-};
-
+/* ============================================================
+   Services (used on /services page and homepage ServicesPreview)
+   ============================================================ */
 export interface Service {
   title: string;
   slug: string;
@@ -123,106 +21,19 @@ export interface Service {
   tags: string[];
 }
 
-export interface GalleryItem {
-  title: string;
-  tag: string;
-  image: ImageMetadata;
-  link: string;
-}
-
-export interface TeamMember {
-  name: string;
-  role: string;
-  image: ImageMetadata;
-}
-
-export interface Testimonial {
-  quote: string;
-  name: string;
-  role: string;
-  image: ImageMetadata;
-  source: TestimonialSource;
-}
-
-export interface RoleConfig {
-  icon: string;
-  label: string;
-  skills: string[];
-}
-
-export interface OpenPosition {
-  title: string;
-  department: string;
-  location: string;
-  type: string;
-  description: string;
-  requirements: string[];
-}
-
-// Products data
-export const products: Product[] = [
-  {
-    name: "Anchor Systems",
-    tagline: "AI Solutions for Modern Enterprises",
-    headline: "Intelligent AI Solutions",
-    description: "We build custom LLM chatbots and enterprise-grade RAG systems that transform your data into actionable intelligence with 95% accuracy.",
-    image: anchorImage,
-    imageLight: anchorLightImage,
-    link: "https://anchor.zaftech.co",
-  },
-  {
-    name: "Talos",
-    tagline: "Security Platform",
-    headline: "Fortified Execution. Absolute Control.",
-    description: "Enterprise-grade authentication meets secure remote code execution. Features RS256 Signed JWT Tokens and Docker Sandbox Execution Engine.",
-    image: talosImage,
-    imageLight: talosLightImage,
-    link: "https://talos.zaftech.co",
-  },
-  {
-    name: "Tarik",
-    tagline: "Digital Heritage Archive",
-    headline: "Discover Ethiopia's Rich Heritage",
-    description: "A comprehensive digital archive preserving and sharing Ethiopia's history, culture, and traditions. From ancient Aksum to modern times.",
-    image: tarikImage,
-    imageLight: tarikLightImage,
-    link: "https://tarik.zaftech.co",
-  },
-];
-
-// Features data
-export const features: Feature[] = [
-  {
-    title: "Fullstack Applications",
-    body: "Frontend desing and development, Scalable APIs, microservices, and server architecture built for performance.",
-  },
-  {
-    title: "Machine learning",
-    body: "Custom ML models, RAG systems, and AI-powered applications that learn and adapt.",
-  },
-  {
-    title: "Cloud infrastructure",
-    body: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling.",
-  },
-  {
-    title: "Database design",
-    body: "PostgreSQL, MongoDB, and distributed data systems optimized for your workload.",
-  },
-];
-
-// Services data
 export const services: Service[] = [
   {
     title: "UI/UX & Frontend Design",
     slug: "frontend",
     icon: "palette",
     body: "Pixel-perfect interfaces built with modern frameworks and exceptional attention to user experience.",
-    description: "We craft responsive, accessible, and performant user interfaces using React, Next.js, and Astro. From design systems to interactive prototypes, our frontend team delivers production-ready applications that delight users and convert visitors.",
+    description:
+      "We craft responsive, accessible, and performant user interfaces using React, Next.js, and Astro. From design systems to interactive prototypes, our frontend team delivers production-ready applications.",
     deliverables: [
       "Custom UI component libraries",
       "Responsive web applications",
       "Design system implementation",
-      "Performance optimization & Core Web Vitals",
+      "Performance optimization and Core Web Vitals",
     ],
     tags: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Astro"],
   },
@@ -231,12 +42,13 @@ export const services: Service[] = [
     slug: "backend",
     icon: "dns",
     body: "Scalable APIs, microservices, and server architecture built for reliability at scale.",
-    description: "We architect robust backend systems using Node.js, Python, and Go. Our APIs handle millions of requests with sub-100ms latency, backed by PostgreSQL, Redis, and event-driven architectures that grow with your business.",
+    description:
+      "We architect robust backend systems using Node.js, Python, and Go. Our APIs handle millions of requests with sub-100ms latency, backed by PostgreSQL, Redis, and event-driven architectures that grow with your business.",
     deliverables: [
-      "RESTful & GraphQL APIs",
+      "RESTful and GraphQL APIs",
       "Microservices architecture",
       "Real-time systems (WebSocket, SSE)",
-      "Third-party integrations & webhooks",
+      "Third-party integrations and webhooks",
     ],
     tags: ["Node.js", "Python", "PostgreSQL", "Redis", "GraphQL"],
   },
@@ -245,10 +57,11 @@ export const services: Service[] = [
     slug: "ml-ai",
     icon: "psychology",
     body: "Custom ML models, RAG systems, and intelligent automation tailored to your domain.",
-    description: "From custom LLM chatbots to computer vision pipelines, we build AI-powered applications that learn and adapt. Our ML engineers deliver production-ready models with monitoring, retraining pipelines, and enterprise-grade RAG systems.",
+    description:
+      "From custom LLM chatbots to computer vision pipelines, we build AI-powered applications that learn and adapt. Our ML engineers deliver production-ready models with monitoring, retraining pipelines, and enterprise-grade RAG systems.",
     deliverables: [
-      "Custom LLM & RAG systems",
-      "ML model training & deployment",
+      "Custom LLM and RAG systems",
+      "ML model training and deployment",
       "AI-powered automation workflows",
       "Natural language processing solutions",
     ],
@@ -259,11 +72,12 @@ export const services: Service[] = [
     slug: "cloud",
     icon: "cloud",
     body: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling.",
-    description: "We deploy and manage cloud infrastructure across AWS, Azure, and GCP using infrastructure-as-code practices. From Kubernetes orchestration to serverless architectures, we ensure your systems are reliable, secure, and cost-optimized.",
+    description:
+      "We deploy and manage cloud infrastructure across AWS, Azure, and GCP using infrastructure-as-code practices. From Kubernetes orchestration to serverless architectures, we keep your systems reliable, secure, and cost-optimized.",
     deliverables: [
-      "Cloud architecture & migration",
+      "Cloud architecture and migration",
       "CI/CD pipeline automation",
-      "Kubernetes & container orchestration",
+      "Kubernetes and container orchestration",
       "Infrastructure as Code (Terraform)",
     ],
     tags: ["AWS", "Docker", "Kubernetes", "Terraform", "GitHub Actions"],
@@ -273,11 +87,12 @@ export const services: Service[] = [
     slug: "database",
     icon: "storage",
     body: "PostgreSQL, MongoDB, and distributed data systems optimized for your workload.",
-    description: "We design and optimize database systems for performance, scalability, and data integrity. Whether you need relational databases, document stores, or distributed caching layers, we architect data solutions that handle your scale.",
+    description:
+      "We design and optimize database systems for performance, scalability, and data integrity. Whether you need relational databases, document stores, or distributed caching layers, we architect data solutions that handle your scale.",
     deliverables: [
-      "Schema design & optimization",
+      "Schema design and optimization",
       "Database migration strategies",
-      "Caching & performance tuning",
+      "Caching and performance tuning",
       "Data pipeline architecture",
     ],
     tags: ["PostgreSQL", "MongoDB", "Redis", "Elasticsearch", "GraphQL"],
@@ -287,107 +102,47 @@ export const services: Service[] = [
     slug: "wordpress",
     icon: "language",
     body: "Custom WordPress themes, plugins, and WooCommerce solutions for content-driven sites.",
-    description: "We build high-performance WordPress sites with custom themes, plugins, and headless CMS architectures. From e-commerce with WooCommerce to editorial platforms, we deliver WordPress solutions that are fast, secure, and easy to manage.",
+    description:
+      "We build high-performance WordPress sites with custom themes, plugins, and headless CMS architectures. From e-commerce with WooCommerce to editorial platforms, we deliver WordPress solutions that are fast, secure, and easy to manage.",
     deliverables: [
-      "Custom theme & plugin development",
+      "Custom theme and plugin development",
       "WooCommerce e-commerce setup",
-      "Headless WordPress (REST API / GraphQL)",
-      "Performance optimization & security hardening",
+      "Headless WordPress (REST API or GraphQL)",
+      "Performance optimization and security hardening",
     ],
     tags: ["WordPress", "PHP", "WooCommerce", "Elementor", "REST API"],
   },
 ];
 
-// Gallery data
+/* ============================================================
+   Portfolio gallery (used on homepage + future /portfolio)
+   ============================================================ */
+export interface GalleryItem {
+  title: string;
+  tag: string;
+  image: ImageMetadata;
+  link: string;
+}
+
 export const gallery: GalleryItem[] = [
-  {
-    title: "Girum Gizaw",
-    tag: "Personal Portfolio Website",
-    image: girumgizaw,
-    link: "https://girumgizaw.com/",
-  },
-  {
-    title: "Akoya Properties",
-    tag: "Real estate service provider website",
-    image: akoyaproperties,
-    link: "https://akoyaproperties.com/",
-  },
-  {
-    title: "Bathra",
-    tag: "Startup and VC connecting platform",
-    image: bathra,
-    link: "https://www.bathra.co/",
-  },
-  {
-    title: "Mizan",
-    tag: "Fullstack AI powered nutrition platform",
-    image: mizan,
-    link: "https://mizan.euaell.me/",
-  },
-  {
-    title: "Bitbricks",
-    tag: "E-learning platform",
-    image: bitbricks,
-    link: "https://bitbricks.ai/",
-  },
-  {
-    title: "Afrochat",
-    tag: "Generative AI for Africans",
-    image: afrochat,
-    link: "https://afrochat.app/en",
-  },
+  { title: "Girum Gizaw",       tag: "Personal portfolio",                        image: girumgizaw,      link: "https://girumgizaw.com/" },
+  { title: "Akoya Properties",  tag: "Real estate platform",                      image: akoyaproperties, link: "https://akoyaproperties.com/" },
+  { title: "Bathra",            tag: "Startup and VC connecting platform",        image: bathra,          link: "https://www.bathra.co/" },
+  { title: "Mizan",             tag: "AI nutrition platform",                     image: mizan,           link: "https://mizan.euaell.me/" },
+  { title: "Bitbricks",         tag: "E-learning platform",                       image: bitbricks,       link: "https://bitbricks.ai/" },
+  { title: "AfroChat",          tag: "Generative AI for Africans",                image: afrochat,        link: "https://afrochat.app/en" },
 ];
 
-// Team data
-export const team: TeamMember[] = [
-  { name: "Euael Eshete", role: "Backend and ML Lead", image: euaelProfile },
-  {
-    name: "Nahom Tamru",
-    role: "Backend and Database Lead",
-    image: nahomProfile,
-  },
-  {
-    name: "Milkiyas Gebremichael",
-    role: "Fullstack Architect and Cloud Lead",
-    image: milkiyasProfile,
-  },
-  {
-    name: "Abel Yifru",
-    role: "Frontend, UI/UX Lead, Wordpress Developer",
-    image: abelProfile,
-  }
-];
+/* ============================================================
+   Testimonials (used on homepage)
+   ============================================================ */
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  image: ImageMetadata;
+}
 
-// Role configurations
-export const roleConfigs: Record<string, RoleConfig> = {
-  "Backend and ML Lead": {
-    icon: "psychology",
-    label: "ML Lead",
-    skills: [
-      "RAG Systems",
-      "Deep Learning",
-      "Pipelines",
-      "Model Deployment",
-    ],
-  },
-  "Backend and Database Lead": {
-    icon: "storage",
-    label: "Backend Lead",
-    skills: ["Database", "Security", "Microservices", "ERP Systems"],
-  },
-  "Fullstack Architect and Cloud Lead": {
-    icon: "dns",
-    label: "Cloud Lead",
-    skills: ["Distributed Systems", "DevOps", "Cloud Architecture", "CI/CD"],
-  },
-  "Frontend, UI/UX Lead, Wordpress Developer": {
-    icon: "palette",
-    label: "Design Lead",
-    skills: ["Frontend", "UI/UX Design", "Design Systems", "Animation"],
-  },
-};
-
-// Testimonials data
 export const testimonials: Testimonial[] = [
   {
     quote:
@@ -395,15 +150,13 @@ export const testimonials: Testimonial[] = [
     name: "Robel Befirdu",
     role: "Manager, RnE Consultancy",
     image: genericAvatar,
-    source: "direct",
   },
   {
     quote:
-      "Working with ZafTech was excellent. Their work was immaculate, they communicated clearly at every stage, and the project was completed successfully. A reliable partner for production-grade development.",
+      "Working with ZafTech was excellent. Their work was immaculate, they communicated clearly at every stage, and the project was completed successfully.",
     name: "Kalab Assefa",
     role: "VP Engineering, mBar",
     image: genericAvatar,
-    source: "upwork",
   },
   {
     quote:
@@ -411,23 +164,123 @@ export const testimonials: Testimonial[] = [
     name: "Munis Badar",
     role: "Founder, Securetron",
     image: genericAvatar,
-    source: "fiverr",
   },
 ];
 
-// Open Positions data
+/* ============================================================
+   Products (external subdomain landing pages)
+   ============================================================ */
+export type ProductStatus = "live" | "beta" | "private-beta" | "in-development";
+
+export interface ProductEntry {
+  slug: "convia" | "mizan" | "rms" | "anchor" | "talos" | "tarik";
+  name: string;
+  tagline: string;
+  description: string;
+  price: string;
+  url: string;
+  domain: string;
+  status: ProductStatus;
+  featured?: boolean;
+}
+
+export const productEntries: ProductEntry[] = [
+  {
+    slug: "convia",
+    name: "Convia",
+    tagline: "Conversational forms, AI assisted",
+    description:
+      "Ask one question at a time. Branch on answers. Draft surveys by typing a goal. 10x the completion rate of a Google Form for a fifth of the price of Typeform.",
+    price: "from $19/mo",
+    url: "https://convia.zaftech.co",
+    domain: "convia.zaftech.co",
+    status: "beta",
+    featured: true,
+  },
+  {
+    slug: "mizan",
+    name: "Mizan",
+    tagline: "Nutrition tracking, done your way",
+    description:
+      "Log meals, plan macros, track body measurements, follow a coach. The tracker our founder uses every day.",
+    price: "free + Pro $9/mo",
+    url: "https://mizan.zaftech.co",
+    domain: "mizan.zaftech.co",
+    status: "live",
+    featured: true,
+  },
+  {
+    slug: "rms",
+    name: "RMS",
+    tagline: "Restaurant POS, no hardware lock-in",
+    description:
+      "POS, inventory, ordering, and reporting for independent restaurants. Runs on the tablet you already have.",
+    price: "from $79/mo",
+    url: "https://rms.zaftech.co/landing",
+    domain: "rms.zaftech.co",
+    status: "private-beta",
+    featured: true,
+  },
+  {
+    slug: "anchor",
+    name: "Anchor",
+    tagline: "RAG platform, one API call",
+    description:
+      "Upload documents, ask questions, get grounded answers with citations. The RAG infrastructure we built for AfroChat, packaged.",
+    price: "usage-based",
+    url: "https://anchor.zaftech.co",
+    domain: "anchor.zaftech.co",
+    status: "live",
+  },
+  {
+    slug: "talos",
+    name: "Talos",
+    tagline: "Auth + sandboxed code execution",
+    description:
+      "RS256-signed JWTs and a Docker-isolated sandbox for running user-submitted code safely. Built for AI agent platforms.",
+    price: "usage-based",
+    url: "https://talos.zaftech.co",
+    domain: "talos.zaftech.co",
+    status: "live",
+  },
+  {
+    slug: "tarik",
+    name: "Tarik",
+    tagline: "Ethiopian heritage archive",
+    description:
+      "A non-commercial archive of Ethiopian history, culture, and artefacts. Open to researchers, students, and the curious.",
+    price: "free",
+    url: "https://tarik.zaftech.co",
+    domain: "tarik.zaftech.co",
+    status: "live",
+  },
+];
+
+/* ============================================================
+   Open positions (used on /careers)
+   ============================================================ */
+export interface OpenPosition {
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string[];
+}
+
 export const openPositions: OpenPosition[] = [
   {
     title: "Skilled Software Engineer",
     department: "Engineering",
-    location: "Remote / Addis Ababa",
+    location: "Remote or Addis Ababa",
     type: "Full-time",
-    description: "Join our core engineering team to build scalable full-stack applications, architect robust cloud infrastructure, and develop innovative software solutions.",
+    description:
+      "Join our core engineering team to build scalable full-stack applications, architect robust cloud infrastructure, and develop innovative software solutions.",
     requirements: [
       "Solid experience in software engineering across the full stack",
       "Proficiency in modern programming languages and frameworks (e.g., TypeScript, React, Node.js, Python)",
       "Experience with database design and cloud platforms",
-      "Strong problem-solving skills and a proactive mindset"
+      "Strong problem-solving skills and a proactive mindset",
     ],
   },
 ];
