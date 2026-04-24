@@ -7,10 +7,13 @@ import Kicker from "@/components/ui/Kicker.astro";
   style="min-height: 100dvh;"
   data-hero
 >
-  <!-- WebGL layer: blurred team bento with shader-reveal around the cursor. -->
+  <!-- WebGL layer: heavily blurred team bento with a gray overlay that shades away under the cursor. -->
   <div class="absolute inset-0 z-0" data-hero-shader></div>
 
-  <!-- Legibility wash over the shader -->
+  <!-- Canvas 2D: barely-visible random shapes that bounce and react to the cursor. -->
+  <canvas class="absolute inset-0 z-[5] pointer-events-none" data-hero-shapes></canvas>
+
+  <!-- Legibility wash -->
   <div class="absolute inset-0 z-10 pointer-events-none hero-wash" aria-hidden="true"></div>
 
   <!-- Centered content -->
@@ -35,28 +38,47 @@ import Kicker from "@/components/ui/Kicker.astro";
 <style>
   .hero-wash {
     background:
-      radial-gradient(ellipse at 50% 50%, rgba(12,15,13,0.2) 0%, rgba(12,15,13,0.6) 70%),
-      linear-gradient(to bottom, rgba(12,15,13,0.55) 0%, rgba(12,15,13,0.25) 40%, rgba(12,15,13,0.75) 100%);
+      radial-gradient(ellipse at 50% 50%, rgba(12,15,13,0.2) 0%, rgba(12,15,13,0.55) 70%),
+      linear-gradient(to bottom, rgba(12,15,13,0.5) 0%, rgba(12,15,13,0.25) 40%, rgba(12,15,13,0.7) 100%);
   }
   @media (prefers-color-scheme: light) {
     .hero-wash {
       background:
-        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.6) 70%),
-        linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0.75) 100%);
+        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.55) 70%),
+        linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0.7) 100%);
     }
   }
 </style>
 
 <script>
+  /*
+   * Hero: two synchronised canvases.
+   *   1. WebGL (OGL): composed team bento, heavily blurred. A gray overlay covers
+   *      everything; the cursor "shades it away" within uRadius so the blurred
+   *      colour bleeds through, still blurred.
+   *   2. Canvas 2D: sparse decorative shapes that bounce around the hero and are
+   *      pushed away by the cursor within the same radius.
+   * Both share the same mouse + radius state so the visual impact is cohesive.
+   */
+
   import nahomUrl    from "@/assets/people/nahom-profile.jpg?url";
   import abelUrl     from "@/assets/people/abel-profile.jpg?url";
   import euaelUrl    from "@/assets/people/euael-profile.jpg?url";
   import milkiyasUrl from "@/assets/people/milkiyas-profile.jpg?url";
   import { Renderer, Program, Mesh, Triangle, Texture } from "ogl";
 
-  type Palette = { grayTarget: number; baseBrightness: number };
-  const DARK: Palette = { grayTarget: 1.0, baseBrightness: 0.35 };
-  const LIGHT: Palette = { grayTarget: 1.0, baseBrightness: 0.85 };
+  type Palette = { grayTarget: number; darken: number };
+  const DARK:  Palette = { grayTarget: 1.0, darken: 0.28 };
+  const LIGHT: Palette = { grayTarget: 1.0, darken: 0.82 };
+
+  // Shared cursor state. Both canvases read from this.
+  const mouse = {
+    targetX: 0.5, targetY: 0.5,
+    x: 0.5,       y: 0.5,
+    targetR: 0,   r: 0,
+    hovering: false,
+  };
+  const HOVER_R = 0.24; // UV units on the shorter axis
 
   const vertex = /* glsl */ `
     attribute vec2 position;
@@ -65,19 +87,18 @@ import Kicker from "@/components/ui/Kicker.astro";
     void main() { vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }
   `;
 
+  // Everything stays blurred. The reveal lifts a gray overlay, it does not sharpen.
   const fragment = /* glsl */ `
     precision highp float;
     varying vec2 vUv;
     uniform sampler2D uTex;
-    uniform vec2 uMouse;       // 0..1 in canvas space
-    uniform float uRadius;     // radius of the reveal circle in UV units
-    uniform float uAspect;     // canvas w/h, used to correct circle distortion
-    uniform float uTime;
-    uniform vec2 uTexelSize;   // 1 / texture resolution
-    uniform float uBaseBright; // brightness of the blurred grayscale base
-    uniform float uGray;       // 0..1 how gray the base is (1 = fully gray)
+    uniform vec2 uMouse;
+    uniform float uRadius;
+    uniform float uAspect;
+    uniform vec2 uTexelSize;
+    uniform float uGray;     // 1.0 = fully gray, 0.0 = full colour
+    uniform float uDarken;   // multiplier: lower = darker
 
-    // Small 5x5 separable-ish blur, cheap enough for hero at 60fps.
     vec4 blurTex(vec2 uv, float r) {
       vec4 sum = vec4(0.0);
       float total = 0.0;
@@ -92,61 +113,30 @@ import Kicker from "@/components/ui/Kicker.astro";
       return sum / total;
     }
 
-    float hash(vec2 p) {
-      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
-    }
-
     void main() {
       vec2 uv = vUv;
+      vec4 blurred = blurTex(uv, 6.0);
 
-      // Distance from cursor, aspect-corrected so the reveal is a true circle.
       vec2 d = (uv - uMouse) * vec2(uAspect, 1.0);
       float dist = length(d);
-
-      // Shader reveal mask with soft shoulder.
       float mask = 1.0 - smoothstep(uRadius * 0.55, uRadius, dist);
 
-      // Blurred grayscale base.
-      vec4 blurred = blurTex(uv, 6.0);
       float gray = dot(blurred.rgb, vec3(0.299, 0.587, 0.114));
-      vec3 base = mix(blurred.rgb, vec3(gray), uGray) * uBaseBright;
 
-      // Sharp color sample with small wobble near the ring edge.
-      float ring = smoothstep(uRadius * 0.85, uRadius, dist)
-                 * (1.0 - smoothstep(uRadius, uRadius * 1.08, dist));
-      vec2 wobble = vec2(
-        sin(uv.y * 60.0 + uTime * 2.0),
-        cos(uv.x * 60.0 + uTime * 2.0)
-      ) * ring * 0.003;
+      // Base state: fully gray + darkened.
+      vec3 base = mix(blurred.rgb, vec3(gray), uGray) * uDarken;
 
-      // Chromatic aberration along the ring, classic shader flair.
-      vec2 dir = dist > 0.0001 ? normalize(d) : vec2(0.0, 0.0);
-      float aberr = ring * 0.006;
-      vec2 sampleUv = uv + wobble;
-      float sR = texture2D(uTex, sampleUv - dir * aberr).r;
-      float sG = texture2D(uTex, sampleUv).g;
-      float sB = texture2D(uTex, sampleUv + dir * aberr).b;
-      vec3 sharp = vec3(sR, sG, sB);
+      // Revealed state: keep the blur, lift the gray slightly, brighten the
+      // darken multiplier so colour leaks through.
+      float revealGray   = uGray   * 0.15;
+      float revealDarken = max(uDarken, 0.65);
+      vec3 reveal = mix(blurred.rgb, vec3(gray), revealGray) * revealDarken;
 
-      vec3 color = mix(base, sharp, mask);
-
-      // Subtle grain so flat regions feel alive.
-      float n = hash(uv * 800.0 + uTime) - 0.5;
-      color += n * 0.015;
-
+      vec3 color = mix(base, reveal, mask);
       gl_FragColor = vec4(color, 1.0);
     }
   `;
 
-  // Compose a bento grid of the 4 team photos onto a single canvas.
-  // Layout on a 1600x900 canvas:
-  //   +--------+--------+--------+
-  //   | Nahom  | Abel   | Euael  |
-  //   |  big   |  big   |  col   |
-  //   +--------+--------+        +
-  //           Milkiyas  |  (cont)|
-  //   +-----------------+--------+
-  // Columns/rows chosen so each face has breathing room.
   async function composeBento(): Promise<HTMLCanvasElement> {
     const imgs = await Promise.all([
       loadImage(nahomUrl),
@@ -156,12 +146,9 @@ import Kicker from "@/components/ui/Kicker.astro";
     ]);
     const [nahom, abel, euael, milkiyas] = imgs;
 
-    const W = 1600;
-    const H = 900;
-    const GAP = 4;
+    const W = 1600, H = 900, GAP = 4;
     const c = document.createElement("canvas");
-    c.width = W;
-    c.height = H;
+    c.width = W; c.height = H;
     const ctx = c.getContext("2d");
     if (!ctx) return c;
 
@@ -182,17 +169,16 @@ import Kicker from "@/components/ui/Kicker.astro";
       ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
     };
 
-    // Asymmetric bento
-    const colA = { x: 0,       w: 560 };
-    const colB = { x: 560 + GAP, w: 560 };
-    const colC = { x: 1120 + GAP * 2, w: W - (1120 + GAP * 2) };
-    const rowTop = { y: 0,            h: 540 };
-    const rowBot = { y: 540 + GAP,    h: H - (540 + GAP) };
+    const colA = { x: 0,                 w: 560 };
+    const colB = { x: 560 + GAP,         w: 560 };
+    const colC = { x: 1120 + GAP * 2,    w: W - (1120 + GAP * 2) };
+    const rowTop = { y: 0,               h: 540 };
+    const rowBot = { y: 540 + GAP,       h: H - (540 + GAP) };
 
-    drawCover(nahom, colA.x, rowTop.y, colA.w, rowTop.h);
-    drawCover(abel,  colB.x, rowTop.y, colB.w, rowTop.h);
-    drawCover(euael, colC.x, rowTop.y, colC.w, H);                         // tall right column spans both rows
-    drawCover(milkiyas, colA.x, rowBot.y, colA.w + GAP + colB.w, rowBot.h); // wide bottom band
+    drawCover(nahom,    colA.x, rowTop.y, colA.w,                       rowTop.h);
+    drawCover(abel,     colB.x, rowTop.y, colB.w,                       rowTop.h);
+    drawCover(euael,    colC.x, rowTop.y, colC.w,                       H);
+    drawCover(milkiyas, colA.x, rowBot.y, colA.w + GAP + colB.w,        rowBot.h);
 
     return c;
   }
@@ -208,14 +194,11 @@ import Kicker from "@/components/ui/Kicker.astro";
     });
   }
 
-  async function boot() {
-    const hostEl = document.querySelector<HTMLElement>("[data-hero-shader]");
-    const heroEl = document.querySelector<HTMLElement>("[data-hero]");
-    if (!hostEl || !heroEl) return;
+  async function startShader(hero: HTMLElement) {
+    const hostEl = hero.querySelector<HTMLElement>("[data-hero-shader]");
+    if (!hostEl) return;
     const host = hostEl;
-    const hero = heroEl;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const themeQuery = window.matchMedia("(prefers-color-scheme: light)");
     let palette: Palette = themeQuery.matches ? LIGHT : DARK;
 
@@ -237,14 +220,13 @@ import Kicker from "@/components/ui/Kicker.astro";
       vertex,
       fragment,
       uniforms: {
-        uTex: { value: texture },
-        uMouse: { value: new Float32Array([0.5, 0.5]) },
-        uRadius: { value: 0.0 },
-        uAspect: { value: 1.0 },
-        uTime: { value: 0.0 },
-        uTexelSize: { value: new Float32Array([1 / bentoCanvas.width, 1 / bentoCanvas.height]) },
-        uBaseBright: { value: palette.baseBrightness },
-        uGray: { value: palette.grayTarget },
+        uTex:        { value: texture },
+        uMouse:      { value: new Float32Array([0.5, 0.5]) },
+        uRadius:     { value: 0.0 },
+        uAspect:     { value: 1.0 },
+        uTexelSize:  { value: new Float32Array([1 / bentoCanvas.width, 1 / bentoCanvas.height]) },
+        uGray:       { value: palette.grayTarget },
+        uDarken:     { value: palette.darken },
       },
     });
     const mesh = new Mesh(gl, { geometry, program });
@@ -257,52 +239,12 @@ import Kicker from "@/components/ui/Kicker.astro";
     resize();
     window.addEventListener("resize", resize);
 
-    const onTheme = (e: MediaQueryListEvent) => {
+    themeQuery.addEventListener("change", (e) => {
       palette = e.matches ? LIGHT : DARK;
-      program.uniforms.uBaseBright.value = palette.baseBrightness;
       program.uniforms.uGray.value = palette.grayTarget;
-    };
-    themeQuery.addEventListener("change", onTheme);
+      program.uniforms.uDarken.value = palette.darken;
+    });
 
-    // Pointer tracking.
-    const HOVER_R = 0.24; // in UV units (proportion of shorter axis)
-    let targetMx = 0.5, targetMy = 0.5;
-    let mx = 0.5, my = 0.5;
-    let targetR = 0.0;
-    let currentR = 0.0;
-    let hovering = false;
-
-    function onMove(e: PointerEvent) {
-      const rect = hero.getBoundingClientRect();
-      targetMx = (e.clientX - rect.left) / rect.width;
-      targetMy = (e.clientY - rect.top) / rect.height;
-      hovering = true;
-      targetR = HOVER_R;
-    }
-    function onLeave() {
-      hovering = false;
-      targetR = 0.0;
-    }
-    if (!reduced) {
-      hero.addEventListener("pointermove", onMove, { passive: true });
-      hero.addEventListener("pointerleave", onLeave);
-    }
-
-    // Scroll-into-view flash: expand radius once, then retract.
-    const scrollIo = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (!e.isIntersecting) continue;
-          targetR = 1.6;
-          window.setTimeout(() => { if (!hovering) targetR = 0.0; }, 650);
-          scrollIo.unobserve(hero);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    scrollIo.observe(hero);
-
-    // Pause loop when the hero is off-screen.
     let visible = true;
     const visIo = new IntersectionObserver(
       (entries) => { visible = entries[0]?.isIntersecting ?? true; },
@@ -310,27 +252,225 @@ import Kicker from "@/components/ui/Kicker.astro";
     );
     visIo.observe(hero);
 
-    const start = performance.now();
-
-    function frame(now: number) {
+    function frame() {
       requestAnimationFrame(frame);
       if (!visible || document.hidden) return;
-
-      mx += (targetMx - mx) * 0.12;
-      my += (targetMy - my) * 0.12;
-      currentR += (targetR - currentR) * 0.1;
-
-      program.uniforms.uMouse.value[0] = mx;
-      program.uniforms.uMouse.value[1] = 1.0 - my; // flip Y for WebGL
-      program.uniforms.uRadius.value = currentR;
-      program.uniforms.uTime.value = reduced ? 0 : (now - start) * 0.001;
-
+      program.uniforms.uMouse.value[0] = mouse.x;
+      program.uniforms.uMouse.value[1] = 1.0 - mouse.y;
+      program.uniforms.uRadius.value = mouse.r;
       renderer.render({ scene: mesh });
     }
     requestAnimationFrame(frame);
   }
 
-  // Defer init until the browser is idle so LCP is never blocked.
+  /* ============================================================
+     Canvas 2D shapes: decorative particles that bounce + push.
+     ============================================================ */
+  type Shape = {
+    x: number; y: number;   // pixel position within hero
+    vx: number; vy: number; // velocity (px/s)
+    size: number;
+    rot: number; rotSpeed: number;
+    type: "square" | "triangle" | "cross" | "circle" | "diag";
+  };
+
+  function startShapes(hero: HTMLElement) {
+    const canvasEl = hero.querySelector<HTMLCanvasElement>("[data-hero-shapes]");
+    if (!canvasEl) return;
+    const ctxMaybe = canvasEl.getContext("2d");
+    if (!ctxMaybe) return;
+    const canvas = canvasEl;
+    const ctx = ctxMaybe;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let width = 0, height = 0;
+    let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+
+    function resize() {
+      const rect = hero.getBoundingClientRect();
+      width = rect.width; height = rect.height;
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = width + "px";
+      canvas.style.height = height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    const COUNT = 36;
+    const TYPES: Shape["type"][] = ["square", "triangle", "cross", "circle", "diag"];
+    const shapes: Shape[] = [];
+    const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+    for (let i = 0; i < COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = rand(6, 22);
+      shapes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        size: rand(8, 26),
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: rand(-0.25, 0.25),
+        type: TYPES[Math.floor(Math.random() * TYPES.length)],
+      });
+    }
+
+    let visible = true;
+    const io = new IntersectionObserver(
+      (entries) => { visible = entries[0]?.isIntersecting ?? true; },
+      { threshold: 0 }
+    );
+    io.observe(hero);
+
+    let lastT = performance.now();
+
+    function frame(now: number) {
+      requestAnimationFrame(frame);
+      const dt = Math.min((now - lastT) / 1000, 1 / 30);
+      lastT = now;
+      if (!visible || document.hidden || width === 0) return;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Cursor position in pixel space.
+      const cx = mouse.x * width;
+      const cy = mouse.y * height;
+      // Impact radius. We aspect-correct uRadius (UV on shorter axis) back to pixels.
+      const radiusPx = mouse.r * Math.min(width, height);
+
+      for (const s of shapes) {
+        // Cursor repulsion + brightness flare within the shader's same radius.
+        let flare = 0;
+        if (radiusPx > 0) {
+          const dx = s.x - cx;
+          const dy = s.y - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist < radiusPx) {
+            const push = (1 - dist / radiusPx) * 220 * dt;
+            const invD = dist > 0.001 ? 1 / dist : 0;
+            s.vx += dx * invD * push;
+            s.vy += dy * invD * push;
+            flare = 1 - dist / radiusPx;
+          }
+        }
+
+        // Gentle drag so impulses settle.
+        if (!reduced) {
+          s.vx *= 0.985;
+          s.vy *= 0.985;
+          s.x += s.vx * dt;
+          s.y += s.vy * dt;
+          s.rot += s.rotSpeed * dt;
+        }
+
+        // Bounce off hero edges.
+        if (s.x < 0)           { s.x = 0;           s.vx = Math.abs(s.vx); }
+        else if (s.x > width)  { s.x = width;       s.vx = -Math.abs(s.vx); }
+        if (s.y < 0)           { s.y = 0;           s.vy = Math.abs(s.vy); }
+        else if (s.y > height) { s.y = height;      s.vy = -Math.abs(s.vy); }
+
+        // Render: barely-visible by default, flares to ~0.5 near the cursor.
+        const baseAlpha = 0.08;
+        const alpha = Math.min(baseAlpha + flare * 0.42, 0.55);
+
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rot);
+        ctx.strokeStyle = `rgba(127, 207, 179, ${alpha.toFixed(3)})`;
+        ctx.lineWidth = 1;
+
+        const h = s.size / 2;
+        switch (s.type) {
+          case "square":
+            ctx.strokeRect(-h, -h, s.size, s.size);
+            break;
+          case "triangle":
+            ctx.beginPath();
+            ctx.moveTo(0, -h);
+            ctx.lineTo(h, h);
+            ctx.lineTo(-h, h);
+            ctx.closePath();
+            ctx.stroke();
+            break;
+          case "cross":
+            ctx.beginPath();
+            ctx.moveTo(-h, 0); ctx.lineTo(h, 0);
+            ctx.moveTo(0, -h); ctx.lineTo(0, h);
+            ctx.stroke();
+            break;
+          case "circle":
+            ctx.beginPath();
+            ctx.arc(0, 0, h, 0, Math.PI * 2);
+            ctx.stroke();
+            break;
+          case "diag":
+            ctx.beginPath();
+            ctx.moveTo(-h, -h); ctx.lineTo(h, h);
+            ctx.stroke();
+            break;
+        }
+        ctx.restore();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ============================================================
+     Shared cursor bookkeeping + scroll-in flash.
+     ============================================================ */
+  function startCursor(hero: HTMLElement) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function onMove(e: PointerEvent) {
+      const rect = hero.getBoundingClientRect();
+      mouse.targetX = (e.clientX - rect.left) / rect.width;
+      mouse.targetY = (e.clientY - rect.top) / rect.height;
+      mouse.hovering = true;
+      mouse.targetR = HOVER_R;
+    }
+    function onLeave() {
+      mouse.hovering = false;
+      mouse.targetR = 0;
+    }
+    if (!reduced) {
+      hero.addEventListener("pointermove", onMove, { passive: true });
+      hero.addEventListener("pointerleave", onLeave);
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          mouse.targetR = 1.6;
+          window.setTimeout(() => { if (!mouse.hovering) mouse.targetR = 0; }, 650);
+          io.unobserve(hero);
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(hero);
+
+    function tick() {
+      requestAnimationFrame(tick);
+      mouse.x += (mouse.targetX - mouse.x) * 0.12;
+      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+      mouse.r += (mouse.targetR - mouse.r) * 0.1;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  async function boot() {
+    const heroEl = document.querySelector<HTMLElement>("[data-hero]");
+    if (!heroEl) return;
+    startCursor(heroEl);
+    startShapes(heroEl);
+    await startShader(heroEl);
+  }
+
   const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback;
   if (typeof idle === "function") idle(() => { void boot(); }, { timeout: 2000 });
   else setTimeout(() => { void boot(); }, 400);
