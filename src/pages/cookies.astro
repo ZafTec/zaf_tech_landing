@@ -1,0 +1,92 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro";
+
+export const prerender = true;
+
+const sections = [
+  { id: "what", label: "What cookies are" },
+  { id: "categories", label: "Categories we use" },
+  { id: "list", label: "Specific cookies" },
+  { id: "choices", label: "Your choices" },
+  { id: "changes", label: "Changes" },
+];
+---
+<LegalLayout
+  title="Cookie Policy"
+  description="Which cookies ZafTech sets, why, and how to turn them off."
+  effectiveDate="2026-04-24"
+  lastUpdated="2026-04-24"
+  sections={sections}
+  summary="We keep cookies to a minimum. This page lists the ones we do use, what they do, and how to turn off anything that is not strictly necessary."
+>
+  <h2 id="what" data-num="01">What cookies are</h2>
+  <p>
+    Cookies are small text files placed on your device to make a site work, to
+    remember your preferences, or to measure how a product is used. "Similar
+    technologies" include browser localStorage, sessionStorage, and pixel beacons.
+    Everything in this policy applies to all of them.
+  </p>
+
+  <h2 id="categories" data-num="02">Categories we use</h2>
+  <ul>
+    <li><strong>Essential</strong>: required for the site and products to function. Login sessions, CSRF tokens, and checkout flows. You cannot turn these off while using the service.</li>
+    <li><strong>Analytics</strong>: privacy-respecting, aggregated usage metrics (via Plausible or PostHog). No cross-site tracking. No advertising profiles.</li>
+    <li><strong>Functional</strong>: remembers your preferences (theme, language, dismissed banners).</li>
+  </ul>
+  <p>
+    We do not use advertising cookies or third-party tracking pixels from ad
+    networks.
+  </p>
+
+  <h2 id="list" data-num="03">Specific cookies</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Purpose</th>
+        <th>Retention</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>session</code></td>
+        <td>Essential</td>
+        <td>Keeps you logged in</td>
+        <td>30 days or until sign out</td>
+      </tr>
+      <tr>
+        <td><code>csrf</code></td>
+        <td>Essential</td>
+        <td>Protects forms and API calls</td>
+        <td>Session</td>
+      </tr>
+      <tr>
+        <td><code>theme</code></td>
+        <td>Functional</td>
+        <td>Remembers light or dark mode</td>
+        <td>1 year</td>
+      </tr>
+      <tr>
+        <td><code>_plausible</code> / <code>ph_*</code></td>
+        <td>Analytics</td>
+        <td>Anonymous usage metrics</td>
+        <td>Up to 12 months</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="choices" data-num="04">Your choices</h2>
+  <p>
+    You can reject non-essential cookies via the consent banner on first visit, and
+    you can revisit your choice at any time from the footer link "Cookie settings".
+    You can also block cookies at the browser level, but this may break parts of the
+    site that depend on essential cookies.
+  </p>
+
+  <h2 id="changes" data-num="05">Changes</h2>
+  <p>
+    We update this list when we add or remove technologies. The "Last updated" date
+    at the top reflects the latest version.
+  </p>
+</LegalLayout>
