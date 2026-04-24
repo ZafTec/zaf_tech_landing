@@ -1,0 +1,21 @@
+---
+interface Props {
+  value: string;
+  label: string;
+  trend?: "up" | "down" | "flat";
+}
+const { value, label, trend } = Astro.props;
+---
+<div class="metric-tile">
+  <div class="flex items-center justify-between">
+    <div class="value">{value}</div>
+    {trend && (
+      <svg width="40" height="16" viewBox="0 0 40 16" fill="none" stroke="currentColor" stroke-width="1.5" class="text-spruce-400" aria-hidden="true">
+        {trend === "up" && <path d="M1 14 10 8 18 11 26 4 34 6 39 2"/>}
+        {trend === "down" && <path d="M1 2 10 4 18 7 26 6 34 10 39 14"/>}
+        {trend === "flat" && <path d="M1 8 10 7 18 9 26 7 34 8 39 8"/>}
+      </svg>
+    )}
+  </div>
+  <div class="label">{label}</div>
+</div>

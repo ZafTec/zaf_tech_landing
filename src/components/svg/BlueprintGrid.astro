@@ -1,0 +1,12 @@
+---
+interface Props {
+  class?: string;
+  opacity?: number;
+}
+const { class: extra = "", opacity = 0.05 } = Astro.props;
+---
+<div
+  class:list={["absolute inset-0 pointer-events-none", extra]}
+  style={`background-image: linear-gradient(to right, var(--color-onyx-800) 1px, transparent 1px), linear-gradient(to bottom, var(--color-onyx-800) 1px, transparent 1px); background-size: 48px 48px; opacity: ${opacity};`}
+  aria-hidden="true"
+></div>

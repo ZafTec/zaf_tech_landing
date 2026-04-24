@@ -1,0 +1,27 @@
+---
+interface Props {
+  seed?: number;
+  class?: string;
+  size?: number;
+}
+const { seed = 0, class: extra = "", size = 48 } = Astro.props;
+// Vary the rings and orientation by seed for visual variety
+const variant = seed % 3;
+---
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 48 48"
+  class:list={["text-onyx-400", extra]}
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1"
+  aria-hidden="true"
+>
+  <circle cx="24" cy="24" r="22" />
+  <circle cx="24" cy="20" r="7" />
+  <path d="M10 40 C 14 32, 34 32, 38 40" />
+  {variant === 0 && <line x1="14" y1="24" x2="34" y2="24" stroke-dasharray="1 2" opacity="0.5" />}
+  {variant === 1 && <circle cx="24" cy="24" r="15" stroke-dasharray="1 3" opacity="0.4" />}
+  {variant === 2 && <rect x="6" y="22" width="36" height="1" opacity="0.3" />}
+</svg>

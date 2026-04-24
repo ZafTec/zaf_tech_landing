@@ -1,0 +1,91 @@
+---
+interface Pin {
+  label: string;
+  x: number;
+  y: number;
+  primary?: boolean;
+}
+interface Props {
+  pins?: Pin[];
+  class?: string;
+}
+const {
+  pins = [
+    { label: "Addis Ababa · HQ", x: 575, y: 260, primary: true },
+    { label: "London", x: 510, y: 155 },
+    { label: "Dallas", x: 220, y: 210 },
+    { label: "Berlin", x: 530, y: 150 },
+  ],
+  class: extra = "",
+} = Astro.props;
+---
+<div class:list={["relative", extra]}>
+  <svg viewBox="0 0 960 500" class="w-full h-auto text-onyx-600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Global client locations">
+    <defs>
+      <pattern id="world-dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.8" fill="currentColor" />
+      </pattern>
+      <mask id="world-mask">
+        <rect width="960" height="500" fill="black" />
+        <!-- simplified continents as paths -->
+        <path fill="white" d="M120 140 L190 110 L260 130 L310 180 L290 240 L240 260 L190 250 L150 270 L120 230 Z" />
+        <path fill="white" d="M200 280 L260 310 L280 380 L240 430 L210 410 L180 370 L190 320 Z" />
+        <path fill="white" d="M430 90 L540 80 L640 110 L700 160 L680 210 L620 230 L540 220 L470 200 L430 160 Z" />
+        <path fill="white" d="M540 230 L620 240 L640 290 L620 360 L580 390 L560 350 L530 310 L520 270 Z" />
+        <path fill="white" d="M650 260 L720 270 L760 300 L770 350 L740 410 L700 430 L670 400 L650 340 Z" />
+        <path fill="white" d="M750 120 L830 130 L890 170 L900 220 L860 260 L820 250 L780 220 L760 180 Z" />
+        <path fill="white" d="M800 330 L860 340 L880 380 L870 430 L830 440 L810 410 L790 370 Z" />
+      </mask>
+    </defs>
+    <rect width="960" height="500" fill="url(#world-dots)" mask="url(#world-mask)" />
+
+    <!-- pulsing connection lines from HQ -->
+    {pins.filter((p) => !p.primary).map((p) => {
+      const hq = pins.find((pp) => pp.primary)!;
+      return (
+        <line
+          x1={hq.x}
+          y1={hq.y}
+          x2={p.x}
+          y2={p.y}
+          stroke="currentColor"
+          stroke-width="0.75"
+          stroke-dasharray="2 4"
+          opacity="0.5"
+        />
+      );
+    })}
+
+    <!-- pins -->
+    {pins.map((p) => (
+      <g>
+        {p.primary && (
+          <>
+            <circle cx={p.x} cy={p.y} r="14" class="text-spruce-400" stroke="currentColor" stroke-width="0.75" fill="none" opacity="0.35">
+              <animate attributeName="r" from="6" to="20" dur="2.2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" from="0.5" to="0" dur="2.2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={p.x} cy={p.y} r="5" class="text-spruce-400" fill="currentColor" />
+            <circle cx={p.x} cy={p.y} r="2" class="text-onyx-950" fill="currentColor" />
+          </>
+        )}
+        {!p.primary && (
+          <>
+            <circle cx={p.x} cy={p.y} r="4" class="text-ivory-100" fill="currentColor" opacity="0.8" />
+            <circle cx={p.x} cy={p.y} r="1.5" class="text-onyx-950" fill="currentColor" />
+          </>
+        )}
+        <text
+          x={p.x + 12}
+          y={p.y + 4}
+          font-family="JetBrains Mono, monospace"
+          font-size="9"
+          letter-spacing="1"
+          class:list={[p.primary ? "text-spruce-400" : "text-ivory-100"]}
+          fill="currentColor"
+        >{p.label.toUpperCase()}</text>
+      </g>
+    ))}
+  </svg>
+  <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-onyx-500">// clients-live.svg</p>
+</div>

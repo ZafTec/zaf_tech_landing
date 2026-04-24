@@ -1,0 +1,18 @@
+---
+interface Props {
+  filename: string;
+  class?: string;
+}
+const { filename, class: extra = "" } = Astro.props;
+---
+<div class:list={["window-chrome", extra]}>
+  <div class="window-chrome-bar">
+    <span class="window-chrome-dot"></span>
+    <span class="window-chrome-dot"></span>
+    <span class="window-chrome-dot"></span>
+    <span class="window-chrome-filename">{filename}</span>
+  </div>
+  <div class="window-chrome-body">
+    <slot />
+  </div>
+</div>
