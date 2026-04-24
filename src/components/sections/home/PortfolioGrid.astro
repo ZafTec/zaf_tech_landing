@@ -22,7 +22,7 @@ import { gallery } from "@/data/content";
             <div class="aspect-[4/3] overflow-hidden border-b border-onyx-800 relative">
               <Image
                 src={g.image}
-                alt={`${g.title} — ${g.tag}`}
+                alt={`${g.title}: ${g.tag}`}
                 class="absolute inset-0 w-full h-full object-cover opacity-55 group-hover:opacity-90 transition-opacity duration-500"
                 widths={[480, 720, 960]}
                 sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
