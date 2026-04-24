@@ -1,0 +1,32 @@
+---
+import Kicker from "@/components/ui/Kicker.astro";
+
+const steps = [
+  { n: "01", label: "Discover",  body: "Call, read your code, write down the hard parts." },
+  { n: "02", label: "Design",    body: "Architecture + UI sketches. Review together." },
+  { n: "03", label: "Scope",     body: "Fixed-price phases. No open-ended retainers." },
+  { n: "04", label: "Build",     body: "Weekly demos. You see it as it lands." },
+  { n: "05", label: "Ship",      body: "Prod deploy, monitoring, runbooks, training." },
+  { n: "06", label: "Support",   body: "Stay on for fixes and new work, or we hand over." },
+];
+---
+<section class="border-b border-onyx-800">
+  <div class="px-6 md:px-12 py-24 md:py-28">
+    <div class="max-w-6xl mx-auto">
+      <Kicker num="08" label="Process" />
+      <h2 class="mt-4 display-tight text-3xl md:text-4xl font-medium text-ivory-100">
+        Six steps, no surprises.
+      </h2>
+
+      <ol class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-px bg-onyx-800 border border-onyx-800">
+        {steps.map((s, i) => (
+          <li class="p-6 bg-onyx-950 reveal-up" style={`--reveal-delay: ${i * 60}ms;`}>
+            <span class="font-mono text-[10px] text-spruce-400 tracking-widest">/ {s.n}</span>
+            <h3 class="mt-4 text-base font-medium text-ivory-100">{s.label}</h3>
+            <p class="mt-2 text-sm text-onyx-400 leading-relaxed">{s.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

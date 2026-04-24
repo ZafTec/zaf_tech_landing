@@ -1,0 +1,35 @@
+---
+import Kicker from "@/components/ui/Kicker.astro";
+import WireframeAvatar from "@/components/svg/WireframeAvatar.astro";
+import { testimonials } from "@/data/content";
+---
+<section class="border-b border-onyx-800">
+  <div class="px-6 md:px-12 py-24 md:py-28">
+    <div class="max-w-6xl mx-auto">
+      <Kicker num="07" label="Clients" />
+      <h2 class="mt-4 display-tight text-3xl md:text-4xl font-medium text-ivory-100">
+        Said by people who paid us.
+      </h2>
+
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-px bg-onyx-800 border border-onyx-800">
+        {testimonials.map((t, i) => (
+          <figure class="p-8 md:p-10 bg-onyx-950 reveal-up flex flex-col justify-between" style={`--reveal-delay: ${i * 80}ms;`}>
+            <svg width="32" height="24" viewBox="0 0 32 24" fill="none" aria-hidden="true" class="text-spruce-400">
+              <path d="M0 24V12C0 5 5 0 12 0V6C9 6 7 8 7 12H12V24H0ZM20 24V12C20 5 25 0 32 0V6C29 6 27 8 27 12H32V24H20Z" fill="currentColor"/>
+            </svg>
+            <blockquote class="mt-6 text-ivory-100 text-base md:text-lg leading-relaxed">
+              {t.quote}
+            </blockquote>
+            <figcaption class="mt-8 flex items-center gap-4 pt-6 border-t border-onyx-800">
+              <WireframeAvatar seed={i} />
+              <div>
+                <div class="text-sm text-ivory-100 font-medium">{t.name}</div>
+                <div class="font-mono text-[10px] uppercase tracking-widest text-onyx-500 mt-0.5">{t.role}</div>
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

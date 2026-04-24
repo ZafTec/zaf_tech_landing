@@ -1,0 +1,17 @@
+---
+const logos = ["AfroChat", "SecureTron", "Akoya", "Bathra", "mBar", "RnE", "Bitbricks"];
+---
+<section aria-label="Trusted by" class="border-y border-onyx-800">
+  <div class="px-6 md:px-12 py-8">
+    <div class="max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
+      <p class="kicker kicker-muted shrink-0">// Trusted by</p>
+      <ul class="flex flex-wrap items-center gap-x-8 gap-y-3">
+        {logos.map((l) => (
+          <li class="font-mono text-sm tracking-wider text-ivory-200/55 hover:text-ivory-100 transition-colors">
+            {l}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
