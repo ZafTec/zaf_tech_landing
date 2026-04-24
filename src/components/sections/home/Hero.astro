@@ -1,0 +1,37 @@
+---
+import Button from "@/components/ui/Button.astro";
+import Kicker from "@/components/ui/Kicker.astro";
+import WorldMap from "@/components/svg/WorldMap.astro";
+---
+<section class="relative overflow-hidden">
+  <div class="px-6 md:px-12 pt-28 md:pt-36 pb-24">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div class="lg:col-span-7 reveal-up">
+        <Kicker num="01" label="Engineering" />
+        <h1 class="mt-6 display-tight text-5xl md:text-7xl lg:text-[88px] font-medium text-ivory-100">
+          We ship software<br />
+          you can bet<br />
+          the quarter on.
+        </h1>
+        <p class="mt-8 text-onyx-300 max-w-xl text-base md:text-lg leading-relaxed">
+          A small team out of Addis Ababa building production systems for founders in London, Dallas, and Berlin.
+        </p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <Button href="mailto:contact@zaftech.co?subject=Book%20a%20call" variant="primary">Book a call</Button>
+          <Button href="#portfolio" variant="ghost">See our work</Button>
+        </div>
+        <dl class="mt-12 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-onyx-400">
+          <div class="flex items-center gap-2"><span class="text-spruce-400">50+</span> shipped</div>
+          <span class="text-onyx-700">/</span>
+          <div class="flex items-center gap-2"><span class="text-spruce-400">99.9%</span> uptime</div>
+          <span class="text-onyx-700">/</span>
+          <div class="flex items-center gap-2"><span class="text-spruce-400">&lt; 24h</span> reply</div>
+        </dl>
+      </div>
+
+      <div class="lg:col-span-5 reveal-up" style="--reveal-delay: 120ms;">
+        <WorldMap />
+      </div>
+    </div>
+  </div>
+</section>

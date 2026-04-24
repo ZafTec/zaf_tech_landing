@@ -1,0 +1,40 @@
+---
+import { Image } from "astro:assets";
+import Kicker from "@/components/ui/Kicker.astro";
+import { gallery } from "@/data/content";
+---
+<section id="portfolio" class="border-b border-onyx-800 bg-onyx-900/30">
+  <div class="px-6 md:px-12 py-24 md:py-28">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-end justify-between gap-6 flex-wrap">
+        <div>
+          <Kicker num="06" label="Portfolio" />
+          <h2 class="mt-4 display-tight text-3xl md:text-4xl font-medium text-ivory-100">
+            Shipped, running, still ours to support.
+          </h2>
+        </div>
+        <a href="/portfolio" class="font-mono text-[10px] uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">All work →</a>
+      </div>
+
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-onyx-800 border border-onyx-800">
+        {gallery.map((g) => (
+          <a href={g.link} target="_blank" rel="noopener noreferrer" class="card-accent-bar group block bg-onyx-950 reveal-up">
+            <div class="aspect-[4/3] overflow-hidden border-b border-onyx-800 relative">
+              <Image
+                src={g.image}
+                alt={`${g.title} — ${g.tag}`}
+                class="absolute inset-0 w-full h-full object-cover opacity-55 group-hover:opacity-90 transition-opacity duration-500"
+                widths={[480, 720, 960]}
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              />
+            </div>
+            <div class="p-6">
+              <span class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">// {g.tag}</span>
+              <h3 class="mt-3 text-lg font-medium text-ivory-100">{g.title}</h3>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
