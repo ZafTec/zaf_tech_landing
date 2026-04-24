@@ -1,0 +1,100 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SeoHead from "@/components/SeoHead.astro";
+
+interface SectionLink {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  effectiveDate: string;
+  lastUpdated: string;
+  sections: SectionLink[];
+  summary?: string;
+}
+
+const { title, description, effectiveDate, lastUpdated, sections, summary } = Astro.props;
+
+const pageTitle = `${title} | ZafTech`;
+---
+<Layout title={pageTitle} description={description}>
+  <Fragment slot="head">
+    <SeoHead
+      title={pageTitle}
+      description={description}
+      canonicalPath={Astro.url.pathname}
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: title,
+        description,
+        url: new URL(Astro.url.pathname, "https://zaftech.co").toString(),
+        dateModified: lastUpdated,
+      }}
+    />
+  </Fragment>
+
+  <div class="min-h-screen flex flex-col">
+    <SiteHeader />
+
+    <main class="pt-24 pb-16 grow">
+      <section class="px-6 md:px-12 py-10 md:py-14 border-b border-onyx-800">
+        <div class="max-w-6xl mx-auto">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 mb-4">Legal</p>
+          <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-ivory-100">{title}</h1>
+          {summary && (
+            <p class="mt-4 text-onyx-300 max-w-3xl text-base md:text-lg leading-relaxed">{summary}</p>
+          )}
+          <dl class="mt-8 grid grid-cols-2 md:flex md:gap-12 gap-6 text-xs font-mono">
+            <div>
+              <dt class="text-onyx-500 uppercase tracking-widest text-[10px]">Effective</dt>
+              <dd class="mt-1 text-ivory-100">{effectiveDate}</dd>
+            </div>
+            <div>
+              <dt class="text-onyx-500 uppercase tracking-widest text-[10px]">Last updated</dt>
+              <dd class="mt-1 text-ivory-100">{lastUpdated}</dd>
+            </div>
+            <div>
+              <dt class="text-onyx-500 uppercase tracking-widest text-[10px]">Contact</dt>
+              <dd class="mt-1"><a class="text-spruce-400 hover:text-spruce-300 transition-colors" href="mailto:contact@zaftech.co">contact@zaftech.co</a></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="px-6 md:px-12 py-12 md:py-16">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <aside class="lg:col-span-3 lg:sticky lg:top-24 lg:self-start">
+            <nav aria-label="On this page">
+              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500 mb-4">On this page</p>
+              <ol class="space-y-2 text-sm">
+                {sections.map((s, i) => (
+                  <li>
+                    <a
+                      href={`#${s.id}`}
+                      class="group flex gap-3 text-onyx-400 hover:text-spruce-400 transition-colors"
+                    >
+                      <span class="font-mono text-[10px] text-onyx-600 mt-1">{String(i + 1).padStart(2, "0")}</span>
+                      <span>{s.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </aside>
+
+          <article class="lg:col-span-9 prose-legal">
+            <slot />
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+  </div>
+</Layout>
