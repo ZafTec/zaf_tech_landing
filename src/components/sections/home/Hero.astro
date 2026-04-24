@@ -299,22 +299,22 @@ import Kicker from "@/components/ui/Kicker.astro";
     resize();
     window.addEventListener("resize", resize);
 
-    const COUNT = 36;
+    const COUNT = 72;
     const TYPES: Shape["type"][] = ["square", "triangle", "cross", "circle", "diag"];
     const shapes: Shape[] = [];
     const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
     for (let i = 0; i < COUNT; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = rand(6, 22);
+      const speed = rand(8, 26);
       shapes.push({
         x: Math.random() * width,
         y: Math.random() * height,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        size: rand(8, 26),
+        size: rand(8, 30),
         rot: Math.random() * Math.PI * 2,
-        rotSpeed: rand(-0.25, 0.25),
+        rotSpeed: rand(-0.3, 0.3),
         type: TYPES[Math.floor(Math.random() * TYPES.length)],
       });
     }
@@ -373,15 +373,15 @@ import Kicker from "@/components/ui/Kicker.astro";
         if (s.y < 0)           { s.y = 0;           s.vy = Math.abs(s.vy); }
         else if (s.y > height) { s.y = height;      s.vy = -Math.abs(s.vy); }
 
-        // Render: barely-visible by default, flares to ~0.5 near the cursor.
-        const baseAlpha = 0.08;
-        const alpha = Math.min(baseAlpha + flare * 0.42, 0.55);
+        // Render: barely-visible by default, flares near the cursor.
+        const baseAlpha = 0.16;
+        const alpha = Math.min(baseAlpha + flare * 0.6, 0.78);
 
         ctx.save();
         ctx.translate(s.x, s.y);
         ctx.rotate(s.rot);
         ctx.strokeStyle = `rgba(127, 207, 179, ${alpha.toFixed(3)})`;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 1 + flare * 0.6;
 
         const h = s.size / 2;
         switch (s.type) {
