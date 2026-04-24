@@ -7,18 +7,15 @@ import Threads from "@/components/Threads.jsx";
   class="relative isolate overflow-hidden bg-onyx-950"
   style="min-height: 100dvh;"
 >
-  <!-- Interactive canvas, sits behind content -->
+  <!-- Interactive WebGL canvas. Hydrated on idle so LCP is untouched. -->
   <div class="absolute inset-0 z-0 pointer-events-auto">
     <Threads client:idle amplitude={1.1} distance={0.05} enableMouseInteraction={true} />
   </div>
 
-  <!-- Vignette to keep headline readable over canvas -->
-  <div
-    class="absolute inset-0 z-10 pointer-events-none hero-vignette"
-    aria-hidden="true"
-  ></div>
+  <!-- Vignette keeps headline legible over the animated canvas -->
+  <div class="absolute inset-0 z-10 pointer-events-none hero-vignette" aria-hidden="true"></div>
 
-  <!-- Content column -->
+  <!-- Content -->
   <div class="relative z-20 flex flex-col min-h-[100dvh] px-6 md:px-12 pt-28 pb-16">
     <div class="max-w-6xl mx-auto w-full grow flex items-center">
       <div class="max-w-3xl reveal-up">
@@ -37,23 +34,10 @@ import Threads from "@/components/Threads.jsx";
         </div>
       </div>
     </div>
-
-    <!-- Bottom stat strip -->
-    <div class="max-w-6xl mx-auto w-full mt-10 pt-6 border-t border-onyx-800/60 flex flex-wrap items-center justify-between gap-4 reveal-up" style="--reveal-delay: 160ms;">
-      <dl class="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-onyx-300">
-        <div class="flex items-center gap-2"><span class="text-spruce-400">50+</span> shipped</div>
-        <span class="text-onyx-700">/</span>
-        <div class="flex items-center gap-2"><span class="text-spruce-400">99.9%</span> uptime</div>
-        <span class="text-onyx-700">/</span>
-        <div class="flex items-center gap-2"><span class="text-spruce-400">&lt; 24h</span> reply</div>
-      </dl>
-      <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">// scroll</span>
-    </div>
   </div>
 </section>
 
 <style>
-  /* Dark mode default: vignette gently tints inner-left for legibility */
   .hero-vignette {
     background:
       radial-gradient(ellipse at 20% 40%, rgba(12, 15, 13, 0.55) 0%, rgba(12, 15, 13, 0) 55%),
