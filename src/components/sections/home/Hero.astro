@@ -1,42 +1,19 @@
 ---
-import { Image } from "astro:assets";
 import Button from "@/components/ui/Button.astro";
 import Kicker from "@/components/ui/Kicker.astro";
-import teamImg from "@/assets/people/team-placeholder.avif";
 ---
 <section
-  class="hero-section relative isolate overflow-hidden bg-onyx-950"
+  class="relative isolate overflow-hidden bg-onyx-950"
   style="min-height: 100dvh;"
   data-hero
 >
-  <!-- Grayscale base: the team, dimmed -->
-  <div class="hero-layer hero-gray" aria-hidden="true">
-    <Image
-      src={teamImg}
-      alt=""
-      widths={[960, 1440, 1920, 2400]}
-      sizes="100vw"
-      loading="eager"
-      class="w-full h-full object-cover"
-    />
-  </div>
+  <!-- WebGL layer: blurred team bento with shader-reveal around the cursor. -->
+  <div class="absolute inset-0 z-0" data-hero-shader></div>
 
-  <!-- Color spotlight layer, clipped to a circle that follows the cursor -->
-  <div class="hero-layer hero-color" aria-hidden="true" data-hero-spotlight>
-    <Image
-      src={teamImg}
-      alt=""
-      widths={[960, 1440, 1920, 2400]}
-      sizes="100vw"
-      loading="eager"
-      class="w-full h-full object-cover"
-    />
-  </div>
+  <!-- Legibility wash over the shader -->
+  <div class="absolute inset-0 z-10 pointer-events-none hero-wash" aria-hidden="true"></div>
 
-  <!-- Legibility wash -->
-  <div class="hero-wash" aria-hidden="true"></div>
-
-  <!-- Content (centered vertically + horizontally) -->
+  <!-- Centered content -->
   <div class="relative z-30 flex min-h-[100dvh] items-center justify-center px-6 md:px-12 text-center">
     <div class="max-w-3xl">
       <Kicker num="01" label="Engineering" />
@@ -56,134 +33,305 @@ import teamImg from "@/assets/people/team-placeholder.avif";
 </section>
 
 <style>
-  .hero-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-  .hero-layer :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .hero-gray :global(img) {
-    filter: grayscale(100%) contrast(1.08) brightness(0.38);
-  }
-  .hero-color {
-    z-index: 1;
-    /* CSS vars driven by JS; initial radius is 0 so nothing is revealed. */
-    --mx: 50%;
-    --my: 50%;
-    --r: 0px;
-    clip-path: circle(var(--r) at var(--mx) var(--my));
-    -webkit-clip-path: circle(var(--r) at var(--mx) var(--my));
-    will-change: clip-path;
-  }
-  .hero-color :global(img) {
-    filter: contrast(1.05) saturate(1.05);
-  }
   .hero-wash {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
     background:
-      radial-gradient(ellipse at 50% 50%, rgba(12,15,13,0.15) 0%, rgba(12,15,13,0.65) 70%),
-      linear-gradient(to bottom, rgba(12,15,13,0.5) 0%, rgba(12,15,13,0.3) 40%, rgba(12,15,13,0.75) 100%);
+      radial-gradient(ellipse at 50% 50%, rgba(12,15,13,0.2) 0%, rgba(12,15,13,0.6) 70%),
+      linear-gradient(to bottom, rgba(12,15,13,0.55) 0%, rgba(12,15,13,0.25) 40%, rgba(12,15,13,0.75) 100%);
   }
-
   @media (prefers-color-scheme: light) {
-    .hero-gray :global(img) {
-      filter: grayscale(100%) contrast(1.0) brightness(0.9);
-    }
     .hero-wash {
       background:
         radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.6) 70%),
-        linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.75) 100%);
+        linear-gradient(to bottom, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, rgba(255,255,255,0.75) 100%);
     }
   }
 </style>
 
 <script>
-  (function () {
+  import nahomUrl    from "@/assets/people/nahom-profile.jpg?url";
+  import abelUrl     from "@/assets/people/abel-profile.jpg?url";
+  import euaelUrl    from "@/assets/people/euael-profile.jpg?url";
+  import milkiyasUrl from "@/assets/people/milkiyas-profile.jpg?url";
+  import { Renderer, Program, Mesh, Triangle, Texture } from "ogl";
+
+  type Palette = { grayTarget: number; baseBrightness: number };
+  const DARK: Palette = { grayTarget: 1.0, baseBrightness: 0.35 };
+  const LIGHT: Palette = { grayTarget: 1.0, baseBrightness: 0.85 };
+
+  const vertex = /* glsl */ `
+    attribute vec2 position;
+    attribute vec2 uv;
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }
+  `;
+
+  const fragment = /* glsl */ `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uTex;
+    uniform vec2 uMouse;       // 0..1 in canvas space
+    uniform float uRadius;     // radius of the reveal circle in UV units
+    uniform float uAspect;     // canvas w/h, used to correct circle distortion
+    uniform float uTime;
+    uniform vec2 uTexelSize;   // 1 / texture resolution
+    uniform float uBaseBright; // brightness of the blurred grayscale base
+    uniform float uGray;       // 0..1 how gray the base is (1 = fully gray)
+
+    // Small 5x5 separable-ish blur, cheap enough for hero at 60fps.
+    vec4 blurTex(vec2 uv, float r) {
+      vec4 sum = vec4(0.0);
+      float total = 0.0;
+      for (int x = -2; x <= 2; x++) {
+        for (int y = -2; y <= 2; y++) {
+          vec2 off = vec2(float(x), float(y)) * uTexelSize * r;
+          float w = exp(-float(x*x + y*y) / 4.0);
+          sum += texture2D(uTex, uv + off) * w;
+          total += w;
+        }
+      }
+      return sum / total;
+    }
+
+    float hash(vec2 p) {
+      return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    void main() {
+      vec2 uv = vUv;
+
+      // Distance from cursor, aspect-corrected so the reveal is a true circle.
+      vec2 d = (uv - uMouse) * vec2(uAspect, 1.0);
+      float dist = length(d);
+
+      // Shader reveal mask with soft shoulder.
+      float mask = 1.0 - smoothstep(uRadius * 0.55, uRadius, dist);
+
+      // Blurred grayscale base.
+      vec4 blurred = blurTex(uv, 6.0);
+      float gray = dot(blurred.rgb, vec3(0.299, 0.587, 0.114));
+      vec3 base = mix(blurred.rgb, vec3(gray), uGray) * uBaseBright;
+
+      // Sharp color sample with small wobble near the ring edge.
+      float ring = smoothstep(uRadius * 0.85, uRadius, dist)
+                 * (1.0 - smoothstep(uRadius, uRadius * 1.08, dist));
+      vec2 wobble = vec2(
+        sin(uv.y * 60.0 + uTime * 2.0),
+        cos(uv.x * 60.0 + uTime * 2.0)
+      ) * ring * 0.003;
+
+      // Chromatic aberration along the ring, classic shader flair.
+      vec2 dir = dist > 0.0001 ? normalize(d) : vec2(0.0, 0.0);
+      float aberr = ring * 0.006;
+      vec2 sampleUv = uv + wobble;
+      float sR = texture2D(uTex, sampleUv - dir * aberr).r;
+      float sG = texture2D(uTex, sampleUv).g;
+      float sB = texture2D(uTex, sampleUv + dir * aberr).b;
+      vec3 sharp = vec3(sR, sG, sB);
+
+      vec3 color = mix(base, sharp, mask);
+
+      // Subtle grain so flat regions feel alive.
+      float n = hash(uv * 800.0 + uTime) - 0.5;
+      color += n * 0.015;
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  // Compose a bento grid of the 4 team photos onto a single canvas.
+  // Layout on a 1600x900 canvas:
+  //   +--------+--------+--------+
+  //   | Nahom  | Abel   | Euael  |
+  //   |  big   |  big   |  col   |
+  //   +--------+--------+        +
+  //           Milkiyas  |  (cont)|
+  //   +-----------------+--------+
+  // Columns/rows chosen so each face has breathing room.
+  async function composeBento(): Promise<HTMLCanvasElement> {
+    const imgs = await Promise.all([
+      loadImage(nahomUrl),
+      loadImage(abelUrl),
+      loadImage(euaelUrl),
+      loadImage(milkiyasUrl),
+    ]);
+    const [nahom, abel, euael, milkiyas] = imgs;
+
+    const W = 1600;
+    const H = 900;
+    const GAP = 4;
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d");
+    if (!ctx) return c;
+
+    ctx.fillStyle = "#0C0F0D";
+    ctx.fillRect(0, 0, W, H);
+
+    const drawCover = (img: HTMLImageElement, dx: number, dy: number, dw: number, dh: number) => {
+      const ir = img.naturalWidth / img.naturalHeight;
+      const br = dw / dh;
+      let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+      if (ir > br) {
+        sw = img.naturalHeight * br;
+        sx = (img.naturalWidth - sw) / 2;
+      } else {
+        sh = img.naturalWidth / br;
+        sy = (img.naturalHeight - sh) / 2;
+      }
+      ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+    };
+
+    // Asymmetric bento
+    const colA = { x: 0,       w: 560 };
+    const colB = { x: 560 + GAP, w: 560 };
+    const colC = { x: 1120 + GAP * 2, w: W - (1120 + GAP * 2) };
+    const rowTop = { y: 0,            h: 540 };
+    const rowBot = { y: 540 + GAP,    h: H - (540 + GAP) };
+
+    drawCover(nahom, colA.x, rowTop.y, colA.w, rowTop.h);
+    drawCover(abel,  colB.x, rowTop.y, colB.w, rowTop.h);
+    drawCover(euael, colC.x, rowTop.y, colC.w, H);                         // tall right column spans both rows
+    drawCover(milkiyas, colA.x, rowBot.y, colA.w + GAP + colB.w, rowBot.h); // wide bottom band
+
+    return c;
+  }
+
+  function loadImage(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.decoding = "async";
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  async function boot() {
+    const hostEl = document.querySelector<HTMLElement>("[data-hero-shader]");
     const heroEl = document.querySelector<HTMLElement>("[data-hero]");
-    const spotEl = document.querySelector<HTMLElement>("[data-hero-spotlight]");
-    if (!heroEl || !spotEl) return;
+    if (!hostEl || !heroEl) return;
+    const host = hostEl;
     const hero = heroEl;
-    const spot = spotEl;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const themeQuery = window.matchMedia("(prefers-color-scheme: light)");
+    let palette: Palette = themeQuery.matches ? LIGHT : DARK;
 
-    const HOVER_R = 260;
-    let targetX = 50, targetY = 50;
-    let mx = 50, my = 50;
-    let targetR = 0;
-    let currentR = 0;
-    let hovering = false;
+    const bentoCanvas = await composeBento();
 
-    function apply() {
-      spot.style.setProperty("--mx", mx + "%");
-      spot.style.setProperty("--my", my + "%");
-      spot.style.setProperty("--r", currentR + "px");
+    const renderer = new Renderer({ alpha: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
+    const gl = renderer.gl;
+    gl.clearColor(0, 0, 0, 0);
+    host.appendChild(gl.canvas);
+    gl.canvas.style.display = "block";
+    gl.canvas.style.width = "100%";
+    gl.canvas.style.height = "100%";
+
+    const texture = new Texture(gl, { generateMipmaps: false });
+    texture.image = bentoCanvas as unknown as HTMLImageElement;
+
+    const geometry = new Triangle(gl);
+    const program = new Program(gl, {
+      vertex,
+      fragment,
+      uniforms: {
+        uTex: { value: texture },
+        uMouse: { value: new Float32Array([0.5, 0.5]) },
+        uRadius: { value: 0.0 },
+        uAspect: { value: 1.0 },
+        uTime: { value: 0.0 },
+        uTexelSize: { value: new Float32Array([1 / bentoCanvas.width, 1 / bentoCanvas.height]) },
+        uBaseBright: { value: palette.baseBrightness },
+        uGray: { value: palette.grayTarget },
+      },
+    });
+    const mesh = new Mesh(gl, { geometry, program });
+
+    function resize() {
+      const rect = host.getBoundingClientRect();
+      renderer.setSize(rect.width, rect.height);
+      program.uniforms.uAspect.value = rect.width / Math.max(rect.height, 1);
     }
-    apply();
+    resize();
+    window.addEventListener("resize", resize);
+
+    const onTheme = (e: MediaQueryListEvent) => {
+      palette = e.matches ? LIGHT : DARK;
+      program.uniforms.uBaseBright.value = palette.baseBrightness;
+      program.uniforms.uGray.value = palette.grayTarget;
+    };
+    themeQuery.addEventListener("change", onTheme);
+
+    // Pointer tracking.
+    const HOVER_R = 0.24; // in UV units (proportion of shorter axis)
+    let targetMx = 0.5, targetMy = 0.5;
+    let mx = 0.5, my = 0.5;
+    let targetR = 0.0;
+    let currentR = 0.0;
+    let hovering = false;
 
     function onMove(e: PointerEvent) {
       const rect = hero.getBoundingClientRect();
-      targetX = ((e.clientX - rect.left) / rect.width) * 100;
-      targetY = ((e.clientY - rect.top) / rect.height) * 100;
+      targetMx = (e.clientX - rect.left) / rect.width;
+      targetMy = (e.clientY - rect.top) / rect.height;
       hovering = true;
       targetR = HOVER_R;
     }
     function onLeave() {
       hovering = false;
-      targetR = 0;
+      targetR = 0.0;
     }
     if (!reduced) {
       hero.addEventListener("pointermove", onMove, { passive: true });
       hero.addEventListener("pointerleave", onLeave);
     }
 
-    // Scroll-in flash: expand the spotlight once, then retract.
-    const io = new IntersectionObserver(
+    // Scroll-into-view flash: expand radius once, then retract.
+    const scrollIo = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
-          const max = Math.max(hero.clientWidth, hero.clientHeight) * 1.2;
-          targetR = max;
-          window.setTimeout(() => {
-            if (!hovering) targetR = 0;
-          }, 520);
-          io.unobserve(hero);
+          targetR = 1.6;
+          window.setTimeout(() => { if (!hovering) targetR = 0.0; }, 650);
+          scrollIo.unobserve(hero);
         }
       },
       { threshold: 0.2 }
     );
-    io.observe(hero);
+    scrollIo.observe(hero);
 
-    let raf = 0;
-    function tick() {
-      mx += (targetX - mx) * 0.12;
-      my += (targetY - my) * 0.12;
-      currentR += (targetR - currentR) * 0.12;
-      apply();
-      raf = requestAnimationFrame(tick);
-    }
-    raf = requestAnimationFrame(tick);
-
-    // Stop animating when the hero leaves the viewport.
+    // Pause loop when the hero is off-screen.
+    let visible = true;
     const visIo = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            if (!raf) raf = requestAnimationFrame(tick);
-          } else {
-            if (raf) { cancelAnimationFrame(raf); raf = 0; }
-          }
-        }
-      },
+      (entries) => { visible = entries[0]?.isIntersecting ?? true; },
       { threshold: 0 }
     );
     visIo.observe(hero);
-  })();
+
+    const start = performance.now();
+
+    function frame(now: number) {
+      requestAnimationFrame(frame);
+      if (!visible || document.hidden) return;
+
+      mx += (targetMx - mx) * 0.12;
+      my += (targetMy - my) * 0.12;
+      currentR += (targetR - currentR) * 0.1;
+
+      program.uniforms.uMouse.value[0] = mx;
+      program.uniforms.uMouse.value[1] = 1.0 - my; // flip Y for WebGL
+      program.uniforms.uRadius.value = currentR;
+      program.uniforms.uTime.value = reduced ? 0 : (now - start) * 0.001;
+
+      renderer.render({ scene: mesh });
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Defer init until the browser is idle so LCP is never blocked.
+  const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void }).requestIdleCallback;
+  if (typeof idle === "function") idle(() => { void boot(); }, { timeout: 2000 });
+  else setTimeout(() => { void boot(); }, 400);
 </script>
