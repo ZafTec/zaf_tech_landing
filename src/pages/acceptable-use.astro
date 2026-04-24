@@ -1,0 +1,74 @@
+---
+import LegalLayout from "@/layouts/LegalLayout.astro";
+
+export const prerender = true;
+
+const sections = [
+  { id: "scope", label: "Scope" },
+  { id: "prohibited", label: "What's prohibited" },
+  { id: "security", label: "Security research" },
+  { id: "enforcement", label: "Enforcement" },
+  { id: "report", label: "Report abuse" },
+];
+---
+<LegalLayout
+  title="Acceptable Use Policy"
+  description="The rules for using ZafTech products and services responsibly."
+  effectiveDate="2026-04-24"
+  lastUpdated="2026-04-24"
+  sections={sections}
+  summary="Short list, strict rules. These apply to anyone using a ZafTech product or service and form part of the Terms of Service."
+>
+  <h2 id="scope" data-num="01">Scope</h2>
+  <p>
+    This Acceptable Use Policy ("AUP") applies to everyone with access to a ZafTech
+    account, website, or product (Convia, Mizan, RMS, Anchor, Talos, and future
+    products). It is part of the <a href="/terms">Terms of Service</a>.
+  </p>
+
+  <h2 id="prohibited" data-num="02">What's prohibited</h2>
+  <p>You will not use our services to:</p>
+  <ul>
+    <li>Break any law. This includes laws of your jurisdiction, our jurisdiction, and anywhere your data travels.</li>
+    <li>Harass, threaten, defame, or target anyone.</li>
+    <li>Send unsolicited bulk email, SMS, or marketing without a verifiable opt-in.</li>
+    <li>Distribute malware, ransomware, or phishing content.</li>
+    <li>Scrape, crawl, or automatically extract content beyond rate limits we publish.</li>
+    <li>Reverse engineer, decompile, or disassemble our software except where prohibition is not permitted by law.</li>
+    <li>Access accounts or data that are not yours, including through credential stuffing, session hijacking, or social engineering.</li>
+    <li>Probe, scan, or test the vulnerability of our systems without prior written permission (see security research below).</li>
+    <li>Interfere with or degrade our services, for example by overwhelming our rate limits or uploading pathological payloads.</li>
+    <li>Use our products to build, train, or power a directly competing product.</li>
+    <li>Resell, sublicense, or white-label our services without a written agreement.</li>
+    <li>Upload content you do not have rights to, or content that infringes trademarks, copyrights, trade secrets, or privacy.</li>
+    <li>Collect special-category personal data (health, biometric, political, religious, etc.) without a lawful basis and proper notice to the people concerned.</li>
+    <li>Use our products to generate or distribute child sexual abuse material, terrorism-promoting content, or content that incites violence.</li>
+  </ul>
+
+  <h2 id="security" data-num="03">Security research</h2>
+  <p>
+    We welcome responsible disclosure. If you believe you have found a
+    vulnerability, email <a href="mailto:contact@zaftech.co">contact@zaftech.co</a>
+    (subject: "Security") with reproduction steps. Do not exploit it beyond what
+    is needed to confirm the issue, do not access data that is not yours, and give
+    us a reasonable window to fix it before public disclosure. In return we will
+    acknowledge you and keep you updated.
+  </p>
+
+  <h2 id="enforcement" data-num="04">Enforcement</h2>
+  <p>
+    If we reasonably believe you have violated this AUP we may, without prior
+    notice: (a) remove the offending content, (b) suspend or terminate your
+    account, (c) deny refunds for affected periods, and (d) report the matter to
+    law enforcement. For severe violations (for example, CSAM, active attacks, or
+    fraud) we will act immediately and without warning.
+  </p>
+
+  <h2 id="report" data-num="05">Report abuse</h2>
+  <p>
+    Seeing something that looks like a violation? Email
+    <a href="mailto:contact@zaftech.co">contact@zaftech.co</a> with the URL, the
+    account or content in question, and a short description. Serious reports are
+    reviewed within one business day.
+  </p>
+</LegalLayout>
