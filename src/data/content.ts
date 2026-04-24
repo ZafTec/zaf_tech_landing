@@ -1,6 +1,5 @@
 // Import images
 import girumgizaw from "@/assets/projects/girumgizaw.png";
-import weventurehub from "@/assets/projects/weventure.png";
 import akoyaproperties from "@/assets/projects/akoyapropertises.png";
 import bathra from "@/assets/projects/bathra.png";
 import mizan from "@/assets/projects/mizan.png";

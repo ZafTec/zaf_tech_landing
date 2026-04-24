@@ -1,29 +1,42 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import Button from "@/components/ui/Button.astro";
+import Kicker from "@/components/ui/Kicker.astro";
 ---
+<Layout title="404 · Page not found | ZafTech" description="This page doesn't exist.">
+  <div class="min-h-screen flex flex-col">
+    <SiteHeader />
+    <main class="pt-24 pb-24 grow flex items-center">
+      <section class="px-6 md:px-12 w-full">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+          <div class="md:col-span-7">
+            <Kicker num="404" label="Page not found" />
+            <h1 class="mt-6 display-tight text-6xl md:text-8xl font-medium text-ivory-100">
+              Nothing here.
+            </h1>
+            <p class="mt-6 text-onyx-300 max-w-xl text-base md:text-lg leading-relaxed">
+              The page moved, was never here, or you followed a stale link. Try one of these instead.
+            </p>
+            <div class="mt-10 flex flex-wrap gap-3">
+              <Button href="/" variant="primary">Back home</Button>
+              <Button href="mailto:contact@zaftech.co" variant="ghost" icon={null}>Email us</Button>
+            </div>
+          </div>
 
-<Layout title="404 - Page Not Found | ZafTech">
-  <div class="min-h-screen flex items-center justify-center bg-bg">
-    <div class="text-center px-4">
-      <h1 class="text-9xl font-bold text-accent mb-4">404</h1>
-      <h2 class="text-3xl font-semibold text-ink mb-4">Page Not Found</h2>
-      <p class="text-ink-muted mb-8 max-w-md mx-auto">
-        The page you're looking for doesn't exist or has been moved.
-      </p>
-      <div class="flex flex-wrap gap-4 justify-center">
-        <a
-          href="/"
-          class="rounded-full bg-accent px-8 py-3 text-sm font-semibold text-contrast shadow-soft hover:opacity-90 transition-opacity"
-        >
-          Go Home
-        </a>
-        <a
-          href="/#contact"
-          class="rounded-full border border-ink/30 dark:border-white/30 px-8 py-3 text-sm font-semibold text-ink dark:text-white hover:bg-ink/5 dark:hover:bg-white/5 transition-colors"
-        >
-          Contact Us
-        </a>
-      </div>
-    </div>
+          <nav class="md:col-span-5 border-t border-onyx-800 md:border-t-0 md:border-l md:pl-8 pt-8 md:pt-0" aria-label="Popular destinations">
+            <p class="kicker kicker-muted">// Try these</p>
+            <ul class="mt-6 space-y-4">
+              <li><a href="/services" class="group flex items-baseline justify-between text-ivory-100 hover:text-spruce-400 transition-colors"><span>Services</span><span class="font-mono text-xs text-onyx-500 group-hover:text-spruce-400">→</span></a></li>
+              <li><a href="/#products" class="group flex items-baseline justify-between text-ivory-100 hover:text-spruce-400 transition-colors"><span>Products</span><span class="font-mono text-xs text-onyx-500 group-hover:text-spruce-400">→</span></a></li>
+              <li><a href="/careers" class="group flex items-baseline justify-between text-ivory-100 hover:text-spruce-400 transition-colors"><span>Careers</span><span class="font-mono text-xs text-onyx-500 group-hover:text-spruce-400">→</span></a></li>
+              <li><a href="/terms" class="group flex items-baseline justify-between text-ivory-100 hover:text-spruce-400 transition-colors"><span>Legal</span><span class="font-mono text-xs text-onyx-500 group-hover:text-spruce-400">→</span></a></li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+    <SiteFooter />
   </div>
 </Layout>

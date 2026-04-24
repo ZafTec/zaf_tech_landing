@@ -1,203 +1,35 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-
-import Hero from "@/components/sections/Hero.astro";
-import About from "@/components/sections/About.astro";
-import Products from "@/components/sections/Products.astro";
-import Gallery from "@/components/sections/Gallery.astro";
-import Contact from "@/components/sections/Contact.astro";
-
-import Testimonials from "@/components/sections/Testimonials.astro";
-
-import { features, products, gallery, testimonials } from "@/data/content";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import Button from "@/components/ui/Button.astro";
+import Kicker from "@/components/ui/Kicker.astro";
 
 export const prerender = true;
-
-const nav = [
-  { label: "Capabilities", href: "#about" },
-  { label: "Services", href: "/services" },
-  { label: "Products", href: "#products" },
-  { label: "Contact", href: "#contact" },
-];
 ---
-<Layout title="Zaftech Solutions | Full-stack Development & Machine Learning">
-  <div class="bg-onyx-950 text-ivory-100 min-h-screen flex flex-col" id="page-top">
-    <!-- Navigation -->
-    <header class="fixed top-0 left-0 w-full z-50 border-b border-onyx-700 bg-onyx-950/95 backdrop-blur-sm" data-header>
-      <div class="px-6 md:px-12 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-6">
-          <a href="/" class="flex items-center">
-            <picture>
-              <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
-              <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="Zaftech Solutions" class="h-12 w-auto" />
-            </picture>
-          </a>
-          <div class="hidden md:block h-4 w-px bg-onyx-700"></div>
-          <nav class="hidden md:flex gap-6" data-nav-root>
-            {nav.map((item) => (
-              <a
-                class="text-[10px] font-mono text-onyx-400 hover:text-spruce-400 transition-colors uppercase tracking-widest"
-                href={item.href}
-                {...(item.href.startsWith("#") ? { "data-nav": item.href.replace("#", "") } : {})}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        </div>
-        <div class="flex items-center gap-4">
-          <a
-            href="#contact"
-            class="hidden sm:flex h-9 items-center justify-center px-5 bg-spruce-400 text-onyx-950 text-[10px] font-bold tracking-wider hover:bg-spruce-300 transition-colors uppercase"
-          >
-            Start Project
-          </a>
-          <button class="flex sm:hidden h-9 w-9 items-center justify-center bg-onyx-900 border border-onyx-700 text-ivory-100" data-mobile-menu aria-label="Menu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Mobile Menu -->
-    <div class="fixed inset-0 z-40 pointer-events-none" data-mobile-menu-overlay>
-      <div class="absolute inset-0 bg-onyx-950/80 opacity-0 transition-opacity duration-300 pointer-events-none" data-mobile-menu-backdrop></div>
-      <nav class="absolute top-0 right-0 h-full w-64 bg-onyx-900 border-l border-onyx-700 transform translate-x-full transition-transform duration-300" data-mobile-menu-panel>
-        <div class="p-6 flex flex-col gap-6">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-mono text-onyx-400 uppercase tracking-widest">Menu</span>
-            <button class="h-9 w-9 flex items-center justify-center text-ivory-100 hover:text-spruce-400 transition-colors" data-mobile-menu-close aria-label="Close menu">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-          <div class="flex flex-col gap-4">
-            {nav.map((item) => (
-              <a
-                class="text-sm font-mono text-ivory-100 hover:text-spruce-400 transition-colors uppercase tracking-wider py-2 border-b border-onyx-700"
-                href={item.href}
-                {...(item.href.startsWith("#") ? { "data-nav": item.href.replace("#", ""), "data-mobile-nav": "" } : { "data-mobile-nav": "" })}
-              >
-                {item.label}
-              </a>
-            ))}
-            <a
-              href="#contact"
-              class="mt-4 h-11 flex items-center justify-center px-5 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wider hover:bg-spruce-300 transition-colors uppercase"
-              data-nav="contact"
-              data-mobile-nav
-            >
-              Start Project
-            </a>
+<Layout
+  title="ZafTech — Engineering-precise software"
+  description="A small Ethiopian team building production systems for founders in London, Dallas, Berlin. Services and SaaS products."
+>
+  <div class="min-h-screen flex flex-col">
+    <SiteHeader />
+    <main class="pt-24 pb-24 grow flex items-center">
+      <section class="px-6 md:px-12 w-full">
+        <div class="max-w-6xl mx-auto">
+          <Kicker num="00" label="Site in rebuild" />
+          <h1 class="mt-6 display-tight text-5xl md:text-7xl font-medium text-ivory-100 max-w-3xl">
+            We ship software you can bet the quarter on.
+          </h1>
+          <p class="mt-6 text-onyx-300 max-w-xl text-base md:text-lg leading-relaxed">
+            The cinematic rebuild is landing section by section. In the meantime: legal pages are live, and you can reach us directly.
+          </p>
+          <div class="mt-10 flex flex-wrap gap-3">
+            <Button href="mailto:contact@zaftech.co" variant="primary">Book a call</Button>
+            <Button href="/services" variant="ghost">See services</Button>
           </div>
         </div>
-      </nav>
-    </div>
-
-    <main class="pt-16">
-      <Hero />
-      <About />
-      <Products products={products} />
-      <Gallery gallery={gallery} />
-      <Testimonials testimonials={testimonials} />
-      <Contact />
+      </section>
     </main>
-
-    <footer class="border-t border-onyx-700 py-8 px-6 md:px-12 mt-auto">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-mono text-onyx-400">
-        <div class="flex items-center gap-6">
-          <picture>
-            <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
-            <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="Zaftech Solutions" class="h-12 w-auto" />
-          </picture>
-          <span>2026 All rights reserved.</span>
-        </div>
-        <div class="flex gap-6">
-          <a href="#services" class="hover:text-spruce-400 transition-colors">Capabilities</a>
-          <a href="/services" class="hover:text-spruce-400 transition-colors">Services</a>
-          <a href="#contact" class="hover:text-spruce-400 transition-colors">Contact</a>
-          <a href="/careers" class="hover:text-spruce-400 transition-colors">Careers</a>
-        </div>
-      </div>
-    </footer>
+    <SiteFooter />
   </div>
-
-  <script is:inline>
-    const links = Array.from(document.querySelectorAll("[data-nav]"));
-
-    const scrollToSection = (id) => {
-      const element = document.querySelector(`#${id}`);
-      if (!element) return;
-      
-      const headerHeight = 64;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-    };
-
-    links.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = link.dataset.nav;
-        scrollToSection(id);
-      });
-    });
-
-    document.querySelector("[data-contact-form]")?.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const status = document.querySelector("[data-form-status]");
-      if (status) status.textContent = "Sending...";
-
-      try {
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(Object.fromEntries(new FormData(e.target))),
-        });
-        if (!response.ok) throw new Error("Failed");
-        e.target.reset();
-        if (status) status.textContent = "Message sent. We'll respond within 24 hours.";
-      } catch {
-        if (status) status.textContent = "Something went wrong. Please email contact@zaftech.co";
-      }
-    });
-
-    // Mobile menu toggle
-    const mobileMenuButton = document.querySelector("[data-mobile-menu]");
-    const mobileMenuClose = document.querySelector("[data-mobile-menu-close]");
-    const mobileMenuOverlay = document.querySelector("[data-mobile-menu-overlay]");
-    const mobileMenuBackdrop = document.querySelector("[data-mobile-menu-backdrop]");
-    const mobileMenuPanel = document.querySelector("[data-mobile-menu-panel]");
-    const mobileNavLinks = Array.from(document.querySelectorAll("[data-mobile-nav]"));
-
-    const openMobileMenu = () => {
-      mobileMenuOverlay.classList.remove("pointer-events-none");
-      mobileMenuBackdrop.classList.remove("pointer-events-none");
-      mobileMenuBackdrop.classList.remove("opacity-0");
-      mobileMenuPanel.classList.remove("translate-x-full");
-      document.body.style.overflow = "hidden";
-    };
-
-    const closeMobileMenu = () => {
-      mobileMenuOverlay.classList.add("pointer-events-none");
-      mobileMenuBackdrop.classList.add("pointer-events-none");
-      mobileMenuBackdrop.classList.add("opacity-0");
-      mobileMenuPanel.classList.add("translate-x-full");
-      document.body.style.overflow = "";
-    };
-
-    mobileMenuButton?.addEventListener("click", openMobileMenu);
-    mobileMenuClose?.addEventListener("click", closeMobileMenu);
-    mobileMenuBackdrop?.addEventListener("click", closeMobileMenu);
-
-    // Close mobile menu when clicking a link
-    mobileNavLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        closeMobileMenu();
-      });
-    });
-  </script>
 </Layout>
