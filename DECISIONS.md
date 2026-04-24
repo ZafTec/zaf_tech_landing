@@ -61,7 +61,7 @@ Listed in `/privacy` under "Who we share with". If we swap a provider, update `s
 
 ## What's still outstanding (post Phase 1)
 
-- `/portfolio/[slug]` case studies (AfroChat drafted in this commit, SecureTron and mBar pending real metrics from Euael).
+- `/portfolio/[slug]` case studies (pending real metrics + quotes from Euael before we publish any).
 - `/blog` scaffold.
 - `/services` page rebuild to match the new design system (currently using legacy layout, still functional).
 - `/careers` rebuild to match (legacy layout, still functional).

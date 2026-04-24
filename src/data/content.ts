@@ -5,7 +5,6 @@ import akoyaproperties from "@/assets/projects/akoyapropertises.png";
 import bathra from "@/assets/projects/bathra.png";
 import mizan from "@/assets/projects/mizan.png";
 import bitbricks from "@/assets/projects/bitbricks.png";
-import afrochat from "@/assets/projects/afrochat.png";
 import genericAvatar from "@/assets/people/Generic.jpg";
 
 /* ============================================================
@@ -130,7 +129,6 @@ export const gallery: GalleryItem[] = [
   { title: "Bathra",            tag: "Startup and VC connecting platform",        image: bathra,          link: "https://www.bathra.co/" },
   { title: "Mizan",             tag: "AI nutrition platform",                     image: mizan,           link: "https://mizan.euaell.me/" },
   { title: "Bitbricks",         tag: "E-learning platform",                       image: bitbricks,       link: "https://bitbricks.ai/" },
-  { title: "AfroChat",          tag: "Generative AI for Africans",                image: afrochat,        link: "https://afrochat.app/en" },
 ];
 
 /* ============================================================
