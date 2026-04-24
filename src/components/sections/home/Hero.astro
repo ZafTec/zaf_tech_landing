@@ -1,55 +1,189 @@
 ---
+import { Image } from "astro:assets";
 import Button from "@/components/ui/Button.astro";
 import Kicker from "@/components/ui/Kicker.astro";
-import Threads from "@/components/Threads.jsx";
+import teamImg from "@/assets/people/team-placeholder.avif";
 ---
 <section
-  class="relative isolate overflow-hidden bg-onyx-950"
+  class="hero-section relative isolate overflow-hidden bg-onyx-950"
   style="min-height: 100dvh;"
+  data-hero
 >
-  <!-- Interactive WebGL canvas. Hydrated on idle so LCP is untouched. -->
-  <div class="absolute inset-0 z-0 pointer-events-auto">
-    <Threads client:idle amplitude={1.1} distance={0.05} enableMouseInteraction={true} />
+  <!-- Grayscale base: the team, dimmed -->
+  <div class="hero-layer hero-gray" aria-hidden="true">
+    <Image
+      src={teamImg}
+      alt=""
+      widths={[960, 1440, 1920, 2400]}
+      sizes="100vw"
+      loading="eager"
+      class="w-full h-full object-cover"
+    />
   </div>
 
-  <!-- Vignette keeps headline legible over the animated canvas -->
-  <div class="absolute inset-0 z-10 pointer-events-none hero-vignette" aria-hidden="true"></div>
+  <!-- Color spotlight layer, clipped to a circle that follows the cursor -->
+  <div class="hero-layer hero-color" aria-hidden="true" data-hero-spotlight>
+    <Image
+      src={teamImg}
+      alt=""
+      widths={[960, 1440, 1920, 2400]}
+      sizes="100vw"
+      loading="eager"
+      class="w-full h-full object-cover"
+    />
+  </div>
 
-  <!-- Content -->
-  <div class="relative z-20 flex flex-col min-h-[100dvh] px-6 md:px-12 pt-28 pb-16">
-    <div class="max-w-6xl mx-auto w-full grow flex items-center">
-      <div class="max-w-3xl reveal-up">
-        <Kicker num="01" label="Engineering" />
-        <h1 class="mt-6 display-tight text-5xl md:text-7xl lg:text-[96px] font-medium text-ivory-100">
-          We ship software<br />
-          you can bet<br />
-          the quarter on.
-        </h1>
-        <p class="mt-8 text-onyx-200 max-w-xl text-base md:text-lg leading-relaxed">
-          A small team out of Addis Ababa building production systems for founders in London, Dallas, and Berlin.
-        </p>
-        <div class="mt-10 flex flex-wrap gap-3">
-          <Button href="mailto:contact@zaftech.co?subject=Book%20a%20call" variant="primary">Book a call</Button>
-          <Button href="#portfolio" variant="ghost">See our work</Button>
-        </div>
+  <!-- Legibility wash -->
+  <div class="hero-wash" aria-hidden="true"></div>
+
+  <!-- Content (centered vertically + horizontally) -->
+  <div class="relative z-30 flex min-h-[100dvh] items-center justify-center px-6 md:px-12 text-center">
+    <div class="max-w-3xl">
+      <Kicker num="01" label="Engineering" />
+      <h1 class="mt-6 display-tight text-5xl md:text-7xl lg:text-[96px] font-medium text-ivory-100">
+        We turn ideas<br />
+        into software.
+      </h1>
+      <p class="mt-8 text-onyx-200 max-w-xl mx-auto text-base md:text-lg leading-relaxed">
+        A small team out of Addis Ababa building production systems for founders in London, Dallas, and Berlin.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-3 justify-center">
+        <Button href="mailto:contact@zaftech.co?subject=Book%20a%20call" variant="primary">Book a call</Button>
+        <Button href="#portfolio" variant="ghost">See our work</Button>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .hero-vignette {
-    background:
-      radial-gradient(ellipse at 20% 40%, rgba(12, 15, 13, 0.55) 0%, rgba(12, 15, 13, 0) 55%),
-      linear-gradient(to right, rgba(12, 15, 13, 0.65) 0%, rgba(12, 15, 13, 0) 60%),
-      linear-gradient(to top, rgba(12, 15, 13, 0.35) 0%, rgba(12, 15, 13, 0) 30%);
+  .hero-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
+  .hero-layer :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-gray :global(img) {
+    filter: grayscale(100%) contrast(1.08) brightness(0.38);
+  }
+  .hero-color {
+    z-index: 1;
+    /* CSS vars driven by JS; initial radius is 0 so nothing is revealed. */
+    --mx: 50%;
+    --my: 50%;
+    --r: 0px;
+    clip-path: circle(var(--r) at var(--mx) var(--my));
+    -webkit-clip-path: circle(var(--r) at var(--mx) var(--my));
+    will-change: clip-path;
+  }
+  .hero-color :global(img) {
+    filter: contrast(1.05) saturate(1.05);
+  }
+  .hero-wash {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(12,15,13,0.15) 0%, rgba(12,15,13,0.65) 70%),
+      linear-gradient(to bottom, rgba(12,15,13,0.5) 0%, rgba(12,15,13,0.3) 40%, rgba(12,15,13,0.75) 100%);
+  }
+
   @media (prefers-color-scheme: light) {
-    .hero-vignette {
+    .hero-gray :global(img) {
+      filter: grayscale(100%) contrast(1.0) brightness(0.9);
+    }
+    .hero-wash {
       background:
-        radial-gradient(ellipse at 20% 40%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 55%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 60%),
-        linear-gradient(to top, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 30%);
+        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.6) 70%),
+        linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.3) 40%, rgba(255,255,255,0.75) 100%);
     }
   }
 </style>
+
+<script>
+  (function () {
+    const heroEl = document.querySelector<HTMLElement>("[data-hero]");
+    const spotEl = document.querySelector<HTMLElement>("[data-hero-spotlight]");
+    if (!heroEl || !spotEl) return;
+    const hero = heroEl;
+    const spot = spotEl;
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const HOVER_R = 260;
+    let targetX = 50, targetY = 50;
+    let mx = 50, my = 50;
+    let targetR = 0;
+    let currentR = 0;
+    let hovering = false;
+
+    function apply() {
+      spot.style.setProperty("--mx", mx + "%");
+      spot.style.setProperty("--my", my + "%");
+      spot.style.setProperty("--r", currentR + "px");
+    }
+    apply();
+
+    function onMove(e: PointerEvent) {
+      const rect = hero.getBoundingClientRect();
+      targetX = ((e.clientX - rect.left) / rect.width) * 100;
+      targetY = ((e.clientY - rect.top) / rect.height) * 100;
+      hovering = true;
+      targetR = HOVER_R;
+    }
+    function onLeave() {
+      hovering = false;
+      targetR = 0;
+    }
+    if (!reduced) {
+      hero.addEventListener("pointermove", onMove, { passive: true });
+      hero.addEventListener("pointerleave", onLeave);
+    }
+
+    // Scroll-in flash: expand the spotlight once, then retract.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const max = Math.max(hero.clientWidth, hero.clientHeight) * 1.2;
+          targetR = max;
+          window.setTimeout(() => {
+            if (!hovering) targetR = 0;
+          }, 520);
+          io.unobserve(hero);
+        }
+      },
+      { threshold: 0.2 }
+    );
+    io.observe(hero);
+
+    let raf = 0;
+    function tick() {
+      mx += (targetX - mx) * 0.12;
+      my += (targetY - my) * 0.12;
+      currentR += (targetR - currentR) * 0.12;
+      apply();
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+
+    // Stop animating when the hero leaves the viewport.
+    const visIo = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            if (!raf) raf = requestAnimationFrame(tick);
+          } else {
+            if (raf) { cancelAnimationFrame(raf); raf = 0; }
+          }
+        }
+      },
+      { threshold: 0 }
+    );
+    visIo.observe(hero);
+  })();
+</script>

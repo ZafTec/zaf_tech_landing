@@ -240,19 +240,16 @@ select:focus {
 .card-accent-bar:focus-within::before { transform: scaleX(1); }
 
 /* ============================================================
-   Scroll-reveal (IntersectionObserver sets .is-in)
+   Scroll-reveal: opacity-only pop, gated on `has-js` so no-JS or
+   slow-JS visitors never see an invisible placeholder gap.
    ============================================================ */
-.reveal-up {
+.has-js .reveal-up {
   opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity var(--dur-reveal) var(--ease-out-strong),
-    transform var(--dur-reveal) var(--ease-out-strong);
+  transition: opacity 220ms var(--ease-out-strong);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal-up.is-in {
+.has-js .reveal-up.is-in {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* ============================================================
@@ -318,9 +315,8 @@ select:focus {
    Reduced motion
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up {
+  .has-js .reveal-up {
     opacity: 1;
-    transform: none;
     transition: none;
   }
   .btn-primary:active,
