@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# No crawl of internal API routes
+Disallow: /api/
+
 Sitemap: https://zaftech.co/sitemap-index.xml
