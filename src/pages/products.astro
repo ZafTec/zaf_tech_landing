@@ -1,0 +1,126 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SeoHead from "@/components/SeoHead.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import RevealObserver from "@/components/RevealObserver.astro";
+import Kicker from "@/components/ui/Kicker.astro";
+import Button from "@/components/ui/Button.astro";
+import WindowFrame from "@/components/ui/WindowFrame.astro";
+import ProductThumb from "@/components/svg/ProductThumb.astro";
+import { productEntries, type ProductStatus } from "@/data/content";
+
+export const prerender = true;
+
+const statusLabel: Record<ProductStatus, string> = {
+  "live": "LIVE",
+  "beta": "BETA",
+  "private-beta": "PRIVATE BETA",
+  "in-development": "IN DEV",
+};
+
+const liveCount = productEntries.filter((p) => p.status === "live" || p.status === "beta").length;
+
+const title = "Products · ZafTech";
+const description = "Six SaaS products we built and ship ourselves. Each lives on its own subdomain. Sold direct, supported by the team that wrote the code.";
+---
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <SeoHead title={title} description={description} canonicalPath="/products" />
+  </Fragment>
+
+  <div class="min-h-screen flex flex-col">
+    <SiteHeader />
+
+    <main class="grow">
+      <!-- Hero -->
+      <section class="px-6 md:px-12 pt-28 pb-16 border-b border-onyx-800">
+        <div class="max-w-6xl mx-auto reveal-up">
+          <Kicker num="01" label={`Products · ${productEntries.length} built, ${liveCount} live`} />
+          <h1 class="mt-6 display-tight text-4xl md:text-6xl lg:text-7xl font-medium text-ivory-100 max-w-3xl">
+            Software we built because we wanted it.
+          </h1>
+          <p class="mt-6 text-onyx-300 max-w-2xl text-base md:text-lg leading-relaxed">
+            Our SaaS work. All production, all ours. Sold direct and supported by the team that built them. Each product has its own site; the links below take you there.
+          </p>
+          <dl class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-onyx-400">
+            <div><span class="text-spruce-400">{productEntries.length}</span> products</div>
+            <span class="text-onyx-700">/</span>
+            <div><span class="text-spruce-400">{liveCount}</span> live</div>
+            <span class="text-onyx-700">/</span>
+            <div><span class="text-spruce-400">free</span> tiers on all</div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Stacked product rows -->
+      <section class="border-b border-onyx-800">
+        <ul class="divide-y divide-onyx-800">
+          {productEntries.map((p, i) => (
+            <li class="reveal-up" style={`--reveal-delay: ${Math.min(i * 60, 240)}ms;`}>
+              <article class="px-6 md:px-12 py-16 md:py-20 group">
+                <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+                  <!-- Left column: text -->
+                  <div class="lg:col-span-5">
+                    <div class="flex items-center justify-between gap-4 mb-5">
+                      <span class="font-mono text-[10px] tracking-widest text-spruce-400">
+                        PRODUCT / {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span class="font-mono text-[10px] tracking-widest text-onyx-400 border border-onyx-700 px-2 py-0.5">
+                        {statusLabel[p.status]}
+                      </span>
+                    </div>
+
+                    <h2 class="display-tight text-3xl md:text-5xl font-medium text-ivory-100">{p.name}</h2>
+                    <p class="mt-3 text-base md:text-lg text-onyx-200">{p.tagline}</p>
+                    <p class="mt-5 text-sm md:text-[15px] text-onyx-300 leading-relaxed max-w-xl">
+                      {p.description}
+                    </p>
+
+                    <div class="mt-8 flex items-center gap-4">
+                      <Button href={p.url} variant="primary" external>Visit {p.name.toLowerCase()}</Button>
+                      <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">{p.price}</span>
+                    </div>
+
+                    <p class="mt-5 font-mono text-[10px] text-onyx-600">→ {p.domain}</p>
+                  </div>
+
+                  <!-- Right column: window preview -->
+                  <div class="lg:col-span-7">
+                    <a href={p.url} target="_blank" rel="noopener noreferrer" class="card-accent-bar block">
+                      <WindowFrame filename={p.domain}>
+                        <ProductThumb product={p.slug === "tarik" ? "anchor" : p.slug} />
+                      </WindowFrame>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Final CTA -->
+      <section class="border-b border-onyx-800">
+        <div class="px-6 md:px-12 py-24 md:py-32">
+          <div class="max-w-4xl mx-auto text-center reveal-up">
+            <h2 class="display-tight text-3xl md:text-5xl font-medium text-ivory-100">
+              Can't find what you need?
+            </h2>
+            <p class="mt-5 text-onyx-300 max-w-xl mx-auto text-base md:text-lg">
+              We built most of these because clients asked. If there's a gap, we'll scope a custom build.
+            </p>
+            <div class="mt-10 flex justify-center">
+              <Button href="mailto:contact@zaftech.co?subject=Custom%20build" variant="primary">
+                Commission custom software
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <SiteFooter />
+  </div>
+  <RevealObserver />
+</Layout>

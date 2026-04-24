@@ -2,23 +2,9 @@
 import Kicker from "@/components/ui/Kicker.astro";
 import WindowFrame from "@/components/ui/WindowFrame.astro";
 import ProductThumb from "@/components/svg/ProductThumb.astro";
+import { productEntries } from "@/data/content";
 
-type Product = {
-  slug: "convia" | "mizan" | "rms" | "anchor" | "talos";
-  name: string;
-  tagline: string;
-  price: string;
-  href: string;
-  domain: string;
-  external?: boolean;
-};
-const products: Product[] = [
-  { slug: "convia", name: "Convia", tagline: "Conversational forms, AI assisted", price: "from $19/mo", href: "/products/convia", domain: "convia.zaftech.co" },
-  { slug: "mizan",  name: "Mizan",  tagline: "Nutrition tracking, done your way", price: "free + Pro $9/mo", href: "https://mizan.zaftech.co", external: true, domain: "mizan.zaftech.co" },
-  { slug: "rms",    name: "RMS",    tagline: "Restaurant POS, no hardware lock-in", price: "from $79/mo", href: "/products/rms", domain: "rms.zaftech.co" },
-  { slug: "anchor", name: "Anchor", tagline: "RAG platform, one API call", price: "usage-based", href: "https://anchor.zaftech.co", external: true, domain: "anchor.zaftech.co" },
-  { slug: "talos",  name: "Talos",  tagline: "Auth + sandboxed code execution", price: "usage-based", href: "https://talos.zaftech.co", external: true, domain: "talos.zaftech.co" },
-];
+const featured = productEntries.filter((p) => p.featured || p.status === "live").slice(0, 6);
 ---
 <section id="products" class="border-b border-onyx-800">
   <div class="px-6 md:px-12 py-24 md:py-28">
@@ -34,19 +20,19 @@ const products: Product[] = [
       </div>
 
       <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((p) => (
+        {featured.map((p) => (
           <a
-            href={p.href}
-            target={p.external ? "_blank" : undefined}
-            rel={p.external ? "noopener noreferrer" : undefined}
-            class="card-accent-bar reveal-up group block hover:-translate-y-0.5 transition-transform"
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="card-accent-bar group block hover:-translate-y-0.5 transition-transform"
           >
             <WindowFrame filename={p.domain}>
-              <ProductThumb product={p.slug} />
+              <ProductThumb product={p.slug === "tarik" ? "anchor" : p.slug} />
             </WindowFrame>
-            <div class="mt-4 flex items-baseline justify-between">
+            <div class="mt-4 flex items-baseline justify-between gap-4">
               <h3 class="text-lg font-medium text-ivory-100">{p.name}</h3>
-              <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">{p.price}</span>
+              <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-500 shrink-0">{p.price}</span>
             </div>
             <p class="mt-1 text-sm text-onyx-300">{p.tagline}</p>
           </a>
