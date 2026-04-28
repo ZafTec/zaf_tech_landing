@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import heroImage from "@/assets/hero.png";
 import Button from "@/components/ui/Button.astro";
 import Kicker from "@/components/ui/Kicker.astro";
 ---
@@ -7,8 +9,19 @@ import Kicker from "@/components/ui/Kicker.astro";
   style="min-height: 100dvh;"
   data-hero
 >
-  <!-- WebGL layer: heavily blurred team bento with a gray overlay that shades away under the cursor. -->
-  <div class="absolute inset-0 z-0" data-hero-shader></div>
+  <!-- Background image layer -->
+  <div class="absolute inset-0 z-0">
+    <Image
+      src={heroImage}
+      alt="Abstract architectural background"
+      class="w-full h-full object-cover"
+      width={1920}
+      height={1080}
+    />
+  </div>
+
+  <!-- WebGL layer: gray overlay that shades away under the cursor. -->
+  <div class="absolute inset-0 z-[2]" data-hero-shader></div>
 
   <!-- Canvas 2D: barely-visible random shapes that bounce and react to the cursor. -->
   <canvas class="absolute inset-0 z-[5] pointer-events-none" data-hero-shapes></canvas>
@@ -61,11 +74,10 @@ import Kicker from "@/components/ui/Kicker.astro";
    * Both share the same mouse + radius state so the visual impact is cohesive.
    */
 
-  import nahomUrl    from "@/assets/people/nahom-profile.jpg?url";
-  import abelUrl     from "@/assets/people/abel-profile.jpg?url";
-  import euaelUrl    from "@/assets/people/euael-profile.jpg?url";
-  import milkiyasUrl from "@/assets/people/milkiyas-profile.jpg?url";
-  import { Renderer, Program, Mesh, Triangle, Texture } from "ogl";
+  // @ts-ignore
+  const { Renderer, Program, Mesh, Triangle, Texture } = window.OGL;
+  
+  // Removed unused team image imports
 
   type Palette = { grayTarget: number; darken: number };
   const DARK:  Palette = { grayTarget: 1.0, darken: 0.28 };
@@ -87,8 +99,9 @@ import Kicker from "@/components/ui/Kicker.astro";
     void main() { vUv = uv; gl_Position = vec4(position, 0.0, 1.0); }
   `;
 
-  // Everything stays blurred. The reveal lifts a gray overlay, it does not sharpen.
-  const fragment = /* glsl */ `
+    // Simplified shader: just blurs the background image.
+    // The reveal lifts the gray/darkening overlay.
+    const fragment = /* glsl */ `
     precision highp float;
     varying vec2 vUv;
     uniform sampler2D uTex;
@@ -96,8 +109,8 @@ import Kicker from "@/components/ui/Kicker.astro";
     uniform float uRadius;
     uniform float uAspect;
     uniform vec2 uTexelSize;
-    uniform float uGray;     // 1.0 = fully gray, 0.0 = full colour
-    uniform float uDarken;   // multiplier: lower = darker
+    uniform float uGray;
+    uniform float uDarken;
 
     vec4 blurTex(vec2 uv, float r) {
       vec4 sum = vec4(0.0);
@@ -115,7 +128,8 @@ import Kicker from "@/components/ui/Kicker.astro";
 
     void main() {
       vec2 uv = vUv;
-      vec4 blurred = blurTex(uv, 6.0);
+      vec4 textureColor = texture2D(uTex, uv);
+      vec4 blurred = blurTex(uv, 12.0); // Slightly stronger blur for the background image
 
       vec2 d = (uv - uMouse) * vec2(uAspect, 1.0);
       float dist = length(d);
@@ -126,10 +140,9 @@ import Kicker from "@/components/ui/Kicker.astro";
       // Base state: fully gray + darkened.
       vec3 base = mix(blurred.rgb, vec3(gray), uGray) * uDarken;
 
-      // Revealed state: keep the blur, lift the gray slightly, brighten the
-      // darken multiplier so colour leaks through.
+      // Revealed state: keep the blur, lift the gray slightly.
       float revealGray   = uGray   * 0.15;
-      float revealDarken = max(uDarken, 0.65);
+      float revealDarken = max(uDarken, 0.75);
       vec3 reveal = mix(blurred.rgb, vec3(gray), revealGray) * revealDarken;
 
       vec3 color = mix(base, reveal, mask);
@@ -137,62 +150,8 @@ import Kicker from "@/components/ui/Kicker.astro";
     }
   `;
 
-  async function composeBento(): Promise<HTMLCanvasElement> {
-    const imgs = await Promise.all([
-      loadImage(nahomUrl),
-      loadImage(abelUrl),
-      loadImage(euaelUrl),
-      loadImage(milkiyasUrl),
-    ]);
-    const [nahom, abel, euael, milkiyas] = imgs;
 
-    const W = 1600, H = 900, GAP = 4;
-    const c = document.createElement("canvas");
-    c.width = W; c.height = H;
-    const ctx = c.getContext("2d");
-    if (!ctx) return c;
-
-    ctx.fillStyle = "#0C0F0D";
-    ctx.fillRect(0, 0, W, H);
-
-    const drawCover = (img: HTMLImageElement, dx: number, dy: number, dw: number, dh: number) => {
-      const ir = img.naturalWidth / img.naturalHeight;
-      const br = dw / dh;
-      let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
-      if (ir > br) {
-        sw = img.naturalHeight * br;
-        sx = (img.naturalWidth - sw) / 2;
-      } else {
-        sh = img.naturalWidth / br;
-        sy = (img.naturalHeight - sh) / 2;
-      }
-      ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-    };
-
-    const colA = { x: 0,                 w: 560 };
-    const colB = { x: 560 + GAP,         w: 560 };
-    const colC = { x: 1120 + GAP * 2,    w: W - (1120 + GAP * 2) };
-    const rowTop = { y: 0,               h: 540 };
-    const rowBot = { y: 540 + GAP,       h: H - (540 + GAP) };
-
-    drawCover(nahom,    colA.x, rowTop.y, colA.w,                       rowTop.h);
-    drawCover(abel,     colB.x, rowTop.y, colB.w,                       rowTop.h);
-    drawCover(euael,    colC.x, rowTop.y, colC.w,                       H);
-    drawCover(milkiyas, colA.x, rowBot.y, colA.w + GAP + colB.w,        rowBot.h);
-
-    return c;
-  }
-
-  function loadImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.decoding = "async";
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  }
+    // Removed composeBento and related loadImage/drawCover functions
 
   async function startShader(hero: HTMLElement) {
     const hostEl = hero.querySelector<HTMLElement>("[data-hero-shader]");
@@ -200,9 +159,19 @@ import Kicker from "@/components/ui/Kicker.astro";
     const host = hostEl;
 
     const themeQuery = window.matchMedia("(prefers-color-scheme: light)");
+    
+    // Set initial palette
     let palette: Palette = themeQuery.matches ? LIGHT : DARK;
 
-    const bentoCanvas = await composeBento();
+    // Use the new background image as the texture instead of generating a bento grid
+    const bentoCanvas = document.createElement("canvas");
+    bentoCanvas.width = 1920; bentoCanvas.height = 1080;
+    const ctx = bentoCanvas.getContext("2d");
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = "/src/assets/hero.png";
+    await img.decode();
+    ctx?.drawImage(img, 0, 0, 1920, 1080);
 
     const renderer = new Renderer({ alpha: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
     const gl = renderer.gl;
@@ -214,6 +183,7 @@ import Kicker from "@/components/ui/Kicker.astro";
 
     const texture = new Texture(gl, { generateMipmaps: false });
     texture.image = bentoCanvas as unknown as HTMLImageElement;
+
 
     const geometry = new Triangle(gl);
     const program = new Program(gl, {
@@ -239,7 +209,7 @@ import Kicker from "@/components/ui/Kicker.astro";
     resize();
     window.addEventListener("resize", resize);
 
-    themeQuery.addEventListener("change", (e) => {
+    themeQuery.addEventListener("change", (e: MediaQueryListEvent) => {
       palette = e.matches ? LIGHT : DARK;
       program.uniforms.uGray.value = palette.grayTarget;
       program.uniforms.uDarken.value = palette.darken;
