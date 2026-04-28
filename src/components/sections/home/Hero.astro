@@ -21,16 +21,16 @@ import Kicker from "@/components/ui/Kicker.astro";
   </div>
 
   <!-- WebGL layer: gray overlay that shades away under the cursor. -->
-  <div class="absolute inset-0 z-[2]" data-hero-shader></div>
+  <div class="absolute inset-0 z-2" data-hero-shader></div>
 
   <!-- Canvas 2D: barely-visible random shapes that bounce and react to the cursor. -->
-  <canvas class="absolute inset-0 z-[5] pointer-events-none" data-hero-shapes></canvas>
+  <canvas class="absolute inset-0 z-5 pointer-events-none" data-hero-shapes></canvas>
 
   <!-- Legibility wash -->
   <div class="absolute inset-0 z-10 pointer-events-none hero-wash" aria-hidden="true"></div>
 
   <!-- Centered content -->
-  <div class="relative z-30 flex min-h-[100dvh] items-center justify-center px-6 md:px-12 text-center">
+  <div class="relative z-30 flex min-h-dvh items-center justify-center px-6 md:px-12 text-center">
     <div class="max-w-3xl">
       <Kicker num="01" label="Engineering" />
       <h1 class="mt-6 display-tight text-5xl md:text-7xl lg:text-[96px] font-medium text-ivory-100">
