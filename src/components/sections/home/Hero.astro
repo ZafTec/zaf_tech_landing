@@ -8,6 +8,8 @@ import Kicker from "@/components/ui/Kicker.astro";
   class="relative isolate overflow-hidden bg-onyx-950"
   style="min-height: 100dvh;"
   data-hero
+  data-hero-src={heroImage.src}
+  data-ga-section="hero"
 >
   <!-- Background image layer -->
   <div class="absolute inset-0 z-0">
@@ -17,6 +19,8 @@ import Kicker from "@/components/ui/Kicker.astro";
       class="w-full h-full object-cover"
       width={1920}
       height={1080}
+      loading="eager"
+      fetchpriority="high"
     />
   </div>
 
@@ -41,8 +45,18 @@ import Kicker from "@/components/ui/Kicker.astro";
         A small team out of Addis Ababa building production systems for founders in London, Dallas, and Berlin.
       </p>
       <div class="mt-10 flex flex-wrap gap-3 justify-center">
-        <Button href="mailto:contact@zaftech.co?subject=Book%20a%20call" variant="primary">Book a call</Button>
-        <Button href="#portfolio" variant="ghost">See our work</Button>
+        <Button
+          href="mailto:contact@zaftech.co?subject=Book%20a%20call"
+          variant="primary"
+          data-ga-event="cta_click"
+          data-ga-label="Hero - Book a call"
+        >Book a call</Button>
+        <Button
+          href="#portfolio"
+          variant="ghost"
+          data-ga-event="cta_click"
+          data-ga-label="Hero - See our work"
+        >See our work</Button>
       </div>
     </div>
   </div>
@@ -74,14 +88,11 @@ import Kicker from "@/components/ui/Kicker.astro";
    * Both share the same mouse + radius state so the visual impact is cohesive.
    */
 
-  // @ts-ignore
-  const { Renderer, Program, Mesh, Triangle, Texture } = window.OGL;
-  
-  // Removed unused team image imports
+  import { Renderer, Program, Mesh, Triangle, Texture } from "ogl";
 
   type Palette = { grayTarget: number; darken: number };
-  const DARK:  Palette = { grayTarget: 1.0, darken: 0.28 };
-  const LIGHT: Palette = { grayTarget: 1.0, darken: 0.82 };
+  const DARK:  Palette = { grayTarget: 0.55, darken: 0.45 };
+  const LIGHT: Palette = { grayTarget: 0.55, darken: 0.85 };
 
   // Shared cursor state. Both canvases read from this.
   const mouse = {
@@ -108,6 +119,7 @@ import Kicker from "@/components/ui/Kicker.astro";
     uniform vec2 uMouse;
     uniform float uRadius;
     uniform float uAspect;
+    uniform float uImgAspect;
     uniform vec2 uTexelSize;
     uniform float uGray;
     uniform float uDarken;
@@ -115,10 +127,10 @@ import Kicker from "@/components/ui/Kicker.astro";
     vec4 blurTex(vec2 uv, float r) {
       vec4 sum = vec4(0.0);
       float total = 0.0;
-      for (int x = -2; x <= 2; x++) {
-        for (int y = -2; y <= 2; y++) {
+      for (int x = -1; x <= 1; x++) {
+        for (int y = -1; y <= 1; y++) {
           vec2 off = vec2(float(x), float(y)) * uTexelSize * r;
-          float w = exp(-float(x*x + y*y) / 4.0);
+          float w = exp(-float(x*x + y*y) / 2.0);
           sum += texture2D(uTex, uv + off) * w;
           total += w;
         }
@@ -127,11 +139,23 @@ import Kicker from "@/components/ui/Kicker.astro";
     }
 
     void main() {
-      vec2 uv = vUv;
-      vec4 textureColor = texture2D(uTex, uv);
-      vec4 blurred = blurTex(uv, 12.0); // Slightly stronger blur for the background image
+      // object-cover UV transform so the shader samples the same crop
+      // as the underlying <Image object-cover>. This prevents the visible
+      // image from "snapping" to a different position once the shader appears.
+      vec2 sUv = vUv;
+      if (uImgAspect > uAspect) {
+        float s = uAspect / uImgAspect;
+        sUv.x = (vUv.x - 0.5) * s + 0.5;
+      } else {
+        float s = uImgAspect / uAspect;
+        sUv.y = (vUv.y - 0.5) * s + 0.5;
+      }
 
-      vec2 d = (uv - uMouse) * vec2(uAspect, 1.0);
+      vec4 blurred = blurTex(sUv, 2.5); // light blur — preserve image detail
+
+      // Reveal mask works in canvas space (vUv), aspect-corrected so the
+      // hover circle stays round regardless of viewport ratio.
+      vec2 d = (vUv - uMouse) * vec2(uAspect, 1.0);
       float dist = length(d);
       float mask = 1.0 - smoothstep(uRadius * 0.55, uRadius, dist);
 
@@ -163,15 +187,31 @@ import Kicker from "@/components/ui/Kicker.astro";
     // Set initial palette
     let palette: Palette = themeQuery.matches ? LIGHT : DARK;
 
-    // Use the new background image as the texture instead of generating a bento grid
-    const bentoCanvas = document.createElement("canvas");
-    bentoCanvas.width = 1920; bentoCanvas.height = 1080;
-    const ctx = bentoCanvas.getContext("2d");
+    // Use the background image (resolved via Astro's asset pipeline) as the shader texture.
+    const heroSrc = hero.dataset.heroSrc;
+    if (!heroSrc) return;
     const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = "/src/assets/hero.png";
-    await img.decode();
-    ctx?.drawImage(img, 0, 0, 1920, 1080);
+    img.decoding = "async";
+    img.src = heroSrc;
+    try {
+      if (img.decode) await img.decode();
+      else await new Promise<void>((res, rej) => {
+        img.onload = () => res();
+        img.onerror = () => rej(new Error("hero image failed to load"));
+      });
+    } catch {
+      return;
+    }
+    // Use the image's natural dimensions so it's not pre-stretched. The
+    // shader then re-crops via uImgAspect to match the visible <Image object-cover>.
+    const imgW = img.naturalWidth || 1920;
+    const imgH = img.naturalHeight || 1080;
+    const bentoCanvas = document.createElement("canvas");
+    bentoCanvas.width = imgW;
+    bentoCanvas.height = imgH;
+    const ctx = bentoCanvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(img, 0, 0, imgW, imgH);
 
     const renderer = new Renderer({ alpha: true, dpr: Math.min(window.devicePixelRatio || 1, 2) });
     const gl = renderer.gl;
@@ -194,7 +234,8 @@ import Kicker from "@/components/ui/Kicker.astro";
         uMouse:      { value: new Float32Array([0.5, 0.5]) },
         uRadius:     { value: 0.0 },
         uAspect:     { value: 1.0 },
-        uTexelSize:  { value: new Float32Array([1 / bentoCanvas.width, 1 / bentoCanvas.height]) },
+        uImgAspect:  { value: imgW / imgH },
+        uTexelSize:  { value: new Float32Array([1 / imgW, 1 / imgH]) },
         uGray:       { value: palette.grayTarget },
         uDarken:     { value: palette.darken },
       },
@@ -269,7 +310,7 @@ import Kicker from "@/components/ui/Kicker.astro";
     resize();
     window.addEventListener("resize", resize);
 
-    const COUNT = 140;
+    const COUNT = 210;
     const TYPES: Shape["type"][] = ["square", "triangle", "cross", "circle", "diag"];
     const shapes: Shape[] = [];
     const rand = (min: number, max: number) => min + Math.random() * (max - min);

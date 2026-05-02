@@ -6,7 +6,7 @@ import { productEntries } from "@/data/content";
 
 const featured = productEntries.filter((p) => p.featured || p.status === "live").slice(0, 6);
 ---
-<section id="products" class="border-b border-onyx-800">
+<section id="products" class="border-b border-onyx-800" data-ga-section="products">
   <div class="px-6 md:px-12 py-24 md:py-28">
     <div class="max-w-6xl mx-auto">
       <div class="flex items-end justify-between gap-6 flex-wrap">

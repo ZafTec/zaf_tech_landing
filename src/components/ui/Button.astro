@@ -5,13 +5,15 @@ interface Props {
   icon?: "arrow" | "play" | null;
   external?: boolean;
   class?: string;
+  "data-ga-event"?: string;
+  "data-ga-label"?: string;
 }
-const { href, variant = "primary", icon = "arrow", external = false, class: extra = "" } = Astro.props;
+const { href, variant = "primary", icon = "arrow", external = false, class: extra = "", ...rest } = Astro.props;
 const cls = variant === "primary" ? "btn-primary" : "btn-ghost";
 const rel = external ? "noopener noreferrer" : undefined;
 const target = external ? "_blank" : undefined;
 ---
-<a href={href} class:list={[cls, extra]} target={target} rel={rel}>
+<a href={href} class:list={[cls, extra]} target={target} rel={rel} {...rest}>
   <slot />
   {icon === "arrow" && (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
