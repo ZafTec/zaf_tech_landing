@@ -1,0 +1,90 @@
+---
+// Opt-in cookie consent banner. Pairs with Consent Mode v2 in Layout.astro.
+// Choice is persisted in localStorage under "zaf_consent" ("granted" | "denied").
+---
+<div
+  class="fixed bottom-0 left-0 right-0 z-[70] pointer-events-none px-4 pb-4 md:px-6 md:pb-6 hidden"
+  data-cookie-banner
+  role="region"
+  aria-label="Cookie consent"
+>
+  <div class="pointer-events-auto max-w-3xl mx-auto bg-onyx-900 border border-onyx-700 shadow-2xl">
+    <div class="p-5 md:p-6 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+      <div class="flex-1 text-sm text-onyx-200 leading-relaxed">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 mb-2">Cookies</p>
+        <p>
+          We use cookies for analytics so we can see how the site is doing. Nothing is loaded until you accept.
+          See our <a href="/cookies" class="underline hover:text-spruce-400 transition-colors">cookie policy</a>.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2 md:flex-nowrap md:justify-end">
+        <button
+          type="button"
+          data-cookie-reject
+          class="h-10 px-4 text-[10px] font-mono uppercase tracking-widest text-onyx-300 border border-onyx-700 hover:text-ivory-100 hover:border-onyx-500 transition-colors"
+        >
+          Reject
+        </button>
+        <button
+          type="button"
+          data-cookie-accept
+          class="h-10 px-5 text-[10px] font-mono uppercase tracking-widest text-onyx-950 bg-spruce-400 hover:bg-spruce-300 transition-colors font-bold"
+        >
+          Accept
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const KEY = "zaf_consent";
+    const banner = document.querySelector("[data-cookie-banner]");
+    const accept = document.querySelector("[data-cookie-accept]");
+    const reject = document.querySelector("[data-cookie-reject]");
+    if (!banner || !accept || !reject) return;
+
+    const grants = {
+      ad_storage: "granted",
+      ad_user_data: "granted",
+      ad_personalization: "granted",
+      analytics_storage: "granted",
+    };
+    const denials = {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+    };
+
+    let stored = null;
+    try { stored = localStorage.getItem(KEY); } catch (_) {}
+    if (!stored) {
+      banner.classList.remove("hidden");
+    }
+
+    const persist = (val) => { try { localStorage.setItem(KEY, val); } catch (_) {} };
+
+    accept.addEventListener("click", () => {
+      persist("granted");
+      if (typeof window.gtag === "function") {
+        window.gtag("consent", "update", grants);
+        window.gtag("event", "cookie_consent", { consent_state: "granted" });
+      }
+      banner.classList.add("hidden");
+    });
+
+    reject.addEventListener("click", () => {
+      persist("denied");
+      if (typeof window.gtag === "function") {
+        window.gtag("consent", "update", denials);
+      }
+      banner.classList.add("hidden");
+    });
+
+    window.addEventListener("zaf:reopen-consent", () => {
+      banner.classList.remove("hidden");
+    });
+  })();
+</script>

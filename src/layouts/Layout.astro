@@ -1,10 +1,16 @@
 ---
 import "@/styles/global.css";
+import CookieConsent from "@/components/CookieConsent.astro";
 
 const {
   title = "Zaftech Solutions | Full-stack Development & Machine Learning",
   description = "Full-stack engineering & ML solutions for high-stakes environments.",
 } = Astro.props;
+
+// Analytics is opt-in by environment. With no PUBLIC_GA_ID set, gtag.js is not
+// loaded, no tracking cookies are placed, and the consent banner stays hidden —
+// which keeps the site compliant by absence of tracking.
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
 ---
 <!doctype html>
 <html lang="en">
@@ -54,15 +60,138 @@ const {
 
     <slot name="head" />
 
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-7C4HBS7YTG"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-7C4HBS7YTG');
-    </script>
+    {GA_ID && (
+      <Fragment>
+        {/* Consent Mode v2 defaults — must run BEFORE gtag.js so denied state applies to first hits. */}
+        <script is:inline define:vars={{ GA_ID }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          window.gtag = gtag;
+          gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            functionality_storage: 'granted',
+            security_storage: 'granted',
+            wait_for_update: 500
+          });
+          try {
+            var stored = localStorage.getItem('zaf_consent');
+            if (stored === 'granted') {
+              gtag('consent', 'update', {
+                ad_storage: 'granted',
+                ad_user_data: 'granted',
+                ad_personalization: 'granted',
+                analytics_storage: 'granted'
+              });
+            }
+          } catch (e) {}
+          gtag('js', new Date());
+          gtag('config', GA_ID, {
+            anonymize_ip: true,
+            send_page_view: true
+          });
+        </script>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+      </Fragment>
+    )}
   </head>
   <body class="bg-onyx-950 text-ivory-100 antialiased selection:bg-spruce-500 selection:text-onyx-950">
     <slot />
+    {GA_ID && <CookieConsent />}
+    {GA_ID && (
+    <script is:inline>
+      (function () {
+        if (typeof window.gtag !== "function") return;
+        const gtag = window.gtag;
+        const origin = location.host;
+
+        // Generic data-ga-event handler. Any clickable element can opt in:
+        //   <a data-ga-event="cta_click" data-ga-label="Hero book call">
+        document.addEventListener("click", (e) => {
+          const target = e.target instanceof Element ? e.target.closest("[data-ga-event]") : null;
+          if (target) {
+            const name = target.getAttribute("data-ga-event") || "click";
+            const label = target.getAttribute("data-ga-label") || target.textContent?.trim().slice(0, 80) || "";
+            const params = { event_label: label };
+            if (target instanceof HTMLAnchorElement) params.link_url = target.href;
+            gtag("event", name, params);
+          }
+
+          // Outbound, mailto, tel — auto-tagged.
+          const a = e.target instanceof Element ? e.target.closest("a[href]") : null;
+          if (!a) return;
+          const href = a.getAttribute("href") || "";
+          if (href.startsWith("mailto:")) {
+            gtag("event", "email_click", { email: href.replace("mailto:", "").split("?")[0], link_url: href });
+          } else if (href.startsWith("tel:")) {
+            gtag("event", "phone_click", { phone: href.replace("tel:", ""), link_url: href });
+          } else if (/^https?:\/\//i.test(href)) {
+            try {
+              const u = new URL(href);
+              if (u.host && u.host !== origin) {
+                gtag("event", "outbound_click", { link_domain: u.host, link_url: href });
+              }
+            } catch (_) {}
+          }
+        });
+
+        // Scroll depth: 25 / 50 / 75 / 100 fired once each.
+        const fired = new Set();
+        const onScroll = () => {
+          const doc = document.documentElement;
+          const scrollable = doc.scrollHeight - window.innerHeight;
+          if (scrollable <= 0) return;
+          const pct = Math.min(100, Math.round((window.scrollY / scrollable) * 100));
+          [25, 50, 75, 100].forEach((mark) => {
+            if (pct >= mark && !fired.has(mark)) {
+              fired.add(mark);
+              gtag("event", "scroll_depth", { percent_scrolled: mark });
+            }
+          });
+        };
+        let raf = 0;
+        window.addEventListener("scroll", () => {
+          if (raf) return;
+          raf = window.requestAnimationFrame(() => { raf = 0; onScroll(); });
+        }, { passive: true });
+
+        // Section views — opt in by adding data-ga-section="hero" to any section.
+        const sections = document.querySelectorAll("[data-ga-section]");
+        if (sections.length && "IntersectionObserver" in window) {
+          const seen = new WeakSet();
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && !seen.has(entry.target)) {
+                seen.add(entry.target);
+                const id = entry.target.getAttribute("data-ga-section") || entry.target.id || "";
+                gtag("event", "section_view", { section: id });
+              }
+            });
+          }, { threshold: 0.4 });
+          sections.forEach((s) => io.observe(s));
+        }
+
+        // Form lifecycle — opt in by adding data-ga-form="contact" to a <form>.
+        document.querySelectorAll("form[data-ga-form]").forEach((form) => {
+          const name = form.getAttribute("data-ga-form") || "form";
+          form.addEventListener("submit", () => {
+            gtag("event", "form_submit", { form_name: name });
+          });
+        });
+
+        // Surface contact form success/error from Contact.astro.
+        window.addEventListener("zaf:contact-result", (e) => {
+          const detail = (e && e.detail) || {};
+          const success = !!detail.success;
+          gtag("event", success ? "generate_lead" : "form_error", {
+            form_name: detail.form || "contact",
+            error: detail.error || undefined,
+          });
+        });
+      })();
+    </script>
+    )}
   </body>
 </html>
