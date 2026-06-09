@@ -1,0 +1,424 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SeoHead from "@/components/SeoHead.astro";
+import { requireAdmin } from "@/lib/admin/auth";
+import { db } from "@/lib/db";
+
+export const prerender = false;
+
+const admin = await requireAdmin(Astro.request);
+if (!admin) {
+  return Astro.redirect("/admin/login");
+}
+
+const url = new URL(Astro.request.url);
+const tabRaw = (url.searchParams.get("tab") ?? "contact").toLowerCase();
+const tab = (["contact", "careers", "audit"].includes(tabRaw) ? tabRaw : "contact") as
+  | "contact"
+  | "careers"
+  | "audit";
+
+type ContactRow = {
+  id: string; name: string; email: string; message: string;
+  user_agent: string | null; ip_address: string | null; created_at: string;
+};
+type CareersRow = {
+  id: string; name: string; email: string; phone: string | null; position: string;
+  experience: string | null; portfolio: string | null; message: string | null;
+  user_agent: string | null; ip_address: string | null; created_at: string;
+};
+type AuditRow = {
+  id: string; name: string; email: string; building: string; problem: string;
+  tech_stack: string | null; user_agent: string | null; ip_address: string | null; created_at: string;
+};
+
+let counts = { contact: 0, careers: 0, audit: 0 };
+let rows: Array<ContactRow | CareersRow | AuditRow> = [];
+let dbError: string | null = null;
+
+if (!db) {
+  dbError = "DATABASE_URL is not configured on the server.";
+} else {
+  // Make sure tables exist before counting, so a fresh deployment doesn't 500
+  // here. The submission endpoints lazily create their own tables on first
+  // write, but the dashboard may load before any form has been posted.
+  try {
+    await db`
+      CREATE TABLE IF NOT EXISTS contact_submissions (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL,
+        user_agent TEXT, ip_address TEXT, created_at TEXT NOT NULL
+      );
+    `;
+    await db`
+      CREATE TABLE IF NOT EXISTS career_applications (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, phone TEXT,
+        position TEXT NOT NULL, experience TEXT, portfolio TEXT, message TEXT,
+        user_agent TEXT, ip_address TEXT, created_at TEXT NOT NULL
+      );
+    `;
+    await db`
+      CREATE TABLE IF NOT EXISTS audit_submissions (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL,
+        building TEXT NOT NULL, problem TEXT NOT NULL, tech_stack TEXT,
+        user_agent TEXT, ip_address TEXT, created_at TEXT NOT NULL
+      );
+    `;
+
+    const [c, k, a] = await Promise.all([
+      db`SELECT COUNT(*)::int AS n FROM contact_submissions;`,
+      db`SELECT COUNT(*)::int AS n FROM career_applications;`,
+      db`SELECT COUNT(*)::int AS n FROM audit_submissions;`,
+    ]);
+    counts = {
+      contact: (c as Array<{ n: number }>)[0]?.n ?? 0,
+      careers: (k as Array<{ n: number }>)[0]?.n ?? 0,
+      audit: (a as Array<{ n: number }>)[0]?.n ?? 0,
+    };
+
+    if (tab === "contact") {
+      rows = (await db`
+        SELECT id, name, email, message, user_agent, ip_address, created_at
+        FROM contact_submissions ORDER BY created_at DESC LIMIT 200;
+      `) as ContactRow[];
+    } else if (tab === "careers") {
+      rows = (await db`
+        SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at
+        FROM career_applications ORDER BY created_at DESC LIMIT 200;
+      `) as CareersRow[];
+    } else {
+      rows = (await db`
+        SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at
+        FROM audit_submissions ORDER BY created_at DESC LIMIT 200;
+      `) as AuditRow[];
+    }
+  } catch (err) {
+    dbError = err instanceof Error ? err.message : "Unknown DB error";
+  }
+}
+
+const tabs = [
+  { id: "contact", label: "Contact", count: counts.contact },
+  { id: "careers", label: "Careers", count: counts.careers },
+  { id: "audit",   label: "Audit",   count: counts.audit },
+] as const;
+
+const fmtDate = (iso: string) => {
+  // Render ISO in UTC, mono-friendly: 2026-06-09 09:14 UTC
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
+};
+
+const truncate = (s: string | null | undefined, n: number) => {
+  if (!s) return "";
+  return s.length > n ? s.slice(0, n - 1) + "…" : s;
+};
+
+const title = "Submissions · ZafTech Admin";
+const description = "Internal admin console.";
+---
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <SeoHead title={title} description={description} noindex={true} canonicalPath="/admin" />
+  </Fragment>
+
+  <div class="min-h-screen flex flex-col bg-onyx-950">
+    <!-- Admin header -->
+    <header class="border-b border-onyx-800 sticky top-0 z-30 bg-onyx-950/95 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-6">
+          <a href="/admin" class="flex items-center gap-3" aria-label="ZafTech Admin">
+            <picture>
+              <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+              <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="ZafTech" class="h-9 w-auto" width="36" height="36" draggable="false" />
+            </picture>
+            <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-spruce-400">ZafTech <span class="text-onyx-500">// admin</span></span>
+          </a>
+          <nav class="hidden md:flex items-center gap-5" aria-label="Admin navigation">
+            <a href="/admin" class="text-[10px] font-mono uppercase tracking-widest text-spruce-400" aria-current="page">Submissions</a>
+            <a href="/admin/admins" class="text-[10px] font-mono uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">Admins</a>
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-onyx-400">{admin.email}</span>
+          <a
+            href="/api/admin/auth/logout"
+            class="btn-ghost h-9 px-4"
+            data-ga-event="admin_signout_click"
+          >Sign out</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="grow">
+      <section class="px-6 md:px-12 pt-10 pb-4 max-w-7xl mx-auto w-full">
+        <p class="kicker"><span class="text-onyx-500 mr-1">// 01</span><span>Overview</span></p>
+        <h1 class="mt-3 display-tight text-3xl md:text-4xl font-medium text-ivory-100">Submissions</h1>
+
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {tabs.map((t) => (
+            <a
+              href={`/admin?tab=${t.id}`}
+              class:list={[
+                "metric-tile transition-colors block",
+                tab === t.id ? "border-spruce-400" : "hover:border-onyx-700",
+              ]}
+            >
+              <div class="value">{t.count}</div>
+              <div class="label">{t.label}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Tabs -->
+      <section class="px-6 md:px-12 max-w-7xl mx-auto w-full">
+        <div class="mt-6 border-b border-onyx-800 flex items-end gap-1 overflow-x-auto">
+          {tabs.map((t) => (
+            <a
+              href={`/admin?tab=${t.id}`}
+              class:list={[
+                "px-4 py-3 font-mono text-[11px] uppercase tracking-widest transition-colors -mb-px border-b",
+                tab === t.id
+                  ? "text-spruce-400 border-spruce-400"
+                  : "text-onyx-400 border-transparent hover:text-spruce-400",
+              ]}
+            >
+              {t.label}
+              <span class="ml-2 text-onyx-500">{t.count}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Table card -->
+      <section class="px-6 md:px-12 max-w-7xl mx-auto w-full pb-16">
+        <div class="mt-6 border border-onyx-800 bg-onyx-950">
+          {dbError ? (
+            <div class="p-6 text-[14px] text-onyx-200">
+              <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 mb-2">// db error</p>
+              {dbError}
+            </div>
+          ) : rows.length === 0 ? (
+            <div class="p-10 text-center">
+              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">// no submissions yet</p>
+            </div>
+          ) : (
+            <div class="overflow-x-auto">
+              <table class="w-full text-left" data-admin-table>
+                <thead>
+                  <tr class="border-b border-onyx-700">
+                    <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3 whitespace-nowrap">Received</th>
+                    <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Name</th>
+                    <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Email</th>
+                    {tab === "contact" && (
+                      <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Message</th>
+                    )}
+                    {tab === "careers" && (
+                      <>
+                        <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Position</th>
+                        <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Message</th>
+                      </>
+                    )}
+                    {tab === "audit" && (
+                      <>
+                        <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Building</th>
+                        <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Problem</th>
+                      </>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r) => {
+                    const detail = { type: tab, ...r };
+                    return (
+                      <tr
+                        class="border-b border-onyx-800 cursor-pointer hover:bg-onyx-900 transition-colors"
+                        data-row
+                        data-detail={JSON.stringify(detail)}
+                      >
+                        <td class="px-4 py-3 font-mono text-[11px] text-onyx-400 whitespace-nowrap">{fmtDate(r.created_at)}</td>
+                        <td class="px-4 py-3 text-[14px] text-ivory-100">{r.name}</td>
+                        <td class="px-4 py-3 text-[14px] text-spruce-400">{r.email}</td>
+                        {tab === "contact" && (
+                          <td class="px-4 py-3 text-[13px] text-onyx-300">{truncate((r as ContactRow).message, 80)}</td>
+                        )}
+                        {tab === "careers" && (
+                          <>
+                            <td class="px-4 py-3 text-[13px] text-onyx-200">{(r as CareersRow).position}</td>
+                            <td class="px-4 py-3 text-[13px] text-onyx-300">{truncate((r as CareersRow).message ?? "", 80)}</td>
+                          </>
+                        )}
+                        {tab === "audit" && (
+                          <>
+                            <td class="px-4 py-3 text-[13px] text-onyx-200">{truncate((r as AuditRow).building, 60)}</td>
+                            <td class="px-4 py-3 text-[13px] text-onyx-300">{truncate((r as AuditRow).problem, 80)}</td>
+                          </>
+                        )}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {rows.length > 0 && (
+          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-onyx-500">
+            Showing {rows.length} most recent. Click a row to view detail.
+          </p>
+        )}
+      </section>
+    </main>
+
+    <!-- Detail drawer -->
+    <div id="admin-drawer" class="fixed inset-0 z-50 pointer-events-none" aria-hidden="true">
+      <div class="absolute inset-0 bg-onyx-950/70 opacity-0 transition-opacity duration-200 pointer-events-none" data-drawer-backdrop></div>
+      <aside
+        class="absolute top-0 right-0 h-full w-full sm:w-[480px] max-w-[100vw] bg-onyx-950 border-l border-onyx-800 transform translate-x-full transition-transform duration-200 ease-out overflow-y-auto"
+        data-drawer-panel
+        aria-label="Submission detail"
+      >
+        <div class="p-6 md:p-7">
+          <div class="flex items-center justify-between gap-3">
+            <p class="kicker"><span class="text-onyx-500 mr-1">// rec</span><span data-drawer-type>—</span></p>
+            <button
+              type="button"
+              data-drawer-close
+              class="h-9 w-9 flex items-center justify-center text-onyx-400 hover:text-spruce-400 transition-colors"
+              aria-label="Close detail"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <p class="mt-2 font-mono text-[10px] uppercase tracking-widest text-onyx-500" data-drawer-received>—</p>
+          <h2 class="mt-4 display-tight text-2xl font-medium text-ivory-100" data-drawer-name>—</h2>
+          <a class="mt-1 inline-block text-[14px] text-spruce-400 hover:text-spruce-300 transition-colors" data-drawer-email href="#">—</a>
+
+          <div class="mt-6 space-y-5" data-drawer-fields></div>
+
+          <div class="mt-8 pt-5 border-t border-onyx-800 space-y-2 font-mono text-[11px]">
+            <div class="flex justify-between gap-4">
+              <span class="text-onyx-400">IP</span>
+              <span class="text-onyx-300 truncate" data-drawer-ip>—</span>
+            </div>
+            <div class="flex justify-between gap-4">
+              <span class="text-onyx-400">User agent</span>
+              <span class="text-onyx-300 text-right break-words max-w-[70%]" data-drawer-ua>—</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="border-t border-onyx-800 mt-auto">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 py-5 font-mono text-[10px] uppercase tracking-widest text-onyx-500 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+        <span>ZafTech admin · internal</span>
+        <span><a href="/" class="hover:text-spruce-400 transition-colors">back to zaftech.co</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script is:inline>
+    (function () {
+      const drawer = document.getElementById("admin-drawer");
+      if (!drawer) return;
+      const panel = drawer.querySelector("[data-drawer-panel]");
+      const backdrop = drawer.querySelector("[data-drawer-backdrop]");
+      const closeBtn = drawer.querySelector("[data-drawer-close]");
+      const rows = Array.from(document.querySelectorAll("[data-row]"));
+
+      const fieldsEl = drawer.querySelector("[data-drawer-fields]");
+      const typeEl = drawer.querySelector("[data-drawer-type]");
+      const receivedEl = drawer.querySelector("[data-drawer-received]");
+      const nameEl = drawer.querySelector("[data-drawer-name]");
+      const emailEl = drawer.querySelector("[data-drawer-email]");
+      const ipEl = drawer.querySelector("[data-drawer-ip]");
+      const uaEl = drawer.querySelector("[data-drawer-ua]");
+
+      const FIELDS = {
+        contact: [
+          { key: "message", label: "Message" },
+        ],
+        careers: [
+          { key: "position", label: "Position" },
+          { key: "phone", label: "Phone" },
+          { key: "portfolio", label: "Portfolio" },
+          { key: "experience", label: "Experience" },
+          { key: "message", label: "Message" },
+        ],
+        audit: [
+          { key: "building", label: "What they're building" },
+          { key: "problem", label: "Main problem" },
+          { key: "tech_stack", label: "Tech stack" },
+        ],
+      };
+
+      const fmtDate = (iso) => {
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return iso;
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
+      };
+
+      const open = (data) => {
+        typeEl.textContent = data.type;
+        receivedEl.textContent = "Received  //  " + fmtDate(data.created_at);
+        nameEl.textContent = data.name || "—";
+        emailEl.textContent = data.email || "—";
+        emailEl.href = data.email ? `mailto:${data.email}` : "#";
+        ipEl.textContent = data.ip_address || "—";
+        uaEl.textContent = data.user_agent || "—";
+
+        const fields = FIELDS[data.type] || [];
+        fieldsEl.innerHTML = "";
+        for (const f of fields) {
+          const val = data[f.key];
+          if (val === undefined || val === null || val === "") continue;
+          const wrap = document.createElement("div");
+          const label = document.createElement("p");
+          label.className = "font-mono text-[10px] uppercase tracking-widest text-onyx-400";
+          label.textContent = f.label;
+          const body = document.createElement("p");
+          body.className = "mt-2 text-[14px] text-onyx-200 leading-relaxed whitespace-pre-wrap";
+          body.textContent = String(val);
+          wrap.appendChild(label);
+          wrap.appendChild(body);
+          fieldsEl.appendChild(wrap);
+        }
+
+        drawer.setAttribute("aria-hidden", "false");
+        drawer.classList.remove("pointer-events-none");
+        backdrop.classList.remove("pointer-events-none");
+        backdrop.classList.remove("opacity-0");
+        panel.classList.remove("translate-x-full");
+        document.body.style.overflow = "hidden";
+      };
+
+      const close = () => {
+        drawer.setAttribute("aria-hidden", "true");
+        drawer.classList.add("pointer-events-none");
+        backdrop.classList.add("pointer-events-none");
+        backdrop.classList.add("opacity-0");
+        panel.classList.add("translate-x-full");
+        document.body.style.overflow = "";
+      };
+
+      rows.forEach((row) => {
+        row.addEventListener("click", () => {
+          try {
+            const data = JSON.parse(row.getAttribute("data-detail") || "{}");
+            open(data);
+          } catch (e) { /* ignore */ }
+        });
+      });
+      closeBtn?.addEventListener("click", close);
+      backdrop?.addEventListener("click", close);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && drawer.getAttribute("aria-hidden") === "false") close();
+      });
+    })();
+  </script>
+</Layout>
