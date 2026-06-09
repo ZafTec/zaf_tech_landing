@@ -1,0 +1,297 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SeoHead from "@/components/SeoHead.astro";
+import RevealObserver from "@/components/RevealObserver.astro";
+
+export const prerender = true;
+
+const title = "Free 30-Minute Technical Review · ZafTech";
+const description = "An honest engineering read on what you're building. No pitch. We'll flag bottlenecks, surface hidden costs, and tell you what to build next.";
+
+const bullets = [
+  {
+    title: "An architecture assessment",
+    body: "We'll identify bottlenecks, over-engineered parts, and anything that's going to become expensive at scale.",
+  },
+  {
+    title: "A cost breakdown",
+    body: "Infrastructure, tooling, and build time. We'll tell you what's costing more than it should and what to cut.",
+  },
+  {
+    title: "A build roadmap",
+    body: "What to prioritize, what to defer, and what not to build at all. In plain language, not a sales document.",
+  },
+];
+
+const forYou = [
+  "A startup founder with an MVP that may not hold under scale",
+  "A product team hitting unexpected costs as they grow",
+  "A company that has a quote from another agency and wants a second opinion",
+  "Anyone building web, AI, or infrastructure products and feeling stuck",
+];
+
+const next = [
+  "You submit the form",
+  "We read your answers before the call",
+  "We send a calendar link within one business day",
+  "On the call: we talk, we assess, we give you something useful",
+];
+---
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalPath="/audit"
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "Free 30-Minute Technical Review",
+        provider: {
+          "@type": "Organization",
+          name: "ZafTech Solutions",
+          url: "https://zaftech.co",
+        },
+        areaServed: "Worldwide",
+        description,
+      }}
+    />
+  </Fragment>
+
+  <div class="min-h-screen flex flex-col">
+    <!-- Minimal header: logo only, no nav. The page has one job. -->
+    <header class="border-b border-onyx-800">
+      <div class="max-w-6xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3" aria-label="ZafTech home">
+          <picture>
+            <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+            <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="ZafTech Solutions" class="h-10 w-auto" width="40" height="40" draggable="false" />
+          </picture>
+          <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-onyx-300">ZafTech</span>
+        </a>
+        <a
+          href="mailto:contact@zaftech.co"
+          class="font-mono text-[10px] uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors"
+        >
+          contact@zaftech.co
+        </a>
+      </div>
+    </header>
+
+    <main class="grow">
+      <!-- Hero: tight, no big media. -->
+      <section class="px-6 md:px-12 pt-12 md:pt-16 pb-8 md:pb-10" data-ga-section="audit-hero">
+        <div class="max-w-6xl mx-auto">
+          <p class="kicker"><span class="text-onyx-500 mr-1">// 01</span><span>Technical review</span></p>
+          <h1 class="mt-5 display-tight text-4xl md:text-5xl lg:text-6xl font-medium text-ivory-100 max-w-3xl">
+            Free 30-minute<br />technical review.
+          </h1>
+          <p class="mt-6 text-onyx-300 text-base md:text-lg leading-relaxed max-w-2xl">
+            We look at what you're building, what it's costing you, and where it's going to break.
+            No pitch. Just an honest technical read from engineers who ship.
+          </p>
+        </div>
+      </section>
+
+      <!-- Body: supporting copy left, form right on desktop. -->
+      <section class="px-6 md:px-12 pb-16">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+          <!-- Left column: what they get, who it's for, credibility -->
+          <div class="lg:col-span-7 reveal-up">
+            <!-- What you'll get -->
+            <div>
+              <p class="kicker"><span class="text-onyx-500 mr-1">// 02</span><span>What you'll get</span></p>
+              <ul class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {bullets.map((b) => (
+                  <li class="border border-onyx-800 bg-onyx-950 p-5 card-accent-bar">
+                    <h3 class="text-ivory-100 font-medium text-[15px] leading-snug">{b.title}</h3>
+                    <p class="mt-2 text-[13px] text-onyx-300 leading-relaxed">{b.body}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Who this is for -->
+            <div class="mt-10">
+              <p class="kicker"><span class="text-onyx-500 mr-1">// 03</span><span>Who this is for</span></p>
+              <ul class="mt-5 space-y-2.5">
+                {forYou.map((line) => (
+                  <li class="flex items-start gap-3 text-[15px] text-onyx-200 leading-relaxed">
+                    <span class="text-spruce-400 shrink-0 mt-1.5" aria-hidden="true">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                    </span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+              <p class="mt-5 text-[13px] text-onyx-400 leading-relaxed">
+                <span class="text-ivory-100 font-medium">Not for you if:</span>
+                you want us to validate a decision you've already made.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Right column: the form -->
+          <aside class="lg:col-span-5 reveal-up" style="--reveal-delay: 120ms;">
+            <form
+              id="audit-form"
+              class="border border-onyx-800 bg-onyx-950 p-6 md:p-7 lg:sticky lg:top-6"
+              data-audit-form
+              data-ga-form="audit"
+              method="post"
+              action="/api/audit"
+              novalidate
+            >
+              <p class="kicker"><span class="text-onyx-500 mr-1">// 04</span><span>Request your review</span></p>
+              <h2 class="mt-3 display-tight text-2xl md:text-[26px] font-medium text-ivory-100">
+                Tell us what you're building.
+              </h2>
+
+              <div class="mt-6 space-y-5">
+                <label class="block">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Your name</span>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    autocomplete="name"
+                    placeholder="Your name"
+                    class="mt-2 w-full bg-onyx-900 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Email</span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    autocomplete="email"
+                    inputmode="email"
+                    placeholder="you@company.com"
+                    class="mt-2 w-full bg-onyx-900 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3"
+                  />
+                </label>
+
+                <label class="block">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">What are you building?</span>
+                  <textarea
+                    name="building"
+                    required
+                    rows="3"
+                    placeholder="One or two lines about the product or system."
+                    class="mt-2 w-full bg-onyx-900 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3 resize-none"
+                  ></textarea>
+                </label>
+
+                <label class="block">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Main problem you're trying to solve</span>
+                  <textarea
+                    name="problem"
+                    required
+                    rows="3"
+                    placeholder="The thing that made you click this ad."
+                    class="mt-2 w-full bg-onyx-900 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3 resize-none"
+                  ></textarea>
+                </label>
+
+                <label class="block">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Current tech stack <span class="text-onyx-500 normal-case tracking-normal">(optional)</span></span>
+                  <input
+                    type="text"
+                    name="tech_stack"
+                    autocomplete="off"
+                    placeholder="e.g. Next.js, Postgres, AWS"
+                    class="mt-2 w-full bg-onyx-900 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3"
+                  />
+                </label>
+              </div>
+
+              <div class="mt-6">
+                <button type="submit" class="btn-primary w-full">
+                  Request free review
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+                <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-onyx-500" data-audit-status>
+                  We respond within one business day. No spam, no automated follow-ups.
+                </p>
+              </div>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <!-- What happens next -->
+      <section class="px-6 md:px-12 pb-20 border-t border-onyx-800 pt-14">
+        <div class="max-w-6xl mx-auto">
+          <p class="kicker"><span class="text-onyx-500 mr-1">// 05</span><span>What happens next</span></p>
+          <ol class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {next.map((step, i) => (
+              <li class="border border-onyx-800 p-5">
+                <span class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">Step {String(i + 1).padStart(2, "0")}</span>
+                <p class="mt-3 text-[14px] text-onyx-200 leading-relaxed">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <!-- Minimal footer to keep the page focused on the form. -->
+    <footer class="border-t border-onyx-800">
+      <div class="max-w-6xl mx-auto px-6 md:px-12 py-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between font-mono text-[10px] uppercase tracking-widest text-onyx-500">
+        <span>&copy; {new Date().getFullYear()} ZafTech Solutions</span>
+        <span>
+          <a href="/privacy" class="hover:text-spruce-400 transition-colors">Privacy</a>
+          <span class="mx-2 text-onyx-700">/</span>
+          <a href="/terms" class="hover:text-spruce-400 transition-colors">Terms</a>
+        </span>
+      </div>
+    </footer>
+  </div>
+  <RevealObserver />
+
+  <script is:inline>
+  (function () {
+    const form = document.querySelector("[data-audit-form]");
+    const status = document.querySelector("[data-audit-status]");
+    if (!form || !status) return;
+
+    const defaultStatus = status.textContent;
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector("button[type=submit]");
+      if (submitBtn) submitBtn.setAttribute("disabled", "true");
+      status.textContent = "Sending...";
+
+      const data = Object.fromEntries(new FormData(e.target));
+      try {
+        const res = await fetch("/api/audit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        e.target.reset();
+        status.textContent = "Thanks. We'll be in touch within one business day.";
+        window.dispatchEvent(new CustomEvent("zaf:contact-result", {
+          detail: { success: true, form: "audit" }
+        }));
+      } catch (err) {
+        status.textContent = "Something went wrong. Email contact@zaftech.co and we'll follow up.";
+        window.dispatchEvent(new CustomEvent("zaf:contact-result", {
+          detail: { success: false, form: "audit", error: String((err && err.message) || err) }
+        }));
+      } finally {
+        if (submitBtn) submitBtn.removeAttribute("disabled");
+        window.setTimeout(() => {
+          if (status.textContent && status.textContent.startsWith("Thanks")) return;
+          status.textContent = defaultStatus;
+        }, 8000);
+      }
+    });
+  })();
+  </script>
+</Layout>
