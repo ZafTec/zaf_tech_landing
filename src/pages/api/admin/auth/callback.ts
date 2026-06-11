@@ -24,11 +24,13 @@ export const GET: APIRoute = async ({ request }) => {
   const oauthError = url.searchParams.get("error");
 
   if (oauthError) {
+    console.warn("[admin/auth] Google returned error:", oauthError);
     return redirectTo(`/admin/login?error=${encodeURIComponent(oauthError)}`, [buildClearStateCookie()]);
   }
 
   const expectedState = readCookie(request.headers.get("cookie"), OAUTH_STATE_COOKIE);
   if (!code || !state || !expectedState || state !== expectedState) {
+    console.warn("[admin/auth] state mismatch", { hasCode: !!code, hasState: !!state, hasCookie: !!expectedState });
     return redirectTo("/admin/login?error=state_mismatch", [buildClearStateCookie()]);
   }
 
@@ -36,6 +38,7 @@ export const GET: APIRoute = async ({ request }) => {
   try {
     user = await exchangeCodeForUser(request, code);
   } catch (err) {
+    console.error("[admin/auth] exchangeCodeForUser failed:", err);
     const message = err instanceof Error ? err.message : "unknown";
     return redirectTo(
       `/admin/login?error=${encodeURIComponent("exchange_failed")}&detail=${encodeURIComponent(message.slice(0, 120))}`,
@@ -44,13 +47,27 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   const email = user.email.toLowerCase();
-  const allowed = await isAdmin(email);
+
+  let allowed: boolean;
+  try {
+    allowed = await isAdmin(email);
+  } catch (err) {
+    console.error("[admin/auth] isAdmin threw:", err);
+    const message = err instanceof Error ? err.message : "unknown";
+    return redirectTo(
+      `/admin/login?error=db_error&detail=${encodeURIComponent(message.slice(0, 120))}`,
+      [buildClearStateCookie()],
+    );
+  }
+
   if (!allowed) {
+    console.warn(`[admin/auth] Sign-in denied for ${email} (not in admins table)`);
     return redirectTo(`/admin/login?error=not_admin&email=${encodeURIComponent(email)}`, [
       buildClearStateCookie(),
     ]);
   }
 
+  console.log(`[admin/auth] Signed in: ${email}`);
   const session = await signSession(email);
   return redirectTo("/admin", [buildSessionCookie(session), buildClearStateCookie()]);
 };

@@ -4,9 +4,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "astro dev",
+        "dev": "bun --bun astro dev",
         "build": "astro build",
-        "preview": "astro preview",
+        "preview": "bun --bun astro preview",
         "lint": "astro check",
         "test": "bun test"
     },

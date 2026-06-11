@@ -5,8 +5,8 @@ const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 
-const env = (name: string, fallback?: string): string => {
-  const v = process.env[name] ?? fallback;
+const env = (name: string): string => {
+  const v = process.env[name];
   if (!v) throw new Error(`${name} is not set`);
   return v;
 };

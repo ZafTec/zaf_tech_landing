@@ -4,8 +4,8 @@ export const SEED_EMAIL = (process.env.ADMIN_SEED_EMAIL ?? "contact@zaftech.co")
 
 let setupReady: Promise<void> | null = null;
 
-const setup = () => {
-  if (!db) return Promise.reject(new Error("Database not configured"));
+const setup = async () => {
+  if (!db) throw new Error("Database not configured (DATABASE_URL missing)");
   if (!setupReady) {
     setupReady = (async () => {
       await db`
@@ -15,14 +15,20 @@ const setup = () => {
           created_at TEXT NOT NULL
         );
       `;
-      // Seed the bootstrap admin if no rows exist for it. We don't overwrite,
-      // we just guarantee one row is present so the first sign-in works.
-      await db`
+      const inserted = await db`
         INSERT INTO admins (email, added_by, created_at)
         VALUES (${SEED_EMAIL}, ${"system"}, ${new Date().toISOString()})
-        ON CONFLICT (email) DO NOTHING;
+        ON CONFLICT (email) DO NOTHING
+        RETURNING email;
       `;
-    })();
+      if ((inserted as unknown[]).length > 0) {
+        console.log(`[admins] Seeded admin: ${SEED_EMAIL}`);
+      }
+    })().catch((err) => {
+      console.error("[admins] Setup failed:", err);
+      setupReady = null; // allow retry on next call
+      throw err;
+    });
   }
   return setupReady;
 };
@@ -41,12 +47,24 @@ export const listAdmins = async (): Promise<AdminRow[]> => {
 };
 
 export const isAdmin = async (email: string): Promise<boolean> => {
-  if (!db) return false;
-  await setup();
+  if (!db) {
+    console.error("[admins] isAdmin called but db is null (DATABASE_URL unset)");
+    return false;
+  }
   const e = email.trim().toLowerCase();
   if (!e) return false;
+  try {
+    await setup();
+  } catch (err) {
+    console.error("[admins] setup() failed inside isAdmin:", err);
+    return false;
+  }
   const rows = await db`SELECT 1 FROM admins WHERE email = ${e} LIMIT 1;`;
-  return (rows as unknown[]).length > 0;
+  const ok = (rows as unknown[]).length > 0;
+  if (!ok) {
+    console.warn(`[admins] isAdmin denied: ${e} not in admins table`);
+  }
+  return ok;
 };
 
 export const addAdmin = async (email: string, addedBy: string): Promise<{ ok: boolean; error?: string }> => {
