@@ -25,9 +25,9 @@ export const services: Service[] = [
     title: "UI/UX & Frontend Design",
     slug: "frontend",
     icon: "palette",
-    body: "Pixel-perfect interfaces built with modern frameworks and exceptional attention to user experience.",
+    body: "Accessible, fast interfaces. Component libraries that survive design handoffs and the next two product pivots.",
     description:
-      "We craft responsive, accessible, and performant user interfaces using React, Next.js, and Astro. From design systems to interactive prototypes, our frontend team delivers production-ready applications.",
+      "Responsive React / Next.js / Astro interfaces with WCAG-conformant components, a real design system, and Core Web Vitals scores we'll back in writing.",
     deliverables: [
       "Custom UI component libraries",
       "Responsive web applications",
@@ -40,9 +40,9 @@ export const services: Service[] = [
     title: "Backend & API Development",
     slug: "backend",
     icon: "dns",
-    body: "Scalable APIs, microservices, and server architecture built for reliability at scale.",
+    body: "APIs and services with predictable latency, real observability, and a clear migration path when the schema changes.",
     description:
-      "We architect robust backend systems using Node.js, Python, and Go. Our APIs handle millions of requests with sub-100ms latency, backed by PostgreSQL, Redis, and event-driven architectures that grow with your business.",
+      "Node, Python, and Go services backed by Postgres, Redis, and message queues. Tracing, structured logs, p99 SLOs, and runbooks — not just code.",
     deliverables: [
       "RESTful and GraphQL APIs",
       "Microservices architecture",
@@ -55,9 +55,9 @@ export const services: Service[] = [
     title: "Machine Learning & AI",
     slug: "ml-ai",
     icon: "psychology",
-    body: "Custom ML models, RAG systems, and intelligent automation tailored to your domain.",
+    body: "RAG, fine-tunes, and inference pipelines built on your data — with evals, cost ceilings, and a fallback path when the model misbehaves.",
     description:
-      "From custom LLM chatbots to computer vision pipelines, we build AI-powered applications that learn and adapt. Our ML engineers deliver production-ready models with monitoring, retraining pipelines, and enterprise-grade RAG systems.",
+      "LLM apps, RAG over private corpora, embedding pipelines, and CV models — wired up with eval suites, prompt versioning, latency budgets, and the monitoring you need to catch drift before users do.",
     deliverables: [
       "Custom LLM and RAG systems",
       "ML model training and deployment",
@@ -70,9 +70,9 @@ export const services: Service[] = [
     title: "Cloud & DevOps",
     slug: "cloud",
     icon: "cloud",
-    body: "AWS, Azure, and GCP deployments with CI/CD pipelines and automated scaling.",
+    body: "AWS / GCP / Azure infra defined in Terraform, deployed by CI, observable from day one. Bills you can reason about.",
     description:
-      "We deploy and manage cloud infrastructure across AWS, Azure, and GCP using infrastructure-as-code practices. From Kubernetes orchestration to serverless architectures, we keep your systems reliable, secure, and cost-optimized.",
+      "Terraform-managed VPCs, Kubernetes or serverless workloads, GitHub Actions pipelines, and the kind of cost dashboards that flag a runaway job before payroll does.",
     deliverables: [
       "Cloud architecture and migration",
       "CI/CD pipeline automation",
@@ -85,9 +85,9 @@ export const services: Service[] = [
     title: "Database Architecture",
     slug: "database",
     icon: "storage",
-    body: "PostgreSQL, MongoDB, and distributed data systems optimized for your workload.",
+    body: "Schemas, indexes, and migrations that survive your next 10x in traffic. Postgres, Mongo, Redis, search.",
     description:
-      "We design and optimize database systems for performance, scalability, and data integrity. Whether you need relational databases, document stores, or distributed caching layers, we architect data solutions that handle your scale.",
+      "Relational and document schemas, partitioning strategies, zero-downtime migrations, replica topologies, and query-plan reviews — designed against your actual workload, not a blog post's.",
     deliverables: [
       "Schema design and optimization",
       "Database migration strategies",
@@ -100,9 +100,9 @@ export const services: Service[] = [
     title: "WordPress & CMS",
     slug: "wordpress",
     icon: "language",
-    body: "Custom WordPress themes, plugins, and WooCommerce solutions for content-driven sites.",
+    body: "Headless or classic WordPress, custom blocks, WooCommerce stores. PHP that won't haunt you in two years.",
     description:
-      "We build high-performance WordPress sites with custom themes, plugins, and headless CMS architectures. From e-commerce with WooCommerce to editorial platforms, we deliver WordPress solutions that are fast, secure, and easy to manage.",
+      "Custom block themes, plugin architecture, WooCommerce checkouts, and headless WP/GraphQL setups — security-hardened, cache-friendly, and editable by people who aren't engineers.",
     deliverables: [
       "Custom theme and plugin development",
       "WooCommerce e-commerce setup",
