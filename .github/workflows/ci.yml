@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-test:
+  lint-build-test:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -48,6 +48,19 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      # Mirrors the Docker build step. Catches any module-init / prerender
+      # errors before they break the deploy pipeline. We pass dummy values
+      # for the secrets so the build can complete without throwing — the
+      # real values land at container runtime via env_file.
+      - name: Build
+        run: bun run build
+        env:
+          DATABASE_URL: postgres://zaftech:zaftech@127.0.0.1:5432/zaftech_test
+          BETTER_AUTH_URL: http://localhost:4321
+          BETTER_AUTH_SECRET: ci-build-secret-not-used-for-real-traffic
+          GOOGLE_CLIENT_ID: ci-build-not-real
+          GOOGLE_CLIENT_SECRET: ci-build-not-real
 
       - name: Test
         run: bun run test
