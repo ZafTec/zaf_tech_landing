@@ -23,6 +23,7 @@ const errorMessages: Record<string, string> = {
   state_mismatch: "Sign-in attempt didn't validate. Try again.",
   exchange_failed: "Google didn't accept the sign-in. Try again.",
   access_denied: "Sign-in was cancelled.",
+  db_error: "Database error during sign-in. Check the server logs.",
 };
 
 const errorText = error ? (errorMessages[error] ?? `Sign-in failed: ${error}`) : null;
