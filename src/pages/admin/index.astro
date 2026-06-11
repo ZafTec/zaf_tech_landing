@@ -48,7 +48,12 @@ type AuditRow = CommonRow & {
   tech_stack: string | null;
 };
 
-let counts = { contact: 0, careers: 0, audit: 0 };
+type TileCounts = { open: number; total: number };
+let counts: Record<"contact" | "careers" | "audit", TileCounts> = {
+  contact: { open: 0, total: 0 },
+  careers: { open: 0, total: 0 },
+  audit: { open: 0, total: 0 },
+};
 let rows: Array<ContactRow | CareersRow | AuditRow> = [];
 let totalForTab = 0;
 let dbError: string | null = null;
@@ -82,15 +87,17 @@ if (!db) {
     await db`ALTER TABLE career_applications  ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ;`;
     await db`ALTER TABLE audit_submissions    ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ;`;
 
+    type CountRow = { open: number; total: number };
     const [c, k, a] = await Promise.all([
-      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM contact_submissions;`,
-      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM career_applications;`,
-      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM audit_submissions;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS "open", COUNT(*)::int AS "total" FROM contact_submissions;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS "open", COUNT(*)::int AS "total" FROM career_applications;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS "open", COUNT(*)::int AS "total" FROM audit_submissions;`,
     ]);
+    const row = (r: unknown): CountRow => (r as CountRow[])[0] ?? { open: 0, total: 0 };
     counts = {
-      contact: (c as Array<{ n: number }>)[0]?.n ?? 0,
-      careers: (k as Array<{ n: number }>)[0]?.n ?? 0,
-      audit: (a as Array<{ n: number }>)[0]?.n ?? 0,
+      contact: row(c),
+      careers: row(k),
+      audit: row(a),
     };
 
     // Total + page of rows for the current (tab, filter). Bun's tagged
@@ -164,9 +171,9 @@ if (!db) {
 }
 
 const tabs = [
-  { id: "contact", label: "Contact", count: counts.contact },
-  { id: "careers", label: "Careers", count: counts.careers },
-  { id: "audit",   label: "Audit",   count: counts.audit },
+  { id: "contact", label: "Contact", open: counts.contact.open, total: counts.contact.total },
+  { id: "careers", label: "Careers", open: counts.careers.open, total: counts.careers.total },
+  { id: "audit",   label: "Audit",   open: counts.audit.open,   total: counts.audit.total },
 ] as const;
 
 const fmtDate = (iso: string | null) => {
@@ -225,12 +232,17 @@ const description = "Internal admin console.";
             <a
               href={`/admin?tab=${t.id}`}
               class:list={[
-                "metric-tile transition-colors block",
+                "metric-tile relative overflow-hidden transition-colors block",
                 tab === t.id ? "border-spruce-400" : "hover:border-onyx-700",
               ]}
+              aria-label={`${t.label} — ${t.open} open of ${t.total} total`}
             >
-              <div class="value">{t.count}</div>
-              <div class="label">{t.label}</div>
+              <span
+                aria-hidden="true"
+                class="absolute right-3 -top-2 font-mono text-7xl md:text-8xl font-medium leading-none text-onyx-700/40 select-none pointer-events-none"
+              >{t.total}</span>
+              <div class="value relative z-10">{t.open}</div>
+              <div class="label relative z-10">{t.label} <span class="text-onyx-500">/ open</span></div>
             </a>
           ))}
         </div>
@@ -248,7 +260,7 @@ const description = "Internal admin console.";
                   : "text-onyx-400 border-transparent hover:text-spruce-400",
               ]}
             >
-              {t.label}<span class="ml-2 text-onyx-500">{t.count}</span>
+              {t.label}<span class="ml-2 text-onyx-500">{t.open}</span>
             </a>
           ))}
         </div>
