@@ -1,15 +1,14 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SeoHead from "@/components/SeoHead.astro";
-import { requireAdmin } from "@/lib/admin/auth";
+import { guardAdminPage } from "@/lib/admin/auth";
 import { SEED_EMAIL, listAdmins } from "@/lib/admin/admins";
 
 export const prerender = false;
 
-const admin = await requireAdmin(Astro);
-if (!admin) {
-  return Astro.redirect("/admin/login");
-}
+const gate = await guardAdminPage(Astro);
+if (gate instanceof Response) return gate;
+const admin = gate;
 
 const admins = await listAdmins();
 
