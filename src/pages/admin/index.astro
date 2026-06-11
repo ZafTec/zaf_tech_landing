@@ -1,15 +1,14 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SeoHead from "@/components/SeoHead.astro";
-import { requireAdmin } from "@/lib/admin/auth";
+import { guardAdminPage } from "@/lib/admin/auth";
 import { db } from "@/lib/db";
 
 export const prerender = false;
 
-const admin = await requireAdmin(Astro);
-if (!admin) {
-  return Astro.redirect("/admin/login");
-}
+const gate = await guardAdminPage(Astro);
+if (gate instanceof Response) return gate;
+const admin = gate;
 
 const url = new URL(Astro.request.url);
 const tabRaw = (url.searchParams.get("tab") ?? "contact").toLowerCase();
@@ -20,6 +19,11 @@ const tab = (["contact", "careers", "audit"].includes(tabRaw) ? tabRaw : "contac
 
 const showHandledRaw = (url.searchParams.get("show") ?? "open").toLowerCase();
 const showHandled = showHandledRaw === "all" ? "all" : showHandledRaw === "handled" ? "handled" : "open";
+
+const PAGE_SIZE = 50;
+const pageParam = Number(url.searchParams.get("page") ?? "1");
+const page = Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+const offset = (page - 1) * PAGE_SIZE;
 
 type CommonRow = {
   id: string;
@@ -46,6 +50,7 @@ type AuditRow = CommonRow & {
 
 let counts = { contact: 0, careers: 0, audit: 0 };
 let rows: Array<ContactRow | CareersRow | AuditRow> = [];
+let totalForTab = 0;
 let dbError: string | null = null;
 
 if (!db) {
@@ -88,58 +93,70 @@ if (!db) {
       audit: (a as Array<{ n: number }>)[0]?.n ?? 0,
     };
 
-    const handledFilter = showHandled === "open"
-      ? "AND handled_at IS NULL"
-      : showHandled === "handled"
-        ? "AND handled_at IS NOT NULL"
-        : "";
-
-    // Bun's tagged template doesn't interpolate raw SQL fragments, so branch
-    // on the filter value rather than splicing strings.
+    // Total + page of rows for the current (tab, filter). Bun's tagged
+    // template doesn't interpolate SQL identifiers/clauses, so each branch
+    // writes its own statement.
     if (tab === "contact") {
+      const totalRows = showHandled === "open"
+        ? (await db`SELECT COUNT(*)::int AS n FROM contact_submissions WHERE handled_at IS NULL;`) as Array<{ n: number }>
+        : showHandled === "handled"
+          ? (await db`SELECT COUNT(*)::int AS n FROM contact_submissions WHERE handled_at IS NOT NULL;`) as Array<{ n: number }>
+          : (await db`SELECT COUNT(*)::int AS n FROM contact_submissions;`) as Array<{ n: number }>;
+      totalForTab = totalRows[0]?.n ?? 0;
       rows = (showHandled === "open"
         ? await db`
             SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
-            FROM contact_submissions WHERE 1=1 AND handled_at IS NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            FROM contact_submissions WHERE handled_at IS NULL
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
         : showHandled === "handled"
           ? await db`
             SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
             FROM contact_submissions WHERE handled_at IS NOT NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
           : await db`
             SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
-            FROM contact_submissions ORDER BY created_at DESC LIMIT 200;`) as ContactRow[];
+            FROM contact_submissions ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`) as ContactRow[];
     } else if (tab === "careers") {
+      const totalRows = showHandled === "open"
+        ? (await db`SELECT COUNT(*)::int AS n FROM career_applications WHERE handled_at IS NULL;`) as Array<{ n: number }>
+        : showHandled === "handled"
+          ? (await db`SELECT COUNT(*)::int AS n FROM career_applications WHERE handled_at IS NOT NULL;`) as Array<{ n: number }>
+          : (await db`SELECT COUNT(*)::int AS n FROM career_applications;`) as Array<{ n: number }>;
+      totalForTab = totalRows[0]?.n ?? 0;
       rows = (showHandled === "open"
         ? await db`
             SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
             FROM career_applications WHERE handled_at IS NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
         : showHandled === "handled"
           ? await db`
             SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
             FROM career_applications WHERE handled_at IS NOT NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
           : await db`
             SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
-            FROM career_applications ORDER BY created_at DESC LIMIT 200;`) as CareersRow[];
+            FROM career_applications ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`) as CareersRow[];
     } else {
+      const totalRows = showHandled === "open"
+        ? (await db`SELECT COUNT(*)::int AS n FROM audit_submissions WHERE handled_at IS NULL;`) as Array<{ n: number }>
+        : showHandled === "handled"
+          ? (await db`SELECT COUNT(*)::int AS n FROM audit_submissions WHERE handled_at IS NOT NULL;`) as Array<{ n: number }>
+          : (await db`SELECT COUNT(*)::int AS n FROM audit_submissions;`) as Array<{ n: number }>;
+      totalForTab = totalRows[0]?.n ?? 0;
       rows = (showHandled === "open"
         ? await db`
             SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
             FROM audit_submissions WHERE handled_at IS NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
         : showHandled === "handled"
           ? await db`
             SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
             FROM audit_submissions WHERE handled_at IS NOT NULL
-            ORDER BY created_at DESC LIMIT 200;`
+            ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`
           : await db`
             SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
-            FROM audit_submissions ORDER BY created_at DESC LIMIT 200;`) as AuditRow[];
+            FROM audit_submissions ORDER BY created_at DESC LIMIT ${PAGE_SIZE} OFFSET ${offset};`) as AuditRow[];
     }
-    void handledFilter;
   } catch (err) {
     dbError = err instanceof Error ? err.message : "Unknown DB error";
     console.error("[admin] dashboard load failed:", err);
@@ -220,12 +237,12 @@ const description = "Internal admin console.";
       </section>
 
       <section class="px-6 md:px-12 max-w-7xl mx-auto w-full">
-        <div class="mt-6 border-b border-onyx-800 flex items-end gap-1 overflow-x-auto">
+        <div class="mt-6 border-b border-onyx-800 flex items-end gap-1 overflow-x-auto overflow-y-hidden whitespace-nowrap">
           {tabs.map((t) => (
             <a
               href={`/admin?tab=${t.id}${showHandled !== "open" ? `&show=${showHandled}` : ""}`}
               class:list={[
-                "px-4 py-3 font-mono text-[11px] uppercase tracking-widest transition-colors -mb-px border-b",
+                "px-4 py-3 font-mono text-[11px] uppercase tracking-widest transition-colors -mb-px border-b shrink-0",
                 tab === t.id
                   ? "text-spruce-400 border-spruce-400"
                   : "text-onyx-400 border-transparent hover:text-spruce-400",
@@ -339,11 +356,33 @@ const description = "Internal admin console.";
           )}
         </div>
 
-        {rows.length > 0 && (
-          <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-onyx-500">
-            Showing {rows.length} most recent. Click a row to view detail.
-          </p>
-        )}
+        {rows.length > 0 && (() => {
+          const totalPages = Math.max(1, Math.ceil(totalForTab / PAGE_SIZE));
+          const start = offset + 1;
+          const end = offset + rows.length;
+          const baseQuery = `tab=${tab}${showHandled !== "open" ? `&show=${showHandled}` : ""}`;
+          const prevHref = page > 1 ? `/admin?${baseQuery}&page=${page - 1}` : null;
+          const nextHref = page < totalPages ? `/admin?${baseQuery}&page=${page + 1}` : null;
+          return (
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">
+                {start}–{end} of {totalForTab} · page {page} of {totalPages} · click a row to view detail
+              </p>
+              <div class="flex items-center gap-2">
+                {prevHref ? (
+                  <a href={prevHref} class="btn-ghost h-8 px-3 text-[10px]">← Prev</a>
+                ) : (
+                  <span class="btn-ghost h-8 px-3 text-[10px] opacity-40 pointer-events-none">← Prev</span>
+                )}
+                {nextHref ? (
+                  <a href={nextHref} class="btn-ghost h-8 px-3 text-[10px]">Next →</a>
+                ) : (
+                  <span class="btn-ghost h-8 px-3 text-[10px] opacity-40 pointer-events-none">Next →</span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </section>
     </main>
 
