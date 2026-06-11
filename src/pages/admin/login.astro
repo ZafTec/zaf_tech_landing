@@ -5,8 +5,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 
 export const prerender = false;
 
-// If they're already signed in, send them to the dashboard.
-const existing = await requireAdmin(Astro.request);
+const existing = await requireAdmin(Astro);
 if (existing) {
   return Astro.redirect("/admin");
 }
@@ -14,18 +13,14 @@ if (existing) {
 const url = new URL(Astro.request.url);
 const error = url.searchParams.get("error");
 const email = url.searchParams.get("email");
-const detail = url.searchParams.get("detail");
 
 const errorMessages: Record<string, string> = {
   not_admin: email
     ? `${email} is not on the admin list. Ask an existing admin to add you.`
     : "Your Google account is not on the admin list.",
-  state_mismatch: "Sign-in attempt didn't validate. Try again.",
-  exchange_failed: "Google didn't accept the sign-in. Try again.",
+  oauth_failed: "Google sign-in failed. Try again.",
   access_denied: "Sign-in was cancelled.",
-  db_error: "Database error during sign-in. Check the server logs.",
 };
-
 const errorText = error ? (errorMessages[error] ?? `Sign-in failed: ${error}`) : null;
 
 const title = "Sign in · ZafTech Admin";
@@ -58,24 +53,19 @@ const description = "Internal admin console for ZafTech submissions.";
         {errorText && (
           <div class="mt-5 border-l-2 border-spruce-500 pl-4 py-2 text-[13px] text-onyx-200 leading-relaxed bg-onyx-900">
             {errorText}
-            {detail && (
-              <span class="block mt-1 font-mono text-[10px] uppercase tracking-widest text-onyx-500">
-                {detail}
-              </span>
-            )}
           </div>
         )}
 
-        <a
-          href="/api/admin/auth/login"
+        <button
+          type="button"
           class="mt-7 btn-primary w-full"
-          data-ga-event="admin_signin_click"
+          data-google-signin
         >
           <svg width="14" height="14" viewBox="0 0 48 48" aria-hidden="true">
             <path fill="#fff" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.7 4.8-6.2 8-11.3 8a12 12 0 1 1 0-24 12 12 0 0 1 8.5 3.5l5.7-5.7A20 20 0 1 0 44 24c0-1.2-.1-2.4-.4-3.5z"/>
           </svg>
-          Sign in with Google
-        </a>
+          <span data-signin-label>Sign in with Google</span>
+        </button>
 
         <p class="mt-5 font-mono text-[10px] uppercase tracking-widest text-onyx-500 leading-relaxed">
           Restricted access. Activity is logged.
@@ -87,4 +77,29 @@ const description = "Internal admin console for ZafTech submissions.";
       </p>
     </div>
   </main>
+
+  <script>
+    import { createAuthClient } from "better-auth/client";
+    const authClient = createAuthClient();
+
+    const button = document.querySelector("[data-google-signin]") as HTMLButtonElement | null;
+    const label = document.querySelector("[data-signin-label]") as HTMLElement | null;
+    if (button && label) {
+      button.addEventListener("click", async () => {
+        button.setAttribute("disabled", "true");
+        label.textContent = "Redirecting…";
+        try {
+          await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/admin",
+            errorCallbackURL: "/admin/login?error=oauth_failed",
+          });
+        } catch (err) {
+          console.error("Sign-in failed:", err);
+          button.removeAttribute("disabled");
+          label.textContent = "Sign in with Google";
+        }
+      });
+    }
+  </script>
 </Layout>

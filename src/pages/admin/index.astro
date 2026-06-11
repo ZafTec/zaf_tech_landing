@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 
 export const prerender = false;
 
-const admin = await requireAdmin(Astro.request);
+const admin = await requireAdmin(Astro);
 if (!admin) {
   return Astro.redirect("/admin/login");
 }
@@ -18,18 +18,30 @@ const tab = (["contact", "careers", "audit"].includes(tabRaw) ? tabRaw : "contac
   | "careers"
   | "audit";
 
-type ContactRow = {
-  id: string; name: string; email: string; message: string;
-  user_agent: string | null; ip_address: string | null; created_at: string;
+const showHandledRaw = (url.searchParams.get("show") ?? "open").toLowerCase();
+const showHandled = showHandledRaw === "all" ? "all" : showHandledRaw === "handled" ? "handled" : "open";
+
+type CommonRow = {
+  id: string;
+  name: string;
+  email: string;
+  user_agent: string | null;
+  ip_address: string | null;
+  created_at: string;
+  handled_at: string | null;
 };
-type CareersRow = {
-  id: string; name: string; email: string; phone: string | null; position: string;
-  experience: string | null; portfolio: string | null; message: string | null;
-  user_agent: string | null; ip_address: string | null; created_at: string;
+type ContactRow = CommonRow & { message: string };
+type CareersRow = CommonRow & {
+  phone: string | null;
+  position: string;
+  experience: string | null;
+  portfolio: string | null;
+  message: string | null;
 };
-type AuditRow = {
-  id: string; name: string; email: string; building: string; problem: string;
-  tech_stack: string | null; user_agent: string | null; ip_address: string | null; created_at: string;
+type AuditRow = CommonRow & {
+  building: string;
+  problem: string;
+  tech_stack: string | null;
 };
 
 let counts = { contact: 0, careers: 0, audit: 0 };
@@ -39,10 +51,8 @@ let dbError: string | null = null;
 if (!db) {
   dbError = "DATABASE_URL is not configured on the server.";
 } else {
-  // Make sure tables exist before counting, so a fresh deployment doesn't 500
-  // here. The submission endpoints lazily create their own tables on first
-  // write, but the dashboard may load before any form has been posted.
   try {
+    // Ensure submission tables exist and have the handled_at column.
     await db`
       CREATE TABLE IF NOT EXISTS contact_submissions (
         id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL,
@@ -63,11 +73,14 @@ if (!db) {
         user_agent TEXT, ip_address TEXT, created_at TEXT NOT NULL
       );
     `;
+    await db`ALTER TABLE contact_submissions   ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ;`;
+    await db`ALTER TABLE career_applications  ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ;`;
+    await db`ALTER TABLE audit_submissions    ADD COLUMN IF NOT EXISTS handled_at TIMESTAMPTZ;`;
 
     const [c, k, a] = await Promise.all([
-      db`SELECT COUNT(*)::int AS n FROM contact_submissions;`,
-      db`SELECT COUNT(*)::int AS n FROM career_applications;`,
-      db`SELECT COUNT(*)::int AS n FROM audit_submissions;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM contact_submissions;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM career_applications;`,
+      db`SELECT COUNT(*) FILTER (WHERE handled_at IS NULL)::int AS n FROM audit_submissions;`,
     ]);
     counts = {
       contact: (c as Array<{ n: number }>)[0]?.n ?? 0,
@@ -75,24 +88,61 @@ if (!db) {
       audit: (a as Array<{ n: number }>)[0]?.n ?? 0,
     };
 
+    const handledFilter = showHandled === "open"
+      ? "AND handled_at IS NULL"
+      : showHandled === "handled"
+        ? "AND handled_at IS NOT NULL"
+        : "";
+
+    // Bun's tagged template doesn't interpolate raw SQL fragments, so branch
+    // on the filter value rather than splicing strings.
     if (tab === "contact") {
-      rows = (await db`
-        SELECT id, name, email, message, user_agent, ip_address, created_at
-        FROM contact_submissions ORDER BY created_at DESC LIMIT 200;
-      `) as ContactRow[];
+      rows = (showHandled === "open"
+        ? await db`
+            SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
+            FROM contact_submissions WHERE 1=1 AND handled_at IS NULL
+            ORDER BY created_at DESC LIMIT 200;`
+        : showHandled === "handled"
+          ? await db`
+            SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
+            FROM contact_submissions WHERE handled_at IS NOT NULL
+            ORDER BY created_at DESC LIMIT 200;`
+          : await db`
+            SELECT id, name, email, message, user_agent, ip_address, created_at, handled_at
+            FROM contact_submissions ORDER BY created_at DESC LIMIT 200;`) as ContactRow[];
     } else if (tab === "careers") {
-      rows = (await db`
-        SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at
-        FROM career_applications ORDER BY created_at DESC LIMIT 200;
-      `) as CareersRow[];
+      rows = (showHandled === "open"
+        ? await db`
+            SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
+            FROM career_applications WHERE handled_at IS NULL
+            ORDER BY created_at DESC LIMIT 200;`
+        : showHandled === "handled"
+          ? await db`
+            SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
+            FROM career_applications WHERE handled_at IS NOT NULL
+            ORDER BY created_at DESC LIMIT 200;`
+          : await db`
+            SELECT id, name, email, phone, position, experience, portfolio, message, user_agent, ip_address, created_at, handled_at
+            FROM career_applications ORDER BY created_at DESC LIMIT 200;`) as CareersRow[];
     } else {
-      rows = (await db`
-        SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at
-        FROM audit_submissions ORDER BY created_at DESC LIMIT 200;
-      `) as AuditRow[];
+      rows = (showHandled === "open"
+        ? await db`
+            SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
+            FROM audit_submissions WHERE handled_at IS NULL
+            ORDER BY created_at DESC LIMIT 200;`
+        : showHandled === "handled"
+          ? await db`
+            SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
+            FROM audit_submissions WHERE handled_at IS NOT NULL
+            ORDER BY created_at DESC LIMIT 200;`
+          : await db`
+            SELECT id, name, email, building, problem, tech_stack, user_agent, ip_address, created_at, handled_at
+            FROM audit_submissions ORDER BY created_at DESC LIMIT 200;`) as AuditRow[];
     }
+    void handledFilter;
   } catch (err) {
     dbError = err instanceof Error ? err.message : "Unknown DB error";
+    console.error("[admin] dashboard load failed:", err);
   }
 }
 
@@ -102,8 +152,8 @@ const tabs = [
   { id: "audit",   label: "Audit",   count: counts.audit },
 ] as const;
 
-const fmtDate = (iso: string) => {
-  // Render ISO in UTC, mono-friendly: 2026-06-09 09:14 UTC
+const fmtDate = (iso: string | null) => {
+  if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -124,7 +174,6 @@ const description = "Internal admin console.";
   </Fragment>
 
   <div class="min-h-screen flex flex-col bg-onyx-950">
-    <!-- Admin header -->
     <header class="border-b border-onyx-800 sticky top-0 z-30 bg-onyx-950/95 backdrop-blur-sm">
       <div class="max-w-7xl mx-auto px-6 md:px-12 py-3 flex items-center justify-between gap-4">
         <div class="flex items-center gap-6">
@@ -138,15 +187,12 @@ const description = "Internal admin console.";
           <nav class="hidden md:flex items-center gap-5" aria-label="Admin navigation">
             <a href="/admin" class="text-[10px] font-mono uppercase tracking-widest text-spruce-400" aria-current="page">Submissions</a>
             <a href="/admin/admins" class="text-[10px] font-mono uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">Admins</a>
+            <a href="/admin/mcp" class="text-[10px] font-mono uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">MCP</a>
           </nav>
         </div>
         <div class="flex items-center gap-4">
           <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-onyx-400">{admin.email}</span>
-          <a
-            href="/api/admin/auth/logout"
-            class="btn-ghost h-9 px-4"
-            data-ga-event="admin_signout_click"
-          >Sign out</a>
+          <button type="button" class="btn-ghost h-9 px-4" data-signout>Sign out</button>
         </div>
       </div>
     </header>
@@ -155,6 +201,7 @@ const description = "Internal admin console.";
       <section class="px-6 md:px-12 pt-10 pb-4 max-w-7xl mx-auto w-full">
         <p class="kicker"><span class="text-onyx-500 mr-1">// 01</span><span>Overview</span></p>
         <h1 class="mt-3 display-tight text-3xl md:text-4xl font-medium text-ivory-100">Submissions</h1>
+        <p class="mt-3 font-mono text-[10px] uppercase tracking-widest text-onyx-500">Counts show open (unhandled) items.</p>
 
         <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           {tabs.map((t) => (
@@ -172,12 +219,11 @@ const description = "Internal admin console.";
         </div>
       </section>
 
-      <!-- Tabs -->
       <section class="px-6 md:px-12 max-w-7xl mx-auto w-full">
         <div class="mt-6 border-b border-onyx-800 flex items-end gap-1 overflow-x-auto">
           {tabs.map((t) => (
             <a
-              href={`/admin?tab=${t.id}`}
+              href={`/admin?tab=${t.id}${showHandled !== "open" ? `&show=${showHandled}` : ""}`}
               class:list={[
                 "px-4 py-3 font-mono text-[11px] uppercase tracking-widest transition-colors -mb-px border-b",
                 tab === t.id
@@ -185,14 +231,30 @@ const description = "Internal admin console.";
                   : "text-onyx-400 border-transparent hover:text-spruce-400",
               ]}
             >
-              {t.label}
-              <span class="ml-2 text-onyx-500">{t.count}</span>
+              {t.label}<span class="ml-2 text-onyx-500">{t.count}</span>
             </a>
+          ))}
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          {[
+            { id: "open",    label: "Open" },
+            { id: "handled", label: "Handled" },
+            { id: "all",     label: "All" },
+          ].map((f) => (
+            <a
+              href={`/admin?tab=${tab}${f.id !== "open" ? `&show=${f.id}` : ""}`}
+              class:list={[
+                "px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest border transition-colors",
+                showHandled === f.id
+                  ? "border-spruce-400 text-spruce-400"
+                  : "border-onyx-800 text-onyx-400 hover:border-onyx-700 hover:text-spruce-400",
+              ]}
+            >{f.label}</a>
           ))}
         </div>
       </section>
 
-      <!-- Table card -->
       <section class="px-6 md:px-12 max-w-7xl mx-auto w-full pb-16">
         <div class="mt-6 border border-onyx-800 bg-onyx-950">
           {dbError ? (
@@ -202,7 +264,7 @@ const description = "Internal admin console.";
             </div>
           ) : rows.length === 0 ? (
             <div class="p-10 text-center">
-              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">// no submissions yet</p>
+              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">// no submissions matching this filter</p>
             </div>
           ) : (
             <div class="overflow-x-auto">
@@ -227,14 +289,19 @@ const description = "Internal admin console.";
                         <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Problem</th>
                       </>
                     )}
+                    <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3 whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => {
                     const detail = { type: tab, ...r };
+                    const handled = !!r.handled_at;
                     return (
                       <tr
-                        class="border-b border-onyx-800 cursor-pointer hover:bg-onyx-900 transition-colors"
+                        class:list={[
+                          "border-b border-onyx-800 cursor-pointer transition-colors",
+                          handled ? "opacity-60 hover:bg-onyx-900/60" : "hover:bg-onyx-900",
+                        ]}
                         data-row
                         data-detail={JSON.stringify(detail)}
                       >
@@ -256,6 +323,13 @@ const description = "Internal admin console.";
                             <td class="px-4 py-3 text-[13px] text-onyx-300">{truncate((r as AuditRow).problem, 80)}</td>
                           </>
                         )}
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          {handled ? (
+                            <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-500">handled</span>
+                          ) : (
+                            <span class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">open</span>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}
@@ -277,23 +351,19 @@ const description = "Internal admin console.";
     <div id="admin-drawer" class="fixed inset-0 z-50 pointer-events-none" aria-hidden="true">
       <div class="absolute inset-0 bg-onyx-950/70 opacity-0 transition-opacity duration-200 pointer-events-none" data-drawer-backdrop></div>
       <aside
-        class="absolute top-0 right-0 h-full w-full sm:w-[480px] max-w-[100vw] bg-onyx-950 border-l border-onyx-800 transform translate-x-full transition-transform duration-200 ease-out overflow-y-auto"
+        class="absolute top-0 right-0 h-full w-full sm:w-[520px] max-w-[100vw] bg-onyx-950 border-l border-onyx-800 transform translate-x-full transition-transform duration-200 ease-out overflow-y-auto"
         data-drawer-panel
         aria-label="Submission detail"
       >
         <div class="p-6 md:p-7">
           <div class="flex items-center justify-between gap-3">
             <p class="kicker"><span class="text-onyx-500 mr-1">// rec</span><span data-drawer-type>—</span></p>
-            <button
-              type="button"
-              data-drawer-close
-              class="h-9 w-9 flex items-center justify-center text-onyx-400 hover:text-spruce-400 transition-colors"
-              aria-label="Close detail"
-            >
+            <button type="button" data-drawer-close class="h-9 w-9 flex items-center justify-center text-onyx-400 hover:text-spruce-400 transition-colors" aria-label="Close detail">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
           <p class="mt-2 font-mono text-[10px] uppercase tracking-widest text-onyx-500" data-drawer-received>—</p>
+          <p class="mt-1 font-mono text-[10px] uppercase tracking-widest" data-drawer-handled></p>
           <h2 class="mt-4 display-tight text-2xl font-medium text-ivory-100" data-drawer-name>—</h2>
           <a class="mt-1 inline-block text-[14px] text-spruce-400 hover:text-spruce-300 transition-colors" data-drawer-email href="#">—</a>
 
@@ -309,6 +379,33 @@ const description = "Internal admin console.";
               <span class="text-onyx-300 text-right break-words max-w-[70%]" data-drawer-ua>—</span>
             </div>
           </div>
+
+          <!-- Actions -->
+          <div class="mt-8 flex flex-wrap gap-3" data-drawer-actions>
+            <button type="button" class="btn-primary" data-action-handle>Mark handled</button>
+            <button type="button" class="btn-ghost" data-action-reachout hidden>Reach out</button>
+          </div>
+
+          <!-- Compose -->
+          <form class="mt-6 border border-onyx-800 bg-onyx-900 p-5" data-reachout-form hidden novalidate>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">Compose reply</p>
+            <p class="mt-1 font-mono text-[10px] uppercase tracking-widest text-onyx-500">From: <span data-reachout-from>SMTP_FROM</span></p>
+            <label class="block mt-4">
+              <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Subject</span>
+              <input type="text" name="subject" required class="mt-2 w-full bg-onyx-950 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3" />
+            </label>
+            <label class="block mt-4">
+              <span class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Message</span>
+              <textarea name="body" required rows="8" class="mt-2 w-full bg-onyx-950 border border-onyx-800 text-ivory-100 placeholder-onyx-500/60 px-4 py-3 resize-none"></textarea>
+            </label>
+            <div class="mt-4 flex items-center justify-between gap-3">
+              <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-500" data-reachout-status>Sending also marks this submission handled.</p>
+              <div class="flex gap-2">
+                <button type="button" class="btn-ghost h-9 px-4" data-reachout-cancel>Cancel</button>
+                <button type="submit" class="btn-primary h-9 px-4">Send</button>
+              </div>
+            </div>
+          </form>
         </div>
       </aside>
     </div>
@@ -320,6 +417,16 @@ const description = "Internal admin console.";
       </div>
     </footer>
   </div>
+
+  <script>
+    import { createAuthClient } from "better-auth/client";
+    const authClient = createAuthClient();
+
+    document.querySelector("[data-signout]")?.addEventListener("click", async () => {
+      await authClient.signOut();
+      window.location.href = "/admin/login";
+    });
+  </script>
 
   <script is:inline>
     (function () {
@@ -333,15 +440,19 @@ const description = "Internal admin console.";
       const fieldsEl = drawer.querySelector("[data-drawer-fields]");
       const typeEl = drawer.querySelector("[data-drawer-type]");
       const receivedEl = drawer.querySelector("[data-drawer-received]");
+      const handledEl = drawer.querySelector("[data-drawer-handled]");
       const nameEl = drawer.querySelector("[data-drawer-name]");
       const emailEl = drawer.querySelector("[data-drawer-email]");
       const ipEl = drawer.querySelector("[data-drawer-ip]");
       const uaEl = drawer.querySelector("[data-drawer-ua]");
+      const actionHandle = drawer.querySelector("[data-action-handle]");
+      const actionReach = drawer.querySelector("[data-action-reachout]");
+      const reachForm = drawer.querySelector("[data-reachout-form]");
+      const reachStatus = drawer.querySelector("[data-reachout-status]");
+      const reachCancel = drawer.querySelector("[data-reachout-cancel]");
 
       const FIELDS = {
-        contact: [
-          { key: "message", label: "Message" },
-        ],
+        contact: [{ key: "message", label: "Message" }],
         careers: [
           { key: "position", label: "Position" },
           { key: "phone", label: "Phone" },
@@ -357,13 +468,32 @@ const description = "Internal admin console.";
       };
 
       const fmtDate = (iso) => {
+        if (!iso) return "—";
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) return iso;
         const pad = (n) => String(n).padStart(2, "0");
         return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`;
       };
 
+      let current = null;
+
+      const renderHandled = () => {
+        if (!current) return;
+        if (current.handled_at) {
+          handledEl.textContent = "Handled  //  " + fmtDate(current.handled_at);
+          handledEl.classList.add("text-spruce-400");
+          handledEl.classList.remove("text-onyx-500");
+          actionHandle.textContent = "Mark unhandled";
+        } else {
+          handledEl.textContent = "Open  //  not yet handled";
+          handledEl.classList.add("text-onyx-500");
+          handledEl.classList.remove("text-spruce-400");
+          actionHandle.textContent = "Mark handled";
+        }
+      };
+
       const open = (data) => {
+        current = data;
         typeEl.textContent = data.type;
         receivedEl.textContent = "Received  //  " + fmtDate(data.created_at);
         nameEl.textContent = data.name || "—";
@@ -389,10 +519,27 @@ const description = "Internal admin console.";
           fieldsEl.appendChild(wrap);
         }
 
+        // Reach out only for contact + careers.
+        if (data.type === "audit") {
+          actionReach.setAttribute("hidden", "true");
+        } else {
+          actionReach.removeAttribute("hidden");
+        }
+        reachForm.setAttribute("hidden", "true");
+        const subjEl = reachForm.querySelector("[name=subject]");
+        const bodyEl = reachForm.querySelector("[name=body]");
+        subjEl.value = data.type === "careers"
+          ? `Re: your application — ${data.position || "ZafTech"}`
+          : "Re: your message to ZafTech";
+        bodyEl.value = `Hi ${data.name?.split(" ")[0] || ""},\n\n\n\nBest,\nZafTech team`;
+        reachStatus.textContent = "Sending also marks this submission handled.";
+        reachStatus.classList.remove("text-spruce-400", "text-red-400");
+
+        renderHandled();
+
         drawer.setAttribute("aria-hidden", "false");
         drawer.classList.remove("pointer-events-none");
-        backdrop.classList.remove("pointer-events-none");
-        backdrop.classList.remove("opacity-0");
+        backdrop.classList.remove("pointer-events-none", "opacity-0");
         panel.classList.remove("translate-x-full");
         document.body.style.overflow = "hidden";
       };
@@ -400,24 +547,75 @@ const description = "Internal admin console.";
       const close = () => {
         drawer.setAttribute("aria-hidden", "true");
         drawer.classList.add("pointer-events-none");
-        backdrop.classList.add("pointer-events-none");
-        backdrop.classList.add("opacity-0");
+        backdrop.classList.add("pointer-events-none", "opacity-0");
         panel.classList.add("translate-x-full");
         document.body.style.overflow = "";
       };
 
       rows.forEach((row) => {
         row.addEventListener("click", () => {
-          try {
-            const data = JSON.parse(row.getAttribute("data-detail") || "{}");
-            open(data);
-          } catch (e) { /* ignore */ }
+          try { open(JSON.parse(row.getAttribute("data-detail") || "{}")); } catch (e) { /* ignore */ }
         });
       });
       closeBtn?.addEventListener("click", close);
       backdrop?.addEventListener("click", close);
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && drawer.getAttribute("aria-hidden") === "false") close();
+        if (e.key === "Escape" && drawer.getAttribute("aria-hidden") === "false") {
+          if (!reachForm.hasAttribute("hidden")) reachForm.setAttribute("hidden", "true");
+          else close();
+        }
+      });
+
+      actionHandle?.addEventListener("click", async () => {
+        if (!current) return;
+        const next = !current.handled_at;
+        actionHandle.setAttribute("disabled", "true");
+        try {
+          const res = await fetch("/api/admin/handled", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: current.type, id: current.id, handled: next }),
+          });
+          const body = await res.json();
+          if (!res.ok || !body.ok) throw new Error(body.error || "Failed");
+          current.handled_at = body.handled_at;
+          renderHandled();
+        } catch (err) {
+          alert("Failed: " + (err.message || err));
+        } finally {
+          actionHandle.removeAttribute("disabled");
+        }
+      });
+
+      actionReach?.addEventListener("click", () => {
+        reachForm.removeAttribute("hidden");
+        reachForm.querySelector("[name=subject]").focus();
+      });
+      reachCancel?.addEventListener("click", () => reachForm.setAttribute("hidden", "true"));
+
+      reachForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!current) return;
+        const data = Object.fromEntries(new FormData(e.target));
+        reachStatus.textContent = "Sending…";
+        reachStatus.classList.remove("text-red-400", "text-spruce-400");
+        try {
+          const res = await fetch("/api/admin/reachout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: current.type, id: current.id, subject: data.subject, body: data.body }),
+          });
+          const body = await res.json();
+          if (!res.ok || !body.ok) throw new Error(body.error || "Send failed");
+          reachStatus.textContent = "Sent. Submission marked handled.";
+          reachStatus.classList.add("text-spruce-400");
+          current.handled_at = body.handled_at ?? new Date().toISOString();
+          renderHandled();
+          window.setTimeout(() => reachForm.setAttribute("hidden", "true"), 1200);
+        } catch (err) {
+          reachStatus.textContent = "Failed: " + (err.message || err);
+          reachStatus.classList.add("text-red-400");
+        }
       });
     })();
   </script>

@@ -1,118 +1,176 @@
 # Admin console setup
 
-This guide walks through wiring up the `/admin` console: creating Google OAuth credentials, setting environment variables, and bootstrapping the first admin.
+This guide walks through the admin console + MCP server: creating Google OAuth credentials, setting environment variables, configuring SMTP for the reach-out feature, and connecting AI agents to the MCP endpoint.
 
-## What the admin console gives you
+## Architecture in one paragraph
 
-- A login at **`/admin/login`** that signs in with Google.
-- A submissions dashboard at **`/admin`** with three tabs: **Contact**, **Careers**, **Audit**. Click any row for the full detail in a side drawer.
-- An admin management page at **`/admin/admins`**: add or remove admins by email. The next time they sign in with that Google account, they're allowed in (or revoked).
-- All routes under `/admin*` and `/api/admin/*` require a valid HMAC-signed session cookie. The cookie is stateless — no session table to manage.
-
-The first admin is **seeded automatically** when the table is first created so you have a way in. Default seed: `contact@zaftech.co`. Override via `ADMIN_SEED_EMAIL`.
+[BetterAuth](https://www.better-auth.com/) handles Google sign-in and issues sessions backed by Postgres tables. The same BetterAuth instance acts as an OAuth 2 / OIDC provider for MCP clients via the `mcp` plugin, so AI agents go through the same Google sign-in and receive scoped access tokens. Every admin route (`/admin/*`, `/api/admin/*`) and the MCP endpoint (`/api/mcp`) re-confirms the signed-in email is in the `admins` table on each request — revoking an admin is instant.
 
 ## 1. Create a Google OAuth client
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new project (or pick an existing one) — name it `ZafTech Admin` or similar.
-3. Go to **APIs & Services → OAuth consent screen**.
-   - **User type:** External (unless you have a Workspace and want Internal).
-   - **App name:** `ZafTech Admin`
-   - **User support email:** `contact@zaftech.co`
-   - **Developer contact:** `contact@zaftech.co`
-   - **Authorized domains:** `zaftech.co`
-   - Add scopes: `openid`, `email`, `profile`. These are the defaults — no sensitive scopes needed.
-   - On External + Testing status: add the seed admin email (and any other admin Google account) as a **Test user** so they can sign in before the app is verified. You can publish later when you stop adding users frequently.
-4. Go to **APIs & Services → Credentials → Create Credentials → OAuth client ID**.
-   - **Application type:** Web application
-   - **Name:** `ZafTech Admin Web Client`
-   - **Authorized JavaScript origins** (one per environment):
+2. Create or select a project (e.g. `ZafTech Admin`).
+3. **APIs & Services → OAuth consent screen**
+   - User type: External (or Internal for Workspace)
+   - App name: `ZafTech Admin`
+   - Support email + developer contact: `contact@zaftech.co`
+   - Authorized domains: `zaftech.co`
+   - Scopes: `openid`, `email`, `profile` (the defaults — no sensitive scopes needed).
+   - While in testing status, add each admin Google account as a **Test user**.
+4. **APIs & Services → Credentials → Create Credentials → OAuth client ID**
+   - Application type: **Web application**
+   - Name: `ZafTech Admin Web`
+   - **Authorized JavaScript origins:**
      - `https://zaftech.co`
-     - `http://localhost:4321` (for `bun dev`)
+     - `http://localhost:4321`
    - **Authorized redirect URIs:**
-     - `https://zaftech.co/api/admin/auth/callback`
-     - `http://localhost:4321/api/admin/auth/callback`
-   - Save. Google shows you a **Client ID** and **Client secret** — keep them handy.
+     - `https://zaftech.co/api/auth/callback/google`
+     - `http://localhost:4321/api/auth/callback/google`
+5. Copy the **Client ID** and **Client secret**.
 
-## 2. Configure environment variables
+> **Note:** the callback path is `/api/auth/callback/google` — that's BetterAuth's catch-all. Don't use the old `/api/admin/auth/callback` path.
 
-The admin module reads these from `process.env` at runtime (SSR). Set them wherever you run the server — in cPanel/Plesk/Hosted Node, on Fly/Render/Railway, in a systemd unit, or in `.env` for local dev.
+## 2. Apply the database schema
+
+BetterAuth creates its own tables. Run the migration once against your `DATABASE_URL`:
 
 ```bash
-# Required for OAuth
-GOOGLE_CLIENT_ID=xxxxxxxxxxxx.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxx
-
-# Required for signing the admin session cookie.
-# 32+ random bytes, base64 or hex. Generate with `openssl rand -base64 32`.
-ADMIN_SESSION_SECRET=replace-with-a-long-random-string
-
-# Optional. Defaults to contact@zaftech.co.
-ADMIN_SEED_EMAIL=contact@zaftech.co
-
-# Optional. Override the redirect URI when the request URL isn't the public origin
-# (e.g. running behind a proxy that strips host headers).
-# GOOGLE_REDIRECT_URI=https://zaftech.co/api/admin/auth/callback
-
-# Required by the existing form endpoints (contact / careers / audit submissions)
-# and by the admin DB. Bun's SQL driver — use a Postgres URL.
-DATABASE_URL=postgres://user:pass@host:5432/dbname
+bunx @better-auth/cli migrate
 ```
 
-### Local development
+This creates `user`, `session`, `account`, `verification`, `oauthApplication`, `oauthAccessToken`, `oauthConsent`. Re-running is safe — the CLI is idempotent.
 
-Create `.env` (gitignored) in the project root with the values above. `bun dev` reads it automatically.
+The submission tables (`contact_submissions`, `career_applications`, `audit_submissions`) and the `admins` table are created lazily by the app on first use, so no separate migration is needed for those.
 
-### Production
+## 3. Configure environment variables
 
-For the standalone Node adapter, just export the variables in the process supervisor. If you're using systemd, drop them into the service `Environment=` lines or an `EnvironmentFile=`. On cPanel/Plesk, use the app's environment variables panel.
+```bash
+# Database
+DATABASE_URL=postgres://user:pass@host:5432/dbname
 
-## 3. First sign-in
+# BetterAuth — public origin + signing secret
+BETTER_AUTH_URL=https://zaftech.co
+BETTER_AUTH_SECRET=$(openssl rand -base64 32)
+
+# Google OAuth
+GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxxxxxxxxxxxxxxx
+
+# SMTP — admin "Reach out" feature + MCP send_reachout tool
+SMTP_HOST=smtp.your-provider.com
+SMTP_PORT=587
+SMTP_USER=mailer@zaftech.co
+SMTP_PASS=app-specific-password
+SMTP_FROM="ZafTech <hello@zaftech.co>"
+
+# Optional — first admin seeded on initial startup (defaults to contact@zaftech.co)
+# ADMIN_SEED_EMAIL=contact@zaftech.co
+```
+
+Local dev: put these in `.env` (already gitignored). `bun dev` reads it automatically.
+
+Production: export the same variables in your process supervisor / container runtime.
+
+### Docker Compose snippet
+
+```yaml
+services:
+  zaftech:
+    image: euaell/zaftech:latest
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://admin:...@postgresql-db:5432/zaftech
+      - BETTER_AUTH_URL=https://zaftech.co
+      - BETTER_AUTH_SECRET=<generated>
+      - GOOGLE_CLIENT_ID=...
+      - GOOGLE_CLIENT_SECRET=...
+      - SMTP_HOST=...
+      - SMTP_PORT=587
+      - SMTP_USER=...
+      - SMTP_PASS=...
+      - SMTP_FROM=ZafTech <hello@zaftech.co>
+      - PORT=3000
+```
+
+## 4. First sign-in
 
 1. Deploy the latest build (or `bun dev` locally).
-2. Visit `https://zaftech.co/admin/login`.
-3. Click **Sign in with Google** and sign in as `contact@zaftech.co` (or whatever you set `ADMIN_SEED_EMAIL` to).
-4. You should land on `/admin`. The Submissions tabs may be empty if no forms have been filled yet — that's expected.
+2. Visit `BETTER_AUTH_URL/admin/login`.
+3. Click **Sign in with Google** and authenticate as `contact@zaftech.co` (or whichever email you set as `ADMIN_SEED_EMAIL`).
+4. You land on `/admin`. The first request lazily creates the `admins` table and inserts the seed email — you'll see `[admins] Seeded admin: contact@zaftech.co` in logs.
 
-If sign-in fails:
+Errors land back on `/admin/login` with a `?error=` code:
 
-| Error on `/admin/login` | Meaning | Fix |
+| Code | Meaning | Fix |
 |---|---|---|
-| `not_admin` | The signed-in Google email isn't in the `admins` table. | Sign in with the seed account first, then go to `/admin/admins` to add the new email. |
-| `state_mismatch` | The OAuth state cookie expired or was blocked. | Cookies may be blocked by the browser. Try again from `/admin/login`. |
-| `exchange_failed` | Google rejected the token exchange. | Verify `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and that the redirect URI matches exactly (scheme + host + path). |
-| `OAuth configuration error` | Missing env var. | Confirm `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set in the server process. |
+| `not_admin` | Signed-in email isn't in the admins table | Sign in as the seed admin, then go to `/admin/admins` and add the new email |
+| `oauth_failed` | Google rejected the sign-in (bad client ID/secret, redirect mismatch, or test user not allowlisted) | Re-check the credentials + the redirect URI in Cloud Console |
 
-## 4. Adding more admins
+## 5. Adding more admins
 
-1. Sign in as an existing admin.
+1. Sign in as any existing admin.
 2. Go to **`/admin/admins`**.
-3. Type the new admin's Google email and click **Add admin**.
-4. Tell them to visit `/admin/login` and sign in. The first sign-in creates no profile data — only the email needs to be in the table.
+3. Enter the new admin's Google email and click **Add admin**.
+4. Tell them to visit `/admin/login`. They sign in with that exact Google account.
 
-The seed admin (and the currently signed-in admin) cannot remove themselves. Anyone else can be removed with one click.
+The seed admin and the currently signed-in admin cannot remove themselves. Anyone else can be removed with one click — their next request gets bounced back to login.
 
-## 5. How it works (one-paragraph version)
+## 6. SMTP / Reach-out
 
-The session cookie is an HMAC-SHA256 signed string in the form `base64url(json).base64url(sig)`, set as `httpOnly; SameSite=Lax; Secure` (in production). On every protected request, the server re-derives the signature with `ADMIN_SESSION_SECRET` and confirms the email is still in the `admins` table — so removing an admin revokes access immediately, no waiting for the cookie to expire. Cookies are valid for 7 days. OAuth uses the standard authorization-code flow with a one-time `state` parameter signed into a short-lived cookie for CSRF protection.
+The dashboard exposes a **Reach out** button in the detail drawer for contact and career submissions. Clicking it opens an inline compose form with a pre-filled subject and a polite scaffold; admin edits, sends, and the submission gets marked handled automatically.
+
+The same operation is available to AI agents via the `send_reachout` MCP tool (see below).
+
+If `SMTP_HOST` / `SMTP_USER` / `SMTP_PASS` are unset, both the UI and MCP tool return a clear error — nothing else breaks.
+
+## 7. Connect an MCP client
+
+The admin console *is* an MCP server. Once you're signed in as an admin, visit `/admin/mcp` for the canonical config block. The short version:
+
+```json
+{
+  "mcpServers": {
+    "zaftech-admin": {
+      "url": "https://zaftech.co/api/mcp"
+    }
+  }
+}
+```
+
+The first time the agent connects, it'll go through Google sign-in (using the same OAuth client). The issued access token is bound to the user's email; if that email isn't in `admins`, the agent gets a 403. Tools available:
+
+| Tool | Description |
+|---|---|
+| `list_submissions` | List recent submissions of a type, filtered by `open` / `handled` / `all`. |
+| `get_submission` | Fetch one submission by `type` and `id`. |
+| `send_reachout` | Send an email to the submitter (contact + careers only) and mark handled. |
+| `mark_handled` | Mark a submission handled. |
+| `mark_unhandled` | Re-open a previously-handled submission. |
+
+## 8. Rotating secrets
+
+- **`BETTER_AUTH_SECRET`** — rotating signs out every admin and invalidates every MCP access token. No DB change needed.
+- **`GOOGLE_CLIENT_SECRET`** — rotate in Google Cloud Console → Credentials → your OAuth client. Update `GOOGLE_CLIENT_SECRET` in your env, restart the server.
+- **SMTP_PASS** — rotate at the mail provider, update env, restart.
 
 ## File reference
 
 | File | Purpose |
 |---|---|
-| `src/lib/db.ts` | Shared `bun:SQL` connection. |
-| `src/lib/admin/admins.ts` | `admins` table, seed, list/add/remove/check. |
-| `src/lib/admin/session.ts` | HMAC sign/verify, cookie builders. |
-| `src/lib/admin/oauth.ts` | Google authorization-URL + token exchange. |
-| `src/lib/admin/auth.ts` | `requireAdmin(request)` — call from any protected route. |
-| `src/pages/api/admin/auth/login.ts` | Redirects to Google. |
-| `src/pages/api/admin/auth/callback.ts` | Verifies state, exchanges code, sets session cookie. |
-| `src/pages/api/admin/auth/logout.ts` | Clears session cookie. |
-| `src/pages/api/admin/admins.ts` | GET / POST / DELETE for the admins table. |
-| `src/pages/admin/login.astro` | Public — Google sign-in page. |
-| `src/pages/admin/index.astro` | Auth-gated — submissions dashboard. |
-| `src/pages/admin/admins.astro` | Auth-gated — manage admins. |
-
-## Rotating the session secret
-
-Changing `ADMIN_SESSION_SECRET` invalidates every existing session cookie. Everyone gets bounced to `/admin/login` and has to sign in again. Do this if you suspect the secret leaked. No DB change is needed.
+| `src/lib/auth.ts` | BetterAuth instance — Google provider + MCP plugin. |
+| `src/lib/db.ts` | Shared Bun SQL connection for the form/admin tables. |
+| `src/lib/mail.ts` | Nodemailer SMTP transport. |
+| `src/lib/admin/admins.ts` | `admins` table — seed, list/add/remove/check. |
+| `src/lib/admin/auth.ts` | `requireAdmin(...)` — used by every protected page/route. |
+| `src/lib/admin/submissions.ts` | Typed CRUD over `contact_submissions` / `career_applications` / `audit_submissions`. |
+| `src/lib/admin/mcp-tools.ts` | Declarative MCP tool definitions + handlers. |
+| `src/middleware.ts` | Loads the BetterAuth session into `Astro.locals` for every request. |
+| `src/pages/api/auth/[...all].ts` | BetterAuth catch-all (sign-in, callbacks, token issuance, MCP OAuth endpoints). |
+| `src/pages/api/mcp/[...rest].ts` | JSON-RPC MCP endpoint. Admin-only via the OAuth bearer token. |
+| `src/pages/api/admin/admins.ts` | Manage admins (list / add / remove). |
+| `src/pages/api/admin/handled.ts` | Toggle `handled_at` on a submission. |
+| `src/pages/api/admin/reachout.ts` | Send a reply email + mark handled. |
+| `src/pages/admin/login.astro` | Sign-in. |
+| `src/pages/admin/index.astro` | Submissions dashboard + detail drawer + reachout UI. |
+| `src/pages/admin/admins.astro` | Manage admins. |
+| `src/pages/admin/mcp.astro` | MCP connection instructions + tool list. |
