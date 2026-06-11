@@ -15,7 +15,7 @@ const {
     { label: "Services", href: "/services" },
     { label: "Products", href: "/#products" },
     { label: "Portfolio", href: "/#portfolio" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Free Audit", href: "/audit" },
   ],
   variant = "solid",
 } = Astro.props;
@@ -63,9 +63,9 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
         href="/#contact"
         class="hidden sm:flex h-9 items-center justify-center px-5 bg-spruce-400 text-onyx-950 text-[10px] font-bold tracking-wider hover:bg-spruce-300 transition-colors uppercase"
         data-ga-event="cta_click"
-        data-ga-label="Header - Book a call"
+        data-ga-label="Header - Start a project"
       >
-        Book a call
+        Start a project
       </a>
       <button
         class="flex sm:hidden h-9 w-9 items-center justify-center bg-onyx-900 border border-onyx-700 text-ivory-100"
@@ -117,9 +117,9 @@ const pathname = Astro.url.pathname.replace(/\/$/, "") || "/";
           class="mt-4 h-11 flex items-center justify-center px-5 bg-spruce-400 text-onyx-950 text-xs font-bold tracking-wider hover:bg-spruce-300 transition-colors uppercase"
           data-mobile-nav
           data-ga-event="cta_click"
-          data-ga-label="Book a call (mobile menu)"
+          data-ga-label="Start a project (mobile menu)"
         >
-          Book a call
+          Start a project
         </a>
       </div>
     </div>
