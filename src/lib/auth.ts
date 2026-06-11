@@ -2,10 +2,16 @@ import { betterAuth } from "better-auth";
 import { mcp } from "better-auth/plugins";
 import { Pool } from "pg";
 
-const requireEnv = (name: string): string => {
+// IMPORTANT: do NOT throw at module load.
+// Astro's middleware imports `auth`, and the middleware runs for every page —
+// including static routes during `astro build` prerender, where the prod
+// secrets are deliberately absent. Throwing here would fail the Docker build.
+// Missing values are surfaced at request time (BetterAuth returns its own
+// error when OAuth is actually exercised).
+const env = (name: string): string => {
   const v = process.env[name];
-  if (!v) throw new Error(`${name} is not set`);
-  return v;
+  if (!v) console.warn(`[auth] ${name} is not set — auth/OAuth requests will fail until it's configured.`);
+  return v ?? "";
 };
 
 const pool = new Pool({
@@ -18,8 +24,8 @@ export const auth = betterAuth({
   database: pool,
   socialProviders: {
     google: {
-      clientId: requireEnv("GOOGLE_CLIENT_ID"),
-      clientSecret: requireEnv("GOOGLE_CLIENT_SECRET"),
+      clientId: env("GOOGLE_CLIENT_ID"),
+      clientSecret: env("GOOGLE_CLIENT_SECRET"),
     },
   },
   plugins: [
