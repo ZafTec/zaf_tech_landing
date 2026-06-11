@@ -1,0 +1,135 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SeoHead from "@/components/SeoHead.astro";
+import { requireAdmin } from "@/lib/admin/auth";
+import { TOOLS } from "@/lib/admin/mcp-tools";
+
+export const prerender = false;
+
+const admin = await requireAdmin(Astro);
+if (!admin) return Astro.redirect("/admin/login");
+
+const origin = new URL(Astro.request.url).origin;
+const mcpUrl = `${origin}/api/mcp`;
+const discoveryUrl = `${origin}/.well-known/oauth-authorization-server`;
+const resourceUrl = `${origin}/.well-known/oauth-protected-resource`;
+
+const title = "MCP · ZafTech Admin";
+const description = "Connect an AI agent to the ZafTech admin tools via Model Context Protocol.";
+---
+<Layout title={title} description={description}>
+  <Fragment slot="head">
+    <SeoHead title={title} description={description} noindex={true} canonicalPath="/admin/mcp" />
+  </Fragment>
+
+  <div class="min-h-screen flex flex-col bg-onyx-950">
+    <header class="border-b border-onyx-800 sticky top-0 z-30 bg-onyx-950/95 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-6">
+          <a href="/admin" class="flex items-center gap-3" aria-label="ZafTech Admin">
+            <picture>
+              <source srcset="/logo/ZAFTECH_LOGO_Square_bgremoved_dark_theme.png" media="(prefers-color-scheme: light)" />
+              <img src="/logo/ZAFTECH_LOGO_Square_bgremoved_light_theme.png" alt="ZafTech" class="h-9 w-auto" width="36" height="36" draggable="false" />
+            </picture>
+            <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-spruce-400">ZafTech <span class="text-onyx-500">// admin</span></span>
+          </a>
+          <nav class="hidden md:flex items-center gap-5" aria-label="Admin navigation">
+            <a href="/admin" class="text-[10px] font-mono uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">Submissions</a>
+            <a href="/admin/admins" class="text-[10px] font-mono uppercase tracking-widest text-onyx-400 hover:text-spruce-400 transition-colors">Admins</a>
+            <a href="/admin/mcp" class="text-[10px] font-mono uppercase tracking-widest text-spruce-400" aria-current="page">MCP</a>
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="hidden sm:inline font-mono text-[10px] uppercase tracking-widest text-onyx-400">{admin.email}</span>
+          <button type="button" class="btn-ghost h-9 px-4" data-signout>Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grow">
+      <section class="px-6 md:px-12 pt-10 pb-8 max-w-4xl mx-auto w-full">
+        <p class="kicker"><span class="text-onyx-500 mr-1">// 03</span><span>Agent access</span></p>
+        <h1 class="mt-3 display-tight text-3xl md:text-4xl font-medium text-ivory-100">MCP server</h1>
+        <p class="mt-4 text-[14px] text-onyx-300 leading-relaxed max-w-2xl">
+          This admin console exposes the submission tools through Model Context Protocol so AI agents can read, send
+          reach-outs, and mark items handled the same way you do here. Access uses OAuth — only emails in the admins
+          list can mint a token.
+        </p>
+      </section>
+
+      <section class="px-6 md:px-12 pb-10 max-w-4xl mx-auto w-full grid grid-cols-1 gap-5">
+        <div class="border border-onyx-800 bg-onyx-950 p-6">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">MCP endpoint</p>
+          <code class="mt-2 block font-mono text-[13px] text-ivory-100 break-all">{mcpUrl}</code>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div class="border border-onyx-800 bg-onyx-950 p-6">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">OAuth metadata</p>
+            <code class="mt-2 block font-mono text-[12px] text-onyx-200 break-all">{discoveryUrl}</code>
+          </div>
+          <div class="border border-onyx-800 bg-onyx-950 p-6">
+            <p class="font-mono text-[10px] uppercase tracking-widest text-spruce-400">Protected resource</p>
+            <code class="mt-2 block font-mono text-[12px] text-onyx-200 break-all">{resourceUrl}</code>
+          </div>
+        </div>
+      </section>
+
+      <section class="px-6 md:px-12 pb-10 max-w-4xl mx-auto w-full">
+        <p class="kicker"><span class="text-onyx-500 mr-1">// 04</span><span>Connect Claude / Cursor / VS Code</span></p>
+        <p class="mt-4 text-[14px] text-onyx-300 leading-relaxed">
+          Point an MCP-capable client at the endpoint above. The client will be redirected through Google sign-in,
+          and the issued token is bound to your Google account. Non-admin accounts will be rejected with a 403.
+        </p>
+
+        <div class="mt-5 border border-onyx-800 bg-onyx-900 p-5">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-onyx-400">Claude Desktop / Cursor config</p>
+          <pre class="mt-3 overflow-x-auto font-mono text-[12px] text-ivory-100 leading-relaxed"><code>{`{
+  "mcpServers": {
+    "zaftech-admin": {
+      "url": "${mcpUrl}"
+    }
+  }
+}`}</code></pre>
+        </div>
+      </section>
+
+      <section class="px-6 md:px-12 pb-16 max-w-4xl mx-auto w-full">
+        <p class="kicker"><span class="text-onyx-500 mr-1">// 05</span><span>Available tools</span></p>
+        <div class="mt-5 border border-onyx-800 bg-onyx-950">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-onyx-700">
+                <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3 whitespace-nowrap">Tool</th>
+                <th class="font-mono text-[10px] uppercase tracking-widest text-spruce-400 px-4 py-3">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TOOLS.map((t) => (
+                <tr class="border-b border-onyx-800">
+                  <td class="px-4 py-3 font-mono text-[13px] text-ivory-100 whitespace-nowrap">{t.name}</td>
+                  <td class="px-4 py-3 text-[13px] text-onyx-300 leading-relaxed">{t.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-onyx-800 mt-auto">
+      <div class="max-w-7xl mx-auto px-6 md:px-12 py-5 font-mono text-[10px] uppercase tracking-widest text-onyx-500 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
+        <span>ZafTech admin · internal</span>
+        <span><a href="/" class="hover:text-spruce-400 transition-colors">back to zaftech.co</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    import { createAuthClient } from "better-auth/client";
+    const authClient = createAuthClient();
+    document.querySelector("[data-signout]")?.addEventListener("click", async () => {
+      await authClient.signOut();
+      window.location.href = "/admin/login";
+    });
+  </script>
+</Layout>
