@@ -42,10 +42,24 @@ const rpcErr = (
   data?: unknown,
 ): RpcError => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message, ...(data !== undefined ? { data } : {}) } });
 
-const unauthorized = (resource: URL) => {
+// Determine the public-facing origin of THIS server, respecting reverse
+// proxies. BetterAuth's `BETTER_AUTH_URL` is the authoritative source in
+// production; we fall back to `x-forwarded-proto` + `host` headers, then
+// the request URL. This is critical for the WWW-Authenticate discovery URL
+// — clients refuse to follow http:// links pointed at https-only sites.
+const publicOrigin = (request: Request): string => {
+  const fromEnv = process.env.BETTER_AUTH_URL;
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+  const proto = request.headers.get("x-forwarded-proto");
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  if (proto && host) return `${proto}://${host}`;
+  return new URL(request.url).origin;
+};
+
+const unauthorized = (request: Request) => {
   // RFC 6750 + MCP: include a WWW-Authenticate header pointing to the
   // protected resource metadata so clients can discover the OAuth server.
-  const metadataUrl = `${resource.origin}/.well-known/oauth-protected-resource`;
+  const metadataUrl = `${publicOrigin(request)}/.well-known/oauth-protected-resource`;
   return new Response(JSON.stringify({ error: "unauthorized" }), {
     status: 401,
     headers: {
@@ -125,9 +139,8 @@ const handleRpc = async (req: RpcRequest, adminEmail: string): Promise<RpcResult
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const url = new URL(request.url);
   const adminEmail = await getAuthedAdminEmail(request);
-  if (!adminEmail) return unauthorized(url);
+  if (!adminEmail) return unauthorized(request);
 
   let payload: RpcRequest | RpcRequest[];
   try {
@@ -147,8 +160,24 @@ export const POST: APIRoute = async ({ request }) => {
 export const GET: APIRoute = async ({ request }) => {
   // Some clients probe GET for SSE — we don't support streaming yet, but
   // returning 405 with the standard WWW-Authenticate keeps discovery happy.
-  const url = new URL(request.url);
   const adminEmail = await getAuthedAdminEmail(request);
-  if (!adminEmail) return unauthorized(url);
+  if (!adminEmail) return unauthorized(request);
   return json({ error: "Use POST for JSON-RPC. SSE/streaming transport is not implemented." }, 405);
+};
+
+// CORS preflight. claude.ai sends OPTIONS on behalf of the user's browser
+// before issuing the POST; without this it sees a network error.
+export const OPTIONS: APIRoute = async ({ request }) => {
+  const origin = request.headers.get("origin") ?? "*";
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      "Access-Control-Allow-Headers": "authorization, content-type, mcp-protocol-version, mcp-session-id",
+      "Access-Control-Expose-Headers": "www-authenticate, mcp-session-id",
+      "Access-Control-Max-Age": "86400",
+      Vary: "Origin",
+    },
+  });
 };

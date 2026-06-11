@@ -29,6 +29,14 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    mcp({ loginPage: "/admin/login" }),
+    mcp({
+      loginPage: "/admin/login",
+      // Canonical MCP resource URL. claude.ai matches this against the
+      // audience claim on issued tokens, so it must be exact (scheme + host
+      // + path) — not just the origin.
+      resource: process.env.BETTER_AUTH_URL
+        ? `${process.env.BETTER_AUTH_URL.replace(/\/$/, "")}/api/mcp`
+        : undefined,
+    }),
   ],
 });
