@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import SeoHead from "@/components/SeoHead.astro";
 import { guardAdminPage } from "@/lib/admin/auth";
 import { TOOLS } from "@/lib/admin/mcp-tools";
+import { publicOrigin } from "@/lib/public-url";
 
 export const prerender = false;
 
@@ -10,7 +11,9 @@ const gate = await guardAdminPage(Astro);
 if (gate instanceof Response) return gate;
 const admin = gate;
 
-const origin = new URL(Astro.request.url).origin;
+// Always render the canonical, externally-visible origin — never the
+// upstream `http://` that nginx talks to the container with.
+const origin = publicOrigin();
 const mcpUrl = `${origin}/api/mcp`;
 const discoveryUrl = `${origin}/.well-known/oauth-authorization-server`;
 const resourceUrl = `${origin}/.well-known/oauth-protected-resource`;
