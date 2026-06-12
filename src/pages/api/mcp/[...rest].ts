@@ -15,6 +15,7 @@ import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/admin/admins";
 import { TOOLS, TOOLS_BY_NAME } from "@/lib/admin/mcp-tools";
 import { db } from "@/lib/db";
+import { publicUrl } from "@/lib/public-url";
 
 export const prerender = false;
 
@@ -42,25 +43,16 @@ const rpcErr = (
   data?: unknown,
 ): RpcError => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message, ...(data !== undefined ? { data } : {}) } });
 
-// Determine the public-facing origin of THIS server, respecting reverse
-// proxies. BetterAuth's `BETTER_AUTH_URL` is the authoritative source in
-// production; we fall back to `x-forwarded-proto` + `host` headers, then
-// the request URL. This is critical for the WWW-Authenticate discovery URL
-// — clients refuse to follow http:// links pointed at https-only sites.
-const publicOrigin = (request: Request): string => {
-  const fromEnv = process.env.BETTER_AUTH_URL;
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-  const proto = request.headers.get("x-forwarded-proto");
-  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  if (proto && host) return `${proto}://${host}`;
-  return new URL(request.url).origin;
-};
+// Brief request label used in every log line so traces are correlatable.
+const reqId = (request: Request): string =>
+  request.headers.get("mcp-session-id") ??
+  request.headers.get("x-request-id") ??
+  Math.random().toString(36).slice(2, 8);
 
-const unauthorized = (request: Request) => {
-  // RFC 6750 + MCP: include a WWW-Authenticate header pointing to the
-  // protected resource metadata so clients can discover the OAuth server.
-  const metadataUrl = `${publicOrigin(request)}/.well-known/oauth-protected-resource`;
-  return new Response(JSON.stringify({ error: "unauthorized" }), {
+const unauthorized = (request: Request, reason: string) => {
+  const metadataUrl = `${publicUrl("/.well-known/oauth-protected-resource")}`;
+  console.warn(`[mcp:${reqId(request)}] 401 ${reason} — resource_metadata=${metadataUrl}`);
+  return new Response(JSON.stringify({ error: "unauthorized", reason }), {
     status: 401,
     headers: {
       "Content-Type": "application/json",
@@ -69,31 +61,74 @@ const unauthorized = (request: Request) => {
   });
 };
 
+const forbidden = (request: Request, email: string) => {
+  console.warn(`[mcp:${reqId(request)}] 403 ${email} is not on the admins list`);
+  return json({ error: "forbidden", reason: "not_admin", email }, 403);
+};
+
+/** Walk the bearer token → session → user → admin chain, logging each step. */
 const getAuthedAdminEmail = async (request: Request): Promise<string | null> => {
-  const session = await auth.api.getMcpSession({ headers: request.headers });
-  if (!session?.userId) return null;
-  if (!db) return null;
+  const id = reqId(request);
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader) {
+    console.warn(`[mcp:${id}] no Authorization header`);
+    return null;
+  }
+  if (!authHeader.toLowerCase().startsWith("bearer ")) {
+    console.warn(`[mcp:${id}] Authorization header is not a Bearer token (got "${authHeader.slice(0, 12)}…")`);
+    return null;
+  }
+
+  let session;
+  try {
+    session = await auth.api.getMcpSession({ headers: request.headers });
+  } catch (err) {
+    console.error(`[mcp:${id}] auth.api.getMcpSession threw:`, err);
+    return null;
+  }
+  if (!session) {
+    console.warn(`[mcp:${id}] getMcpSession returned null (token invalid, expired, or audience mismatch)`);
+    return null;
+  }
+  if (!session.userId) {
+    console.warn(`[mcp:${id}] session has no userId`, { scopes: session.scopes, clientId: session.clientId });
+    return null;
+  }
+  if (!db) {
+    console.error(`[mcp:${id}] DB is not configured; cannot resolve session.userId=${session.userId}`);
+    return null;
+  }
+
   const rows = (await db`SELECT email FROM "user" WHERE id = ${session.userId} LIMIT 1;`) as Array<{ email: string }>;
   const email = rows[0]?.email?.toLowerCase();
-  if (!email) return null;
-  if (!(await isAdmin(email))) return null;
+  if (!email) {
+    console.warn(`[mcp:${id}] no user row for userId=${session.userId}`);
+    return null;
+  }
+  if (!(await isAdmin(email))) {
+    console.warn(`[mcp:${id}] ${email} is not an admin (session.userId=${session.userId})`);
+    // Return the email so the caller can choose 403 vs 401.
+    throw Object.assign(new Error("not_admin"), { email });
+  }
+  console.log(`[mcp:${id}] authed as ${email} (userId=${session.userId})`);
   return email;
 };
 
-const handleRpc = async (req: RpcRequest, adminEmail: string): Promise<RpcResult | RpcError> => {
+const handleRpc = async (req: RpcRequest, adminEmail: string, logId: string): Promise<RpcResult | RpcError> => {
   try {
     switch (req.method) {
       case "initialize": {
+        console.log(`[mcp:${logId}] initialize from ${adminEmail}`);
         return rpcOk(req.id, {
           protocolVersion: SUPPORTED_PROTOCOL,
           serverInfo: { name: "zaftech-admin-mcp", version: "1.0.0" },
           capabilities: { tools: { listChanged: false } },
         });
       }
-      case "ping": {
+      case "ping":
         return rpcOk(req.id, {});
-      }
       case "tools/list": {
+        console.log(`[mcp:${logId}] tools/list from ${adminEmail}`);
         return rpcOk(req.id, {
           tools: TOOLS.map((t) => ({
             name: t.name,
@@ -107,7 +142,11 @@ const handleRpc = async (req: RpcRequest, adminEmail: string): Promise<RpcResult
         const name = params.name;
         if (!name) return rpcErr(req.id, -32602, "Tool name is required");
         const tool = TOOLS_BY_NAME[name];
-        if (!tool) return rpcErr(req.id, -32601, `Unknown tool: ${name}`);
+        if (!tool) {
+          console.warn(`[mcp:${logId}] unknown tool requested: ${name}`);
+          return rpcErr(req.id, -32601, `Unknown tool: ${name}`);
+        }
+        console.log(`[mcp:${logId}] tools/call ${name} from ${adminEmail}`);
         try {
           const result = await tool.handler(params.arguments ?? {}, { adminEmail });
           return rpcOk(req.id, {
@@ -115,60 +154,78 @@ const handleRpc = async (req: RpcRequest, adminEmail: string): Promise<RpcResult
           });
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
-          console.warn(`[mcp] tool ${name} failed for ${adminEmail}:`, message);
+          console.warn(`[mcp:${logId}] tool ${name} failed for ${adminEmail}: ${message}`);
           return rpcOk(req.id, {
             isError: true,
             content: [{ type: "text", text: `Error: ${message}` }],
           });
         }
       }
-      // The runtime no-ops below are required by some MCP clients during the
-      // initialize/teardown handshake.
+      // Some MCP clients send these during init/teardown.
       case "notifications/initialized":
-      case "notifications/cancelled": {
+      case "notifications/cancelled":
         return rpcOk(req.id, {});
-      }
       default:
+        console.warn(`[mcp:${logId}] unknown method: ${req.method}`);
         return rpcErr(req.id, -32601, `Method not found: ${req.method}`);
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error(`[mcp] handler crashed for ${req.method}:`, err);
+    console.error(`[mcp:${logId}] handler crashed for ${req.method}:`, err);
     return rpcErr(req.id, -32603, "Internal error", { detail: message });
   }
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const adminEmail = await getAuthedAdminEmail(request);
-  if (!adminEmail) return unauthorized(request);
+  const id = reqId(request);
+  console.log(`[mcp:${id}] POST ${request.url}`);
+
+  let adminEmail: string | null;
+  try {
+    adminEmail = await getAuthedAdminEmail(request);
+  } catch (err) {
+    // Thrown specifically when the user is authed but not an admin.
+    const email = (err as { email?: string }).email ?? "";
+    return forbidden(request, email);
+  }
+  if (!adminEmail) return unauthorized(request, "missing-or-invalid-token");
 
   let payload: RpcRequest | RpcRequest[];
   try {
     payload = (await request.json()) as RpcRequest | RpcRequest[];
-  } catch {
+  } catch (err) {
+    console.warn(`[mcp:${id}] body is not valid JSON:`, err);
     return json(rpcErr(null, -32700, "Parse error"), 400);
   }
 
   if (Array.isArray(payload)) {
-    const responses = await Promise.all(payload.map((req) => handleRpc(req, adminEmail)));
+    const responses = await Promise.all(payload.map((req) => handleRpc(req, adminEmail!, id)));
     return json(responses);
   }
-  const response = await handleRpc(payload, adminEmail);
+  const response = await handleRpc(payload, adminEmail, id);
   return json(response);
 };
 
 export const GET: APIRoute = async ({ request }) => {
-  // Some clients probe GET for SSE — we don't support streaming yet, but
-  // returning 405 with the standard WWW-Authenticate keeps discovery happy.
-  const adminEmail = await getAuthedAdminEmail(request);
-  if (!adminEmail) return unauthorized(request);
+  // Some clients probe GET for SSE — we don't support streaming yet.
+  const id = reqId(request);
+  console.log(`[mcp:${id}] GET ${request.url} (SSE not implemented)`);
+  let adminEmail: string | null;
+  try {
+    adminEmail = await getAuthedAdminEmail(request);
+  } catch (err) {
+    const email = (err as { email?: string }).email ?? "";
+    return forbidden(request, email);
+  }
+  if (!adminEmail) return unauthorized(request, "missing-or-invalid-token");
   return json({ error: "Use POST for JSON-RPC. SSE/streaming transport is not implemented." }, 405);
 };
 
-// CORS preflight. claude.ai sends OPTIONS on behalf of the user's browser
-// before issuing the POST; without this it sees a network error.
+// CORS preflight. claude.ai may send OPTIONS on behalf of a user's browser
+// before issuing the POST.
 export const OPTIONS: APIRoute = async ({ request }) => {
   const origin = request.headers.get("origin") ?? "*";
+  console.log(`[mcp:${reqId(request)}] OPTIONS preflight from origin=${origin}`);
   return new Response(null, {
     status: 204,
     headers: {
