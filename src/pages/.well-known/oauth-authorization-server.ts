@@ -6,4 +6,10 @@ export const prerender = false;
 
 const handler = oAuthDiscoveryMetadata(auth);
 
-export const GET: APIRoute = async ({ request }) => handler(request);
+export const GET: APIRoute = async ({ request }) => {
+  const ua = request.headers.get("user-agent") ?? "—";
+  console.log(`[well-known:oauth-authorization-server] GET  ua="${ua}"`);
+  const res = await handler(request);
+  console.log(`[well-known:oauth-authorization-server] → ${res.status}`);
+  return res;
+};

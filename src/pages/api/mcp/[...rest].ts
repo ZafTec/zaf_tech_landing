@@ -44,14 +44,17 @@ const rpcErr = (
 ): RpcError => ({ jsonrpc: "2.0", id: id ?? null, error: { code, message, ...(data !== undefined ? { data } : {}) } });
 
 // Brief request label used in every log line so traces are correlatable.
-const reqId = (request: Request): string =>
+// IMPORTANT: compute once per request and pass it through — never call this
+// twice on the same request, or the random fallback will hand out two
+// different IDs and the log trail becomes impossible to follow.
+const makeReqId = (request: Request): string =>
   request.headers.get("mcp-session-id") ??
   request.headers.get("x-request-id") ??
   Math.random().toString(36).slice(2, 8);
 
-const unauthorized = (request: Request, reason: string) => {
+const unauthorized = (id: string, reason: string) => {
   const metadataUrl = `${publicUrl("/.well-known/oauth-protected-resource")}`;
-  console.warn(`[mcp:${reqId(request)}] 401 ${reason} — resource_metadata=${metadataUrl}`);
+  console.warn(`[mcp:${id}] 401 ${reason} — resource_metadata=${metadataUrl}`);
   return new Response(JSON.stringify({ error: "unauthorized", reason }), {
     status: 401,
     headers: {
@@ -61,14 +64,13 @@ const unauthorized = (request: Request, reason: string) => {
   });
 };
 
-const forbidden = (request: Request, email: string) => {
-  console.warn(`[mcp:${reqId(request)}] 403 ${email} is not on the admins list`);
+const forbidden = (id: string, email: string) => {
+  console.warn(`[mcp:${id}] 403 ${email} is not on the admins list`);
   return json({ error: "forbidden", reason: "not_admin", email }, 403);
 };
 
 /** Walk the bearer token → session → user → admin chain, logging each step. */
-const getAuthedAdminEmail = async (request: Request): Promise<string | null> => {
-  const id = reqId(request);
+const getAuthedAdminEmail = async (request: Request, id: string): Promise<string | null> => {
   const authHeader = request.headers.get("authorization");
   if (!authHeader) {
     console.warn(`[mcp:${id}] no Authorization header`);
@@ -177,18 +179,19 @@ const handleRpc = async (req: RpcRequest, adminEmail: string, logId: string): Pr
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const id = reqId(request);
-  console.log(`[mcp:${id}] POST ${request.url}`);
+  const id = makeReqId(request);
+  const ua = request.headers.get("user-agent") ?? "—";
+  console.log(`[mcp:${id}] POST ${request.url}  ua="${ua}"`);
 
   let adminEmail: string | null;
   try {
-    adminEmail = await getAuthedAdminEmail(request);
+    adminEmail = await getAuthedAdminEmail(request, id);
   } catch (err) {
     // Thrown specifically when the user is authed but not an admin.
     const email = (err as { email?: string }).email ?? "";
-    return forbidden(request, email);
+    return forbidden(id, email);
   }
-  if (!adminEmail) return unauthorized(request, "missing-or-invalid-token");
+  if (!adminEmail) return unauthorized(id, "missing-or-invalid-token");
 
   let payload: RpcRequest | RpcRequest[];
   try {
@@ -208,24 +211,26 @@ export const POST: APIRoute = async ({ request }) => {
 
 export const GET: APIRoute = async ({ request }) => {
   // Some clients probe GET for SSE — we don't support streaming yet.
-  const id = reqId(request);
-  console.log(`[mcp:${id}] GET ${request.url} (SSE not implemented)`);
+  const id = makeReqId(request);
+  const ua = request.headers.get("user-agent") ?? "—";
+  console.log(`[mcp:${id}] GET ${request.url} (SSE not implemented)  ua="${ua}"`);
   let adminEmail: string | null;
   try {
-    adminEmail = await getAuthedAdminEmail(request);
+    adminEmail = await getAuthedAdminEmail(request, id);
   } catch (err) {
     const email = (err as { email?: string }).email ?? "";
-    return forbidden(request, email);
+    return forbidden(id, email);
   }
-  if (!adminEmail) return unauthorized(request, "missing-or-invalid-token");
+  if (!adminEmail) return unauthorized(id, "missing-or-invalid-token");
   return json({ error: "Use POST for JSON-RPC. SSE/streaming transport is not implemented." }, 405);
 };
 
 // CORS preflight. claude.ai may send OPTIONS on behalf of a user's browser
 // before issuing the POST.
 export const OPTIONS: APIRoute = async ({ request }) => {
+  const id = makeReqId(request);
   const origin = request.headers.get("origin") ?? "*";
-  console.log(`[mcp:${reqId(request)}] OPTIONS preflight from origin=${origin}`);
+  console.log(`[mcp:${id}] OPTIONS preflight from origin=${origin}`);
   return new Response(null, {
     status: 204,
     headers: {
